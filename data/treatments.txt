@@ -1,1 +1,0 @@
-M,manager,manager,Manager,McGee,F,1234,ManagerStreet 50,B,beauty,pass,Beauty,Beautiyicangdagda,F,123,adres,B,beauty,pass,Beauty,Beautiyicangdagda,F,123,adres,R,Receptionis,pass,r,r,M,123,adre,C,Client,pass,Clientko,Clientkic,F,123,adrere,

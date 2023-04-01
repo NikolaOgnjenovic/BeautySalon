@@ -32,7 +32,7 @@ public class Database {
 
     private void loadData() {
         checkDataFile();
-        testWrite();
+        //testWrite();
         readUsersFile();
         readTreatmentsFile();
         readTreatmentTypesFile();
@@ -40,7 +40,7 @@ public class Database {
     }
 
     private void testWrite() {
-        addUser(new Manager("manager", "manager", "Manager", "McGee", "F", "1234", "ManagerStreet 50"));
+        addUser(new Manager("manager", "manager", "Manager", "McGee", "F", "1234", "ManagerStreet 50", (byte) 7, (byte) 5, 0, 100000));
     }
 
     public void changeProfit(double profit) {
@@ -200,6 +200,16 @@ public class Database {
 
         return pastTreatments;
     }
+
+    public List<Beautician> getBeauticians() {
+        List<Beautician> beauticians = new ArrayList<>();
+        for (User u : users) {
+            if (u.getClass().equals(Beautician.class)) {
+                beauticians.add((Beautician) u);
+            }
+        }
+        return beauticians;
+    }
     //endregion
 
     //region Receptionist
@@ -233,6 +243,7 @@ public class Database {
 
     public void bookTreatment(Treatment treatment) {
         addTreatment(treatment);
+        writeTreatment(treatment);
         changeProfit(treatment.getPrice());
     }
 
@@ -313,10 +324,12 @@ public class Database {
                             userData[6].trim(),
                             userData[7].trim()));
                     case "B" -> {
-                        String[] treatmentTypes = userData[8].split(";");
                         List<Byte> treatmentTypeIDs = new ArrayList<>();
-                        for(String s : treatmentTypes) {
-                            treatmentTypeIDs.add(Byte.parseByte(s));
+                        if (userData.length > 8) {
+                            String[] treatmentTypes = userData[8].split(";");
+                            for(String s : treatmentTypes) {
+                                treatmentTypeIDs.add(Byte.parseByte(s));
+                            }
                         }
                         users.add(new Beautician(
                                 userData[1].trim(),
@@ -370,6 +383,7 @@ public class Database {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
             for (User user : users) {
                 out.write(user.getFileString());
+                out.write("\n");
             }
             out.close();
         } catch (Exception ex) {
@@ -418,10 +432,10 @@ public class Database {
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
             String line;
-            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
             while ((line = in.readLine()) != null) {
                 String[] data = line.split(",");
-                treatments.add(new Treatment(sdf.parse(data[0]), Integer.parseInt(data[1]), data[2], Integer.parseInt(data[3]), Integer.parseInt(data[4])));
+                treatments.add(new Treatment(Integer.parseInt(data[0]), sdf.parse(data[1]), Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Double.parseDouble(data[6])));
             }
             in.close();
         } catch (Exception e) {
@@ -432,9 +446,22 @@ public class Database {
         String fileName = "data/treatments.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-            for (User user : users) {
-                out.write(user.getFileString());
+            for (Treatment t: treatments) {
+                out.write(t.getFileString());
+                out.write("\n");
             }
+            out.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void writeTreatment(Treatment treatment) {
+        String fileName = "data/treatments.txt";
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+            out.write(treatment.getFileString());
+            out.write("\n");
             out.close();
         } catch (Exception ex) {
             ex.printStackTrace();

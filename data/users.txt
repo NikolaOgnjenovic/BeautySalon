@@ -1,4 +1,5 @@
-M,manager,manager,Manager,McGee,F,1234,ManagerStreet 50,
-B,beauty,pass,Beauty,Beautiyicangdagda,F,123,adres,B,beauty,pass,Beauty,Beautiyicangdagda,F,123,adres,
-R,Receptionis,pass,r,r,M,123,adre,
-C,Client,pass,Clientko,Clientkic,F,123,adrere,
+M,manager,manager,Manager,McGee,F,1234,ManagerStreet 50,7,5,0.0,100000.0
+B,Beautician,pass,Bauticia,Beauticius,F,123,Adr,8,1,0.0,35000.0B,Beautician,pass,Bauticia,Beauticius,F,123,Adr,8,1,0.0,35000.00;1;
+R,Receptionist,pass,Rec,eptionisto,F,123,adr,6,2,0.0,30000.0
+C,Mrmi,pass,Mrmki,Mrmic,M,123,adre,
+B,beautician,pass,b,b,M,123,a,6,4,8.0,8888.0B,beautician,pass,b,b,M,123,a,6,4,8.0,8888.01;

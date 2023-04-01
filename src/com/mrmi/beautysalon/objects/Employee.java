@@ -1,21 +1,29 @@
 package com.mrmi.beautysalon.objects;
 
 public class Employee extends User {
-    private String qualifications;
+    private byte qualificationLevel; // Nivo strucne spreme [1-8]
     private byte yearsOfExperience;
-    private int bonus;
-    private int salary;
+    private double bonus;
+    private double monthlySalary;
 
     public Employee(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
         super(username, password, name, surname, gender, phoneNumber, address);
     }
 
-    public String getQualifications() {
-        return qualifications;
+    public Employee(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(username, password, name, surname, gender, phoneNumber, address);
+        this.qualificationLevel = qualificationLevel;
+        this.yearsOfExperience = yearsOfExperience;
+        this.bonus = bonus;
+        this.monthlySalary = monthlySalary;
     }
 
-    public void setQualifications(String qualifications) {
-        this.qualifications = qualifications;
+    public byte getQualificationLevel() {
+        return qualificationLevel;
+    }
+
+    public void setQualificationLevel(byte qualificationLevel) {
+        this.qualificationLevel = qualificationLevel;
     }
 
     public byte getYearsOfExperience() {
@@ -26,29 +34,39 @@ public class Employee extends User {
         this.yearsOfExperience = yearsOfExperience;
     }
 
-    public int getBonus() {
+    public double getBonus() {
         return bonus;
     }
 
-    public void setBonus(int bonus) {
+    public void setBonus(double bonus) {
         this.bonus = bonus;
     }
 
-    public int getSalary() {
-        return salary + bonus + yearsOfExperience * Integer.parseInt(qualifications);
+    public double getMonthlySalary() {
+        return monthlySalary;
     }
 
-    public void setSalary(int salary) {
-        this.salary = salary;
+    public void setMonthlySalary(double monthlySalary) {
+        this.monthlySalary = monthlySalary;
+    }
+
+    // TODO: map qualification level to index
+    public double getFullSalary() {
+        return (monthlySalary + bonus) * (1 + (double) yearsOfExperience / 10) * qualificationLevel;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "Employee{" +
-                "qualifications='" + qualifications + '\'' +
+        return "Employee{" +
+                "qualificationLevel=" + qualificationLevel +
                 ", yearsOfExperience=" + yearsOfExperience +
                 ", bonus=" + bonus +
-                ", salary=" + salary +
+                ", monthlySalary=" + monthlySalary +
                 '}';
+    }
+
+    @Override
+    public String getFileString() {
+        return super.getFileString() + qualificationLevel + "," + yearsOfExperience + "," + bonus + "," + monthlySalary;
     }
 }

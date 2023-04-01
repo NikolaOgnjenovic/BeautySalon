@@ -15,13 +15,14 @@ public class Treatment {
 
     private Double price; // Although treatmentType holds price, this price can be affected by a loyalty discount
 
-    public Treatment(Date scheduledDate, int treatmentTypeId, String clientUsername, int id, double price) {
-        this.scheduledDate = scheduledDate;
-        this.cancelled = false;
-        this.treatmentTypeId = treatmentTypeId;
-        this.clientUsername = clientUsername;
-        this.price = price;
+    public Treatment(int id, Date scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price) {
         this.id = id;
+        this.scheduledDate = scheduledDate;
+        this.cancelled = cancelled;
+        this.clientUsername = clientUsername;
+        this.beauticianUsername = beauticianUsername;
+        this.treatmentTypeId = treatmentTypeId;
+        this.price = price;
     }
 
     public Date getScheduledDate() {

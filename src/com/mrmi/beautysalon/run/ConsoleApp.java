@@ -9,6 +9,7 @@ import java.util.*;
 public class ConsoleApp {
     private final Scanner scanner = new Scanner(System.in);
     private final Database database = new Database();
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 
     public void run() {
         System.out.println("Welcome to Mrmi/'s beauty salon app");
@@ -161,21 +162,88 @@ public class ConsoleApp {
                         treatmentTypeIDs.add(Byte.parseByte(type));
                     }
                 }
+
                 newUser = new Beautician(username, password, name, surname, gender, phoneNumber, address, treatmentTypeIDs);
+                setEmployeeAttributes((Beautician) newUser);
             }
             case "R" -> {
                 newUser = new Receptionist(username, password, name, surname, gender, phoneNumber, address);
+                setEmployeeAttributes((Receptionist) newUser);
             }
-            case "M" -> newUser = new Manager(username, password, name, surname, gender, phoneNumber, address);
+            case "M" -> {
+                newUser = new Manager(username, password, name, surname, gender, phoneNumber, address);
+                setEmployeeAttributes((Manager) newUser);
+            }
         }
         database.addUser(newUser);
+    }
+
+    private void setEmployeeAttributes(Employee employee) {
+        System.out.println("Enter qualification level");
+        byte qualificationLevel = Byte.parseByte(scanner.nextLine());
+        System.out.println("Enter years of experience");
+        byte yearsOfExperience = Byte.parseByte(scanner.nextLine());
+        System.out.println("Enter bonus");
+        double bonus = Double.parseDouble(scanner.nextLine());
+        System.out.println("Enter monthly salary");
+        double monthlySalary = Double.parseDouble(scanner.nextLine());
+
+        employee.setQualificationLevel(qualificationLevel);
+        employee.setYearsOfExperience(yearsOfExperience);
+        employee.setBonus(bonus);
+        employee.setMonthlySalary(monthlySalary);
+    }
+
+    private Treatment inputTreatment(String clientUsername) {
+        System.out.println("Enter date in dd.MM.yyyy format");
+        Date scheduledDate;
+        try {
+            scheduledDate = sdf.parse(scanner.nextLine());
+        } catch (ParseException e) {
+            System.out.println("Invalid date");
+            return null;
+        }
+
+        System.out.println("Pick a treatment type");
+        int treatmentTypeId;
+        System.out.println("Available treatment types: ");
+        for (TreatmentType treatmentType : database.getTreatmentTypes()) {
+            System.out.println(treatmentType);
+        }
+        System.out.println("Enter the new treatment type id");
+        treatmentTypeId = Integer.parseInt(scanner.nextLine());
+
+        TreatmentType treatmentType = database.getTreatmentTypeById(treatmentTypeId);
+        if (treatmentType == null) {
+            System.out.println("Invalid type id");
+            return null;
+        }
+
+        List<Beautician> beauticians = database.getBeauticians();
+        if (beauticians.size() < 1) {
+            System.out.println("No beauticians available");
+            return null;
+        }
+        System.out.println("Available beauticians:");
+        for (Beautician b : beauticians) {
+            System.out.println(b);
+        }
+
+        System.out.println("Pick a beautician by entering one's username or get a random one by inserting enter");
+        String beauticianUsername = scanner.nextLine();
+        if (beauticianUsername.length() < 1) {
+            beauticianUsername = beauticians.get(0).getUsername();
+        }
+        return new Treatment(database.getNextTreatmentId(), scheduledDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentType.getPrice());
     }
     //endregion
 
     //region Client options
     private void bookTreatment(Client client) {
-        Treatment treatment = new Treatment(new Date(), 0, client.getUsername(), database.getNextTreatmentId(), 100);
-        client.bookTreatment(treatment, database);
+        Treatment treatment = inputTreatment(client.getUsername());
+        if (treatment != null) {
+            client.bookTreatment(treatment, database);
+        }
     }
 
     private void printDueTreatments(Client client) {
@@ -248,13 +316,16 @@ public class ConsoleApp {
     //region Receptionist options
 
     private void bookTreatment(Receptionist receptionist) {
+        System.out.println("Enter client username");
         String clientUsername = scanner.nextLine();
         if (!database.clientExists(clientUsername)) {
             registerUser("C");
         }
-        // TODO REPLACE!!! input treatment type and get its price
-        Treatment treatment = new Treatment(new Date(), 0, receptionist.getUsername(), database.getNextTreatmentId(), 100);
-        receptionist.bookTreatment(treatment, database.getClientByUsername(clientUsername), database);
+
+        Treatment treatment = inputTreatment(clientUsername);
+        if (treatment != null) {
+            receptionist.bookTreatment(treatment, database.getClientByUsername(clientUsername), database);
+        }
     }
 
     private void printAllTreatments(Receptionist receptionist) {
@@ -286,7 +357,6 @@ public class ConsoleApp {
         Date date = treatment.getScheduledDate();
         System.out.println("If you want to change the treatment/'s date enter yes");
         if (scanner.nextLine().equals("yes")) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
             System.out.println("Enter the treatment date in the dd.MM.yyyy format");
             try {
                 date = sdf.parse(scanner.nextLine());
