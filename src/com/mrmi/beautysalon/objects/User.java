@@ -5,16 +5,16 @@ public abstract class User {
     private String password;
     private String name;
     private String surname;
-    private boolean isMale;
+    private String gender;
     private String phoneNumber;
     private String address;
 
-    public User(String username, String password, String name, String surname, boolean isMale, String phoneNumber, String address) {
+    public User(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.surname = surname;
-        this.isMale = isMale;
+        this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
@@ -51,12 +51,12 @@ public abstract class User {
         this.surname = surname;
     }
 
-    public boolean isMale() {
-        return isMale;
+    public String getGender() {
+        return gender;
     }
 
-    public void setMale(boolean male) {
-        isMale = male;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getPhoneNumber() {
@@ -82,9 +82,13 @@ public abstract class User {
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", isMale=" + isMale +
+                ", gender=" + gender +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", address='" + address + '\'' +
                 '}';
+    }
+
+    public String getFileString() {
+        return "," + username + "," + password + "," + name + "," + surname + "," + gender + "," + phoneNumber + "," + address + ",";
     }
 }

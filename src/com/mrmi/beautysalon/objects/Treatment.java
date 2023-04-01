@@ -3,21 +3,25 @@ package com.mrmi.beautysalon.objects;
 import java.util.Date;
 
 public class Treatment {
+    private int id;
     private Date scheduledDate; // Zbog pojednostavljivanja, smatrati da tretmani počinju uvek na pun sat.
     private boolean cancelled;
 
     private String clientUsername;
-    private int id;
 
     private String beauticianUsername;
 
-    private TreatmentType type;
+    private int treatmentTypeId;
 
-    public Treatment(Date scheduledDate, TreatmentType type, String clientUsername) {
+    private Double price; // Although treatmentType holds price, this price can be affected by a loyalty discount
+
+    public Treatment(Date scheduledDate, int treatmentTypeId, String clientUsername, int id, double price) {
         this.scheduledDate = scheduledDate;
         this.cancelled = false;
-        this.type = type;
+        this.treatmentTypeId = treatmentTypeId;
         this.clientUsername = clientUsername;
+        this.price = price;
+        this.id = id;
     }
 
     public Date getScheduledDate() {
@@ -36,12 +40,16 @@ public class Treatment {
         this.cancelled = cancelled;
     }
 
-    public TreatmentType getType() {
-        return type;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setType(TreatmentType type) {
-        this.type = type;
+    public int getTreatmentTypeId() {
+        return treatmentTypeId;
+    }
+
+    public void setTreatmentTypeId(int treatmentTypeId) {
+        this.treatmentTypeId = treatmentTypeId;
     }
 
     public String getClientUsername() {
@@ -62,5 +70,17 @@ public class Treatment {
 
     public void setBeauticianUsername(String beauticianUsername) {
         this.beauticianUsername = beauticianUsername;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public String getFileString() {
+        return id + "," + scheduledDate + "," + cancelled + "," + clientUsername + "," + beauticianUsername + "," + treatmentTypeId + "," + price;
     }
 }

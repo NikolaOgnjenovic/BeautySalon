@@ -1,0 +1,2 @@
+Manicure,100.0,0
+Pedicure,200.0,1

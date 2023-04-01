@@ -6,8 +6,8 @@ public class Employee extends User {
     private int bonus;
     private int salary;
 
-    public Employee(String username, String password, String name, String surname, boolean isMale, String phoneNumber, String address) {
-        super(username, password, name, surname, isMale, phoneNumber, address);
+    public Employee(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
+        super(username, password, name, surname, gender, phoneNumber, address);
     }
 
     public String getQualifications() {

@@ -1,41 +1,21 @@
 package com.mrmi.beautysalon.objects;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Beautician extends Employee {
-    private List<TreatmentType> availableTreatments;
+    private List<Byte> treatmentTypeIDs;
 
-    public Beautician(String username, String password, String name, String surname, boolean isMale, String phoneNumber, String address, List<TreatmentType> treatmentTypes) {
-        super(username, password, name, surname, isMale, phoneNumber, address);
-        this.availableTreatments = treatmentTypes;
+    public Beautician(String username, String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs) {
+        super(username, password, name, surname, gender, phoneNumber, address);
+        this.treatmentTypeIDs = treatmentTypeIDs;
     }
 
     public List<Treatment> getDueTreatments(Database database) {
-        List<Treatment> dueTreatments = new ArrayList<>();
-        List<Treatment> beauticianTreatments = database.getBeauticianTreatments(this.getUsername());
-        Date currentDate = new Date();
-        for (Treatment t : beauticianTreatments) {
-            if (t.getScheduledDate().after(currentDate)) {
-                dueTreatments.add(t);
-            }
-        }
-
-        return dueTreatments;
+        return database.getBeauticianDueTreatments(this.getUsername());
     }
 
     public List<Treatment> getPastTreatments(Database database) {
-        List<Treatment> pastTreatments = new ArrayList<>();
-        List<Treatment> beauticianTreatments = database.getBeauticianTreatments(this.getUsername());
-        Date currentDate = new Date();
-        for (Treatment t : beauticianTreatments) {
-            if (t.getScheduledDate().before(currentDate)) {
-                pastTreatments.add(t);
-            }
-        }
-
-        return pastTreatments;
+        return database.getBeauticianPastTreatments(this.getUsername());
     }
 
     // TODO : GUI
@@ -43,11 +23,23 @@ public class Beautician extends Employee {
         return "";
     }
 
-    public List<TreatmentType> getAvailableTreatments() {
-        return availableTreatments;
+    public List<Byte> getTreatmentTypeIDs() {
+        return treatmentTypeIDs;
     }
 
-    public void setAvailableTreatments(List<TreatmentType> availableTreatments) {
-        this.availableTreatments = availableTreatments;
+    public void setTreatmentTypeIDs(List<Byte> treatmentTypeIDs) {
+        this.treatmentTypeIDs = treatmentTypeIDs;
+    }
+
+    @Override
+    public String getFileString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("B");
+        sb.append(super.getFileString());
+        for (Byte type : treatmentTypeIDs) {
+            sb.append(type);
+            sb.append(";");
+        }
+        return "B" + super.getFileString() + sb;
     }
 }

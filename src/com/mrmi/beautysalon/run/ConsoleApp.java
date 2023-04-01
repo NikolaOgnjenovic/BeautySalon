@@ -131,13 +131,8 @@ public class ConsoleApp {
         System.out.println("Enter your surname:\n");
         String surname = scanner.nextLine();
         System.out.println("Enter your gender (M/F):\n");
-        String genderInput = scanner.nextLine();
-        boolean isMale;
-        if (genderInput.equals("M")) {
-            isMale = true;
-        } else if (genderInput.equals("F")) {
-            isMale = false;
-        } else {
+        String gender = scanner.nextLine();
+        if (!gender.equals("M") && !gender.equals("F")) {
             System.out.println("Invalid gender");
             return;
         }
@@ -148,7 +143,7 @@ public class ConsoleApp {
 
         User newUser = null;
         switch (userType) {
-            case "C" -> newUser = new Client(username, password, name, surname, isMale, phoneNumber, address);
+            case "C" -> newUser = new Client(username, password, name, surname, gender, phoneNumber, address);
             case "B" -> {
                 System.out.println("Available treatment types: ");
                 for (TreatmentType treatmentType : database.getTreatmentTypes()) {
@@ -157,21 +152,21 @@ public class ConsoleApp {
                 System.out.println("Enter treatment type ids separated by commas (0,1,2)");
                 String[] types = scanner.nextLine().split(",");
 
-                List<TreatmentType> availableTreatments = new ArrayList<>();
+                List<Byte> treatmentTypeIDs = new ArrayList<>();
                 for (String type : types) {
                     TreatmentType treatmentType = database.getTreatmentTypeById(Integer.parseInt(type));
                     if (treatmentType == null) {
                         System.out.println("Invalid treatment type id");
                     } else {
-                        availableTreatments.add(treatmentType);
+                        treatmentTypeIDs.add(Byte.parseByte(type));
                     }
                 }
-                newUser = new Beautician(username, password, name, surname, isMale, phoneNumber, address, availableTreatments);
+                newUser = new Beautician(username, password, name, surname, gender, phoneNumber, address, treatmentTypeIDs);
             }
             case "R" -> {
-                newUser = new Receptionist(username, password, name, surname, isMale, phoneNumber, address);
+                newUser = new Receptionist(username, password, name, surname, gender, phoneNumber, address);
             }
-            case "M" -> newUser = new Manager(username, password, name, surname, isMale, phoneNumber, address);
+            case "M" -> newUser = new Manager(username, password, name, surname, gender, phoneNumber, address);
         }
         database.addUser(newUser);
     }
@@ -179,8 +174,8 @@ public class ConsoleApp {
 
     //region Client options
     private void bookTreatment(Client client) {
-        Treatment treatment = new Treatment(new Date(), new TreatmentType("Massage", 100), client.getUsername());
-        client.bookTreatment(treatment);
+        Treatment treatment = new Treatment(new Date(), 0, client.getUsername(), database.getNextTreatmentId(), 100);
+        client.bookTreatment(treatment, database);
     }
 
     private void printDueTreatments(Client client) {
@@ -257,8 +252,9 @@ public class ConsoleApp {
         if (!database.clientExists(clientUsername)) {
             registerUser("C");
         }
-        Treatment treatment = new Treatment(new Date(), new TreatmentType("Massage", 100), receptionist.getUsername());
-        receptionist.bookTreatment(treatment, database.getClientByUsername(clientUsername));
+        // TODO REPLACE!!! input treatment type and get its price
+        Treatment treatment = new Treatment(new Date(), 0, receptionist.getUsername(), database.getNextTreatmentId(), 100);
+        receptionist.bookTreatment(treatment, database.getClientByUsername(clientUsername), database);
     }
 
     private void printAllTreatments(Receptionist receptionist) {
@@ -299,7 +295,7 @@ public class ConsoleApp {
             }
         }
 
-        TreatmentType type = treatment.getType();
+        int treatmentTypeId = treatment.getTreatmentTypeId();
         System.out.println("If you want to change the treatment/'s type enter yes");
         if (scanner.nextLine().equals("yes")) {
             System.out.println("Available types: ");
@@ -307,13 +303,12 @@ public class ConsoleApp {
                 System.out.println(treatmentType);
             }
             System.out.println("Enter the new treatment type id");
-            int treatmentTypeId = Integer.parseInt(scanner.nextLine());
+            int newTreatmentTypeId = Integer.parseInt(scanner.nextLine());
 
-            TreatmentType newType = database.getTreatmentTypeById(treatmentTypeId);
-            if (newType == null) {
+            if (database.getTreatmentTypeById(newTreatmentTypeId) == null) {
                 System.out.println("Bad treatment type id");
             } else {
-                type = newType;
+                treatmentTypeId = newTreatmentTypeId;
             }
         }
 
@@ -333,7 +328,7 @@ public class ConsoleApp {
             beauticianUsername = scanner.nextLine();
         }
 
-        receptionist.updateTreatment(treatment, date, type, clientUsername, beauticianUsername, database);
+        receptionist.updateTreatment(treatment, date, treatmentTypeId, clientUsername, beauticianUsername, database);
     }
     //endregion
 
@@ -374,7 +369,7 @@ public class ConsoleApp {
         String name = scanner.nextLine();
         System.out.println("Enter the treatment type price");
         int price = Integer.parseInt(scanner.nextLine());
-        database.addTreatmentType(new TreatmentType(name, price));
+        database.addTreatmentType(new TreatmentType(name, price, database.getNextTreatmentTypeId()));
     }
 
     /*

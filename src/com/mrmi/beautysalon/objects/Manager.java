@@ -6,8 +6,8 @@ import java.util.List;
 public class Manager extends Employee {
     public static int LoyaltyThreshold;
 
-    public Manager(String username, String password, String name, String surname, boolean isMale, String phoneNumber, String address) {
-        super(username, password, name, surname, isMale, phoneNumber, address);
+    public Manager(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
+        super(username, password, name, surname, gender, phoneNumber, address);
     }
 
     public List<Client> getLoyalClients(Database database) {
@@ -21,10 +21,16 @@ public class Manager extends Employee {
     //ishodi i rashodi za period
     // TODO: uradi kako treba
     public String getIncome(Date lowerBound, Date upperBound){
-        return String.valueOf(Database.salonIncome);
+        //return String.valueOf(Database.salonIncome);
+        return "";
     }
 
     public void addEmployee(Employee e, Database database) {
         database.addUser(e);
+    }
+
+    @Override
+    public String getFileString() {
+        return "M" + super.getFileString();
     }
 }

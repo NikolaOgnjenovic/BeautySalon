@@ -5,10 +5,10 @@ public class TreatmentType {
     private double price;
     private int id;
 
-    public TreatmentType(String name, double price) {
+    public TreatmentType(String name, double price, int id) {
         this.name = name;
         this.price = price;
-        this.id = Database.treatmentTypeId++;
+        this.id = id;
     }
 
     public String getName() {
@@ -42,5 +42,9 @@ public class TreatmentType {
                 ", price=" + price +
                 ", id=" + id +
                 '}';
+    }
+
+    public String getFileString() {
+        return name + "," + price + "," + id;
     }
 }

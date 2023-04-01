@@ -1,19 +1,19 @@
 package com.mrmi.beautysalon.objects;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Database {
     private List<User> users;
+    private List<TreatmentType> treatmentTypes;
     private List<Treatment> treatments;
-    public static int salonIncome = 0;
-
     public static User CurrentUser;
 
-    private List<TreatmentType> treatmentTypes;
+    private int salonIncome = 0;
+    private int treatmentTypeId = 0;
 
-    public static int treatmentTypeId = 0;
+    private int treatmentId = 0;
     public enum TREATMENT_STATUSES {
         CANCELLED,
         FINISHED,
@@ -24,19 +24,28 @@ public class Database {
 
     //region Database data & static variables
     public Database() {
-        // TODO: replace with .csv data
-        loadHardcodedData();
-    }
-
-    private void loadHardcodedData() {
         this.users = new ArrayList<>();
-        this.users.add(new Manager("manager", "manager", "Manager", "McGee", false, "1111", "ManagerStreet 50"));
         this.treatments = new ArrayList<>();
         this.treatmentTypes = new ArrayList<>();
+        loadData();
     }
 
-    public static void changeProfit(double profit) {
+    private void loadData() {
+        checkDataFile();
+        testWrite();
+        readUsersFile();
+        readTreatmentsFile();
+        readTreatmentTypesFile();
+        readVariablesFile();
+    }
+
+    private void testWrite() {
+        addUser(new Manager("manager", "manager", "Manager", "McGee", "F", "1234", "ManagerStreet 50"));
+    }
+
+    public void changeProfit(double profit) {
         salonIncome += profit;
+        overwriteVariablesFile();
     }
 
     public void login(String username, String password) {
@@ -57,7 +66,8 @@ public class Database {
 
     //region User
     public void addUser(User user) {
-        this.users.add(user);
+        users.add(user);
+        writeUser(user);
     }
 
     public void removeUser(User user) {
@@ -72,37 +82,6 @@ public class Database {
             }
         }
     }
-    //endregion
-
-    //region Manager
-    //endregion
-
-    //region Employee
-    public List<Employee> getEmployees() {
-        List<Employee> employees = new ArrayList<>();
-        for (User u : users) {
-            if (!u.getClass().isInstance(User.class)) {
-                employees.add((Employee) u);
-            }
-        }
-        return employees;
-    }
-    //endregion
-
-    //region Beautician
-    public List<Treatment> getBeauticianTreatments(String beauticianUsername) {
-        List<Treatment> beauticianTreatments = new ArrayList<>();
-        for (Treatment t : treatments) {
-            if (t.getBeauticianUsername().equals(beauticianUsername)) {
-                beauticianTreatments.add(t);
-            }
-        }
-
-        return beauticianTreatments;
-    }
-    //endregion
-
-    //region Receptionist
     //endregion
 
     //region Client
@@ -144,6 +123,89 @@ public class Database {
         }
         return clientTreatments;
     }
+
+    public List<Treatment> getClientDueTreatments(String clientUsername) {
+        List<Treatment> dueTreatments = new ArrayList<>();
+        List<Treatment> userTreatments = getClientTreatments(clientUsername);
+        Date currentDate = new Date();
+        for (Treatment t : userTreatments) {
+            if (t.getScheduledDate().after(currentDate)) {
+                dueTreatments.add(t);
+            }
+        }
+
+        return dueTreatments;
+    }
+
+    public List<Treatment> getClientPastTreatments(String clientUsername) {
+        List<Treatment> pastTreatments = new ArrayList<>();
+        List<Treatment> userTreatments = getClientTreatments(clientUsername);
+        Date currentDate = new Date();
+        for (Treatment t : userTreatments) {
+            if (t.getScheduledDate().before(currentDate)) {
+                pastTreatments.add(t);
+            }
+        }
+
+        return pastTreatments;
+    }
+    //endregion
+
+    //region Employee
+    public List<Employee> getEmployees() {
+        List<Employee> employees = new ArrayList<>();
+        for (User u : users) {
+            if (!u.getClass().isInstance(User.class)) {
+                employees.add((Employee) u);
+            }
+        }
+        return employees;
+    }
+    //endregion
+
+    //region Beautician
+    public List<Treatment> getBeauticianTreatments(String beauticianUsername) {
+        List<Treatment> beauticianTreatments = new ArrayList<>();
+        for (Treatment t : treatments) {
+            if (t.getBeauticianUsername().equals(beauticianUsername)) {
+                beauticianTreatments.add(t);
+            }
+        }
+
+        return beauticianTreatments;
+    }
+
+    public List<Treatment> getBeauticianDueTreatments(String beauticianUsername) {
+        List<Treatment> dueTreatments = new ArrayList<>();
+        List<Treatment> beauticianTreatments = getBeauticianTreatments(beauticianUsername);
+        Date currentDate = new Date();
+        for (Treatment t : beauticianTreatments) {
+            if (t.getScheduledDate().after(currentDate)) {
+                dueTreatments.add(t);
+            }
+        }
+
+        return dueTreatments;
+    }
+
+    public List<Treatment> getBeauticianPastTreatments(String beauticianUsername) {
+        List<Treatment> pastTreatments = new ArrayList<>();
+        List<Treatment> beauticianTreatments = getBeauticianTreatments(beauticianUsername);
+        Date currentDate = new Date();
+        for (Treatment t : beauticianTreatments) {
+            if (t.getScheduledDate().before(currentDate)) {
+                pastTreatments.add(t);
+            }
+        }
+
+        return pastTreatments;
+    }
+    //endregion
+
+    //region Receptionist
+    //endregion
+
+    //region Manager
     //endregion
 
     //region Treatment
@@ -157,12 +219,50 @@ public class Database {
         return null;
     }
 
-    public void updateTreatment(Treatment treatment, Date date, TreatmentType treatmentType, String clientUsername, String beauticianUsername) {
+    public void updateTreatment(Treatment treatment, Date date, int treatmentTypeId, String clientUsername, String beauticianUsername) {
         treatment.setScheduledDate(date);
-        treatment.setType(treatmentType);
+        treatment.setTreatmentTypeId(treatmentTypeId);
         treatment.setClientUsername(clientUsername);
         treatment.setBeauticianUsername(beauticianUsername);
-        // TODO: SAVE
+        overwriteTreatmentsFile();
+    }
+
+    public void addTreatment(Treatment treatment) {
+        treatments.add(treatment);
+    }
+
+    public void bookTreatment(Treatment treatment) {
+        addTreatment(treatment);
+        changeProfit(treatment.getPrice());
+    }
+
+    public int getNextTreatmentId() {
+        return treatmentId++;
+    }
+
+
+    public void cancelTreatment(int treatmentId, boolean clientCancelled) {
+        for (Treatment t : treatments) {
+            if (t.getId() == treatmentId) {
+                t.setCancelled(true);
+                Client client = getClientByUsername(t.getClientUsername());
+
+                /*
+                Posle otkazanog tretmana na zahtev klijenta,
+                klijentu se vraća 90% uplaćenog novca dok 10% kozmetički salon zadržava u cilju pokrivanja gubitaka.
+                Ukoliko salon otkaže, klijentu se vraća 100% novca.
+                Ukoliko se klijent ne pojavi, salon zadržava sav uplaćen novac.
+                 */
+                if (clientCancelled) {
+                    client.changeMoneySpent(t.getPrice() * 0.9);
+                    changeProfit(-t.getPrice() * 0.1);
+                } else {
+                    client.changeMoneySpent(t.getPrice());
+                    changeProfit(-t.getPrice());
+                }
+            }
+        }
+        overwriteTreatmentsFile();
     }
     //endregion
 
@@ -183,6 +283,209 @@ public class Database {
 
     public void addTreatmentType(TreatmentType type) {
         treatmentTypes.add(type);
+        writeTreatmentType(type);
+        overwriteVariablesFile();
+    }
+
+    public int getNextTreatmentTypeId() {
+        return treatmentTypeId++;
     }
     //endregion
+
+    //region Users IO
+    private void readUsersFile() {
+        users = new ArrayList<>();
+        String fileName = "data/users.txt";
+        fileCheck(fileName);
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = in.readLine()) != null) {
+                line = line.trim();
+                String[] userData = line.split(",");
+                switch (userData[0]) {
+                    case "C" -> users.add(new Client(
+                            userData[1].trim(),
+                            userData[2].trim(),
+                            userData[3].trim(),
+                            userData[4].trim(),
+                            userData[5].trim(),
+                            userData[6].trim(),
+                            userData[7].trim()));
+                    case "B" -> {
+                        String[] treatmentTypes = userData[8].split(";");
+                        List<Byte> treatmentTypeIDs = new ArrayList<>();
+                        for(String s : treatmentTypes) {
+                            treatmentTypeIDs.add(Byte.parseByte(s));
+                        }
+                        users.add(new Beautician(
+                                userData[1].trim(),
+                                userData[2].trim(),
+                                userData[3].trim(),
+                                userData[4].trim(),
+                                userData[5].trim(),
+                                userData[6].trim(),
+                                userData[7].trim(),
+                                treatmentTypeIDs));
+                    }
+                    case "R" -> users.add(new Receptionist(
+                            userData[1].trim(),
+                            userData[2].trim(),
+                            userData[3].trim(),
+                            userData[4].trim(),
+                            userData[5].trim(),
+                            userData[6].trim(),
+                            userData[7].trim()));
+                    case "M" -> users.add(new Manager(
+                            userData[1].trim(),
+                            userData[2].trim(),
+                            userData[3].trim(),
+                            userData[4].trim(),
+                            userData[5].trim(),
+                            userData[6].trim(),
+                            userData[7].trim()));
+                }
+            }
+            in.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void writeUser(User user) {
+        String fileName = "data/users.txt";
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+            out.write(user.getFileString());
+            out.write("\n");
+            out.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void overwriteUsersFile() {
+        String fileName = "data/users.txt";
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            for (User user : users) {
+                out.write(user.getFileString());
+            }
+            out.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    //endregion
+
+    //region TreatmentTypes IO
+    private void readTreatmentTypesFile() {
+        treatmentTypes = new ArrayList<>();
+        String fileName = "data/treatmentTypes.txt";
+        fileCheck(fileName);
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = in.readLine()) != null) {
+                line = line.trim();
+                String[] data = line.split(",");
+                treatmentTypes.add(new TreatmentType(data[0], Double.parseDouble(data[1]), Integer.parseInt(data[2])));
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeTreatmentType(TreatmentType treatmentType) {
+        String fileName = "data/treatmentTypes.txt";
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+            out.write(treatmentType.getFileString());
+            out.write("\n");
+            out.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    //endregion
+
+    //region Treatments IO
+    private void readTreatmentsFile() {
+        treatments = new ArrayList<>();
+        String fileName = "data/treatments.txt";
+        fileCheck(fileName);
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            String line;
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+            while ((line = in.readLine()) != null) {
+                String[] data = line.split(",");
+                treatments.add(new Treatment(sdf.parse(data[0]), Integer.parseInt(data[1]), data[2], Integer.parseInt(data[3]), Integer.parseInt(data[4])));
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void overwriteTreatmentsFile() {
+        String fileName = "data/treatments.txt";
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            for (User user : users) {
+                out.write(user.getFileString());
+            }
+            out.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    //endregion
+
+    //region Variables IO
+    private void readVariablesFile() {
+        String fileName = "data/variables.txt";
+        fileCheck(fileName);
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            try {
+                salonIncome = Integer.parseInt(in.readLine());
+                treatmentTypeId = Integer.parseInt(in.readLine());
+                treatmentId = Integer.parseInt(in.readLine());
+            } catch (NumberFormatException e) {
+                salonIncome = 0;
+                treatmentTypeId = 0;
+                treatmentId = 0;
+            }
+            in.close();
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void overwriteVariablesFile() {
+        String fileName = "data/variables.txt";
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            out.write(salonIncome + "\n");
+            out.write(treatmentTypeId + "\n");
+            out.write(treatmentId + "\n");
+            out.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    //endregion
+
+    private void checkDataFile() {
+        try {
+            new File("data").mkdir();
+        } catch (Exception ignored) {
+        }
+    }
+    private void fileCheck(String fileName) {
+        try {
+            new File(fileName).createNewFile();
+        } catch (Exception ignored) {
+        }
+    }
 }
