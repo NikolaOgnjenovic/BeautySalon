@@ -7,8 +7,9 @@ import java.util.List;
 public class Beautician extends Employee {
     private List<TreatmentType> availableTreatments;
 
-    public Beautician(String username, String password, String name, String surname, boolean isMale, String phoneNumber, String address) {
+    public Beautician(String username, String password, String name, String surname, boolean isMale, String phoneNumber, String address, List<TreatmentType> treatmentTypes) {
         super(username, password, name, surname, isMale, phoneNumber, address);
+        this.availableTreatments = treatmentTypes;
     }
 
     public List<Treatment> getDueTreatments(Database database) {

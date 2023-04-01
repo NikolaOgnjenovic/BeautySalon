@@ -4,10 +4,7 @@ import com.mrmi.beautysalon.objects.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ConsoleApp {
     private final Scanner scanner = new Scanner(System.in);
@@ -18,9 +15,9 @@ public class ConsoleApp {
 
         String loggedOutOptions = "Options:\n0. Exit\n1. Login\n2. Register as a client";
         String clientOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View due treatments\n4. View past treatments\n5. Cancel treatment";
-        String receptionistOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View all treatments\n3. Cancel treatment\n5. Update treatment";
-        String managerOptions = "Options:\n0. Exit\n1. Logout\n2. View all employees\n3. View all clients with loyalty cards\n4. View salon income and expenses";
         String beauticianOptions = "Options:\n0. Exit\n1. Logout\n2. View due treatments\n3. View past treatments\n4. View schedule";
+        String receptionistOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View all treatments\n3. Cancel treatment\n5. Update treatment";
+        String managerOptions = "Options:\n0. Exit\n1. Logout\n2. View all employees\n3. View all clients with loyalty cards\n4. View salon income and expenses\n5. Register employee\n6. Add treatment type";
         byte selectedOption;
         boolean running = true;
         while (running) {
@@ -31,7 +28,7 @@ public class ConsoleApp {
                 switch (selectedOption) {
                     case 0 -> running = false;
                     case 1 -> login();
-                    case 2 -> registerClient();
+                    case 2 -> registerUser("C");
                     default -> System.out.println("Invalid option.\n");
                 }
             } else if (Database.CurrentUser.getClass().equals(Client.class)) {
@@ -46,6 +43,19 @@ public class ConsoleApp {
                     case 3 -> printDueTreatments(client);
                     case 4 -> printPastTreatments(client);
                     case 5 -> cancelTreatment(client);
+                    default -> System.out.println("Invalid option.\n");
+                }
+            } else if (Database.CurrentUser.getClass().equals(Beautician.class)) {
+                System.out.println(beauticianOptions);
+                selectedOption = getMenuOption();
+
+                Beautician beautician = (Beautician) Database.CurrentUser;
+                switch (selectedOption) {
+                    case 0 -> running = false;
+                    case 1 -> logout();
+                    case 2 -> printDueTreatments(beautician);
+                    case 3 -> printPastTreatments(beautician);
+                    case 4 -> printSchedule(beautician);
                     default -> System.out.println("Invalid option.\n");
                 }
             } else if (Database.CurrentUser.getClass().equals(Receptionist.class)) {
@@ -73,24 +83,12 @@ public class ConsoleApp {
                     case 2 -> printEmployees(manager);
                     case 3 -> printLoyalClients(manager);
                     case 4 -> printIncome(manager);
-                    default -> System.out.println("Invalid option.\n");
-                }
-            } else if (Database.CurrentUser.getClass().equals(Beautician.class)) {
-                System.out.println(beauticianOptions);
-                selectedOption = getMenuOption();
-
-                Beautician beautician = (Beautician) Database.CurrentUser;
-                switch (selectedOption) {
-                    case 0 -> running = false;
-                    case 1 -> logout();
-                    case 2 -> printDueTreatments(beautician);
-                    case 3 -> printPastTreatments(beautician);
-                    case 4 -> printSchedule(beautician);
+                    case 5 -> registerEmployee();
+                    case 6 -> addTreatmentType();
                     default -> System.out.println("Invalid option.\n");
                 }
             }
         }
-
         exit();
     }
 
@@ -123,7 +121,7 @@ public class ConsoleApp {
         database.logout();
     }
 
-    private void registerClient() {
+    private void registerUser(String userType) {
         System.out.println("Enter your username:\n");
         String username = scanner.nextLine();
         System.out.println("Enter your password:\n");
@@ -140,6 +138,7 @@ public class ConsoleApp {
         } else if (genderInput.equals("F")) {
             isMale = false;
         } else {
+            System.out.println("Invalid gender");
             return;
         }
         System.out.println("Enter your phone number:\n");
@@ -147,7 +146,34 @@ public class ConsoleApp {
         System.out.println("Enter your address:\n");
         String address = scanner.nextLine();
 
-        database.addUser(new Client(username, password, name, surname, isMale, phoneNumber, address));
+        User newUser = null;
+        switch (userType) {
+            case "C" -> newUser = new Client(username, password, name, surname, isMale, phoneNumber, address);
+            case "B" -> {
+                System.out.println("Available treatment types: ");
+                for (TreatmentType treatmentType : database.getTreatmentTypes()) {
+                    System.out.println(treatmentType);
+                }
+                System.out.println("Enter treatment type ids separated by commas (0,1,2)");
+                String[] types = scanner.nextLine().split(",");
+
+                List<TreatmentType> availableTreatments = new ArrayList<>();
+                for (String type : types) {
+                    TreatmentType treatmentType = database.getTreatmentTypeById(Integer.parseInt(type));
+                    if (treatmentType == null) {
+                        System.out.println("Invalid treatment type id");
+                    } else {
+                        availableTreatments.add(treatmentType);
+                    }
+                }
+                newUser = new Beautician(username, password, name, surname, isMale, phoneNumber, address, availableTreatments);
+            }
+            case "R" -> {
+                newUser = new Receptionist(username, password, name, surname, isMale, phoneNumber, address);
+            }
+            case "M" -> newUser = new Manager(username, password, name, surname, isMale, phoneNumber, address);
+        }
+        database.addUser(newUser);
     }
     //endregion
 
@@ -175,12 +201,61 @@ public class ConsoleApp {
     }
     //endregion
 
+    //region Beautician options
+    private void printDueTreatments(Beautician beautician) {
+        List<Treatment> dueTreatments = beautician.getDueTreatments(database);
+        printDueTreatments(dueTreatments);
+    }
+
+    private void printPastTreatments(Beautician beautician) {
+        List<Treatment> pastTreatments = beautician.getPastTreatments(database);
+        printPastTreatments(pastTreatments);
+    }
+
+    private void printSchedule(Beautician beautician) {
+        List<Treatment> dueTreatments = beautician.getDueTreatments(database);
+        if (dueTreatments.size() < 1) {
+            System.out.println("You have no due treatments");
+            return;
+        }
+        dueTreatments.sort(Comparator.comparing(Treatment::getScheduledDate));
+        System.out.println("Schedule:\n");
+        int day = dueTreatments.get(0).getScheduledDate().getDay();
+        for (Treatment t : dueTreatments) {
+            System.out.println("Day " + day);
+            System.out.println(t);
+        }
+    }
+
+    private void printDueTreatments(List<Treatment> dueTreatments) {
+        if (dueTreatments.size() < 1) {
+            System.out.println("You have no due treatments.");
+            return;
+        }
+        System.out.println("Due treatments: ");
+        for (Treatment t : dueTreatments) {
+            System.out.println(t);
+        }
+    }
+
+    private void printPastTreatments(List<Treatment> pastTreatments) {
+        if (pastTreatments.size() < 1) {
+            System.out.println("You have no past treatments.");
+            return;
+        }
+        System.out.println("Past treatments: ");
+        for (Treatment t : pastTreatments) {
+            System.out.println(t);
+        }
+    }
+    //endregion
+
     //region Receptionist options
 
     private void bookTreatment(Receptionist receptionist) {
         String clientUsername = scanner.nextLine();
         if (!database.clientExists(clientUsername)) {
-            registerClient();
+            registerUser("C");
         }
         Treatment treatment = new Treatment(new Date(), new TreatmentType("Massage", 100), receptionist.getUsername());
         receptionist.bookTreatment(treatment, database.getClientByUsername(clientUsername));
@@ -235,7 +310,7 @@ public class ConsoleApp {
             int treatmentTypeId = Integer.parseInt(scanner.nextLine());
 
             TreatmentType newType = database.getTreatmentTypeById(treatmentTypeId);
-            if (newType == null ) {
+            if (newType == null) {
                 System.out.println("Bad treatment type id");
             } else {
                 type = newType;
@@ -282,49 +357,38 @@ public class ConsoleApp {
     private void printIncome(Manager manager) {
         System.out.println("Total income: " + manager.getIncome(new Date(), new Date()));
     }
-    //endregion
 
-    //region Beautician options
-    private void printDueTreatments(Beautician beautician) {
-        List<Treatment> dueTreatments = beautician.getDueTreatments(database);
-        printDueTreatments(dueTreatments);
-    }
-
-    private void printPastTreatments(Beautician beautician) {
-        List<Treatment> pastTreatments = beautician.getPastTreatments(database);
-        printPastTreatments(pastTreatments);
-    }
-
-    private void printSchedule(Beautician beautician) {
-        List<Treatment> dueTreatments = beautician.getDueTreatments(database);
-        dueTreatments.sort(Comparator.comparing(Treatment::getScheduledDate));
-        System.out.println("Schedule:\n");
-        int day = dueTreatments.get(0).getScheduledDate().getDay();
-        for (Treatment t : dueTreatments) {
-            System.out.println("Day " + day);
-            System.out.println(t);
+    private void registerEmployee() {
+        System.out.println("Do you want to register a manager [M], beautician [B] or receptionist [R]?");
+        String choice = scanner.nextLine();
+        switch (choice) {
+            case "B" -> registerUser("B");
+            case "R" -> registerUser("R");
+            case "M" -> registerUser("M");
+            default -> System.out.println("Invalid choice");
         }
     }
 
-    private void printDueTreatments(List<Treatment> dueTreatments) {
-        if (dueTreatments.size() < 1) {
-            System.out.println("You have no due treatments.");
-            return;
-        }
-        System.out.println("Due treatments: ");
-        for (Treatment t : dueTreatments) {
-            System.out.println(t);
-        }
+    private void addTreatmentType() {
+        System.out.println("Enter the treatment type name");
+        String name = scanner.nextLine();
+        System.out.println("Enter the treatment type price");
+        int price = Integer.parseInt(scanner.nextLine());
+        database.addTreatmentType(new TreatmentType(name, price));
     }
-    private void printPastTreatments(List<Treatment> pastTreatments) {
-        if (pastTreatments.size() < 1) {
-            System.out.println("You have no past treatments.");
-            return;
-        }
-        System.out.println("Past treatments: ");
-        for (Treatment t : pastTreatments) {
-            System.out.println(t);
-        }
-    }
+
+    /*
+    Potrebno je uraditi izveštaje:
+        ● koliko je kozmetičkih tretmana svaki kozmetičar izvršio i koliko je prihodovao za
+        izabrani opseg datuma,
+        ● koliko kozmetičkih tretmana je potvrđeno, a koliko otkazano (po razlozima) za
+        odabrani opseg datuma
+        ● za prikaz kozmetičke usluge, što podrazumeva prikaz podataka o samoj usluzi i
+        njenom tipu, ukupan broj zakaznih tretmana za tu uslugu i ostvarene prihode za
+        izabrani opseg datuma.
+        ●
+        Klijenata koji ispunjavaju uslove za karticu lojalnosti (potrošili su na tretmane više
+        novca od iznosa koji zadaje menadžer).
+     */
     //endregion
 }

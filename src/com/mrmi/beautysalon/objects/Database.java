@@ -81,7 +81,7 @@ public class Database {
     public List<Employee> getEmployees() {
         List<Employee> employees = new ArrayList<>();
         for (User u : users) {
-            if (u.getClass().isInstance(Employee.class)) {
+            if (!u.getClass().isInstance(User.class)) {
                 employees.add((Employee) u);
             }
         }
@@ -179,6 +179,10 @@ public class Database {
         }
 
         return null;
+    }
+
+    public void addTreatmentType(TreatmentType type) {
+        treatmentTypes.add(type);
     }
     //endregion
 }

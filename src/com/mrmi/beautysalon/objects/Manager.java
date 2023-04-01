@@ -3,7 +3,7 @@ package com.mrmi.beautysalon.objects;
 import java.util.Date;
 import java.util.List;
 
-public class Manager extends User {
+public class Manager extends Employee {
     public static int LoyaltyThreshold;
 
     public Manager(String username, String password, String name, String surname, boolean isMale, String phoneNumber, String address) {
@@ -22,5 +22,9 @@ public class Manager extends User {
     // TODO: uradi kako treba
     public String getIncome(Date lowerBound, Date upperBound){
         return String.valueOf(Database.salonIncome);
+    }
+
+    public void addEmployee(Employee e, Database database) {
+        database.addUser(e);
     }
 }
