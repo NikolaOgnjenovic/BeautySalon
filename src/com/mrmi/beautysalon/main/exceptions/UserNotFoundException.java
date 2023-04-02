@@ -1,4 +1,4 @@
-package com.mrmi.beautysalon.exceptions;
+package com.mrmi.beautysalon.main.exceptions;
 
 public class UserNotFoundException extends Exception{
     public UserNotFoundException(String message) {

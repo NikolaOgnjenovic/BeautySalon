@@ -1,8 +1,8 @@
-package com.mrmi.beautysalon.objects;
+package com.mrmi.beautysalon.main.objects;
 
-import com.mrmi.beautysalon.exceptions.TreatmentNotFoundException;
-import com.mrmi.beautysalon.exceptions.TreatmentTypeNotFoundException;
-import com.mrmi.beautysalon.exceptions.UserNotFoundException;
+import com.mrmi.beautysalon.main.exceptions.TreatmentNotFoundException;
+import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
+import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -20,8 +20,11 @@ public class Database {
     private int treatmentId = 0;
     private double loyaltyThreshold;
 
+    private final String filePathPrefix; // Used to differentiate test & regular files
+
     //region Database data & static variables
-    public Database() {
+    public Database(String filePathPrefix) {
+        this.filePathPrefix = filePathPrefix;
         this.users = new ArrayList<>();
         this.treatments = new ArrayList<>();
         this.treatmentTypes = new ArrayList<>();
@@ -282,12 +285,25 @@ public class Database {
     public int getNextTreatmentId() {
         return treatmentId++;
     }
-    public void cancelTreatment(int treatmentId, boolean clientCancelled, String cancellationReason) throws TreatmentNotFoundException, UserNotFoundException {
-        Treatment t = getTreatmentById(treatmentId);
+    public void cancelTreatment(int treatmentId, boolean clientCancelled, String cancellationReason) {
+        Treatment t;
+        try {
+            t = getTreatmentById(treatmentId);
+        } catch (TreatmentNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
         t.setCancelled(true);
         t.setCancellationReason(cancellationReason);
 
-        Client client = getClientByUsername(t.getClientUsername());
+        Client client;
+        try {
+            client = getClientByUsername(t.getClientUsername());
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
         if (clientCancelled) {
             client.changeMoneySpent(t.getPrice() * 0.9, this);
             changeProfit(-t.getPrice() * 0.1);
@@ -299,6 +315,10 @@ public class Database {
         }
 
         overwriteTreatmentsFile();
+    }
+
+    public List<Treatment> getTreatments() {
+        return treatments;
     }
     //endregion
 
@@ -331,7 +351,7 @@ public class Database {
     //region Users IO
     private void readUsersFile() {
         users = new ArrayList<>();
-        String fileName = "data/users.txt";
+        String fileName = filePathPrefix + "data/users.txt";
         fileCheck(fileName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -403,7 +423,7 @@ public class Database {
     }
 
     private void writeUser(User user) {
-        String fileName = "data/users.txt";
+        String fileName = filePathPrefix + "data/users.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
             out.write(user.getFileString());
@@ -415,7 +435,7 @@ public class Database {
     }
 
     private void overwriteUsersFile() {
-        String fileName = "data/users.txt";
+        String fileName = filePathPrefix + "data/users.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
             for (User user : users) {
@@ -432,7 +452,7 @@ public class Database {
     //region TreatmentTypes IO
     private void readTreatmentTypesFile() {
         treatmentTypes = new ArrayList<>();
-        String fileName = "data/treatmentTypes.txt";
+        String fileName = filePathPrefix + "data/treatmentTypes.txt";
         fileCheck(fileName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -449,7 +469,7 @@ public class Database {
     }
 
     private void writeTreatmentType(TreatmentType treatmentType) {
-        String fileName = "data/treatmentTypes.txt";
+        String fileName = filePathPrefix + "data/treatmentTypes.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
             out.write(treatmentType.getFileString());
@@ -464,7 +484,7 @@ public class Database {
     //region Treatments IO
     private void readTreatmentsFile() {
         treatments = new ArrayList<>();
-        String fileName = "data/treatments.txt";
+        String fileName = filePathPrefix + "data/treatments.txt";
         fileCheck(fileName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -480,7 +500,7 @@ public class Database {
         }
     }
     private void overwriteTreatmentsFile() {
-        String fileName = "data/treatments.txt";
+        String fileName = filePathPrefix + "data/treatments.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
             for (Treatment t: treatments) {
@@ -494,7 +514,7 @@ public class Database {
     }
 
     private void writeTreatment(Treatment treatment) {
-        String fileName = "data/treatments.txt";
+        String fileName = filePathPrefix + "data/treatments.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
             out.write(treatment.getFileString());
@@ -508,7 +528,7 @@ public class Database {
 
     //region Variables IO
     private void readVariablesFile() {
-        String fileName = "data/variables.txt";
+        String fileName = filePathPrefix + "data/variables.txt";
         fileCheck(fileName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -530,7 +550,7 @@ public class Database {
     }
 
     private void overwriteVariablesFile() {
-        String fileName = "data/variables.txt";
+        String fileName = filePathPrefix + "data/variables.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
             out.write(salonIncome + "\n");
@@ -545,7 +565,7 @@ public class Database {
     //endregion
 
     private void checkDataFile() {
-        new File("data").mkdir();
+        new File(filePathPrefix + "data").mkdir();
     }
     private void fileCheck(String fileName) {
         try {

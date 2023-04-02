@@ -1,9 +1,9 @@
-package com.mrmi.beautysalon.run;
+package com.mrmi.beautysalon.main.run;
 
-import com.mrmi.beautysalon.exceptions.TreatmentNotFoundException;
-import com.mrmi.beautysalon.exceptions.TreatmentTypeNotFoundException;
-import com.mrmi.beautysalon.exceptions.UserNotFoundException;
-import com.mrmi.beautysalon.objects.*;
+import com.mrmi.beautysalon.main.exceptions.TreatmentNotFoundException;
+import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
+import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
+import com.mrmi.beautysalon.main.objects.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,7 +11,7 @@ import java.util.*;
 
 public class ConsoleApp {
     private final Scanner scanner = new Scanner(System.in);
-    private final Database database = new Database();
+    private final Database database = new Database("");
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 
     public void run() {

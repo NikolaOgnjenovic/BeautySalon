@@ -1,4 +1,4 @@
-package com.mrmi.beautysalon.objects;
+package com.mrmi.beautysalon.main.objects;
 
 public class Employee extends User {
     private byte qualificationLevel; // Nivo strucne spreme [1-8]

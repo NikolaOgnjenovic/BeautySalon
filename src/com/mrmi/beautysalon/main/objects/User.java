@@ -1,4 +1,4 @@
-package com.mrmi.beautysalon.objects;
+package com.mrmi.beautysalon.main.objects;
 
 public abstract class User {
     private String username;
