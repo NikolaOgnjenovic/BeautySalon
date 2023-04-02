@@ -1,5 +1,8 @@
 package com.mrmi.beautysalon.run;
 
+import com.mrmi.beautysalon.exceptions.TreatmentNotFoundException;
+import com.mrmi.beautysalon.exceptions.TreatmentTypeNotFoundException;
+import com.mrmi.beautysalon.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.objects.*;
 
 import java.text.ParseException;
@@ -88,6 +91,7 @@ public class ConsoleApp {
                     case 5 -> registerEmployee();
                     case 6 -> addTreatmentType();
                     case 7 -> setLoyaltyThreshold();
+                    case 8 -> deleteUser();
                     default -> System.out.println("Invalid option.\n");
                 }
             }
@@ -157,11 +161,11 @@ public class ConsoleApp {
 
                 List<Byte> treatmentTypeIDs = new ArrayList<>();
                 for (String type : types) {
-                    TreatmentType treatmentType = database.getTreatmentTypeById(Integer.parseInt(type));
-                    if (treatmentType == null) {
-                        System.out.println("Invalid treatment type id");
-                    } else {
+                    try {
+                        database.getTreatmentTypeById(Byte.parseByte(type));
                         treatmentTypeIDs.add(Byte.parseByte(type));
+                    } catch (TreatmentTypeNotFoundException e) {
+                        System.out.println(e.getMessage());
                     }
                 }
 
@@ -206,9 +210,11 @@ public class ConsoleApp {
         System.out.println("Enter the new treatment type id");
         treatmentTypeId = Byte.parseByte(scanner.nextLine());
 
-        TreatmentType treatmentType = database.getTreatmentTypeById(treatmentTypeId);
-        if (treatmentType == null) {
-            System.out.println("Invalid type id");
+        TreatmentType treatmentType;
+        try {
+            treatmentType = database.getTreatmentTypeById(treatmentTypeId);
+        } catch (TreatmentTypeNotFoundException e) {
+            System.out.println(e.getMessage());
             return null;
         }
 
@@ -343,7 +349,11 @@ public class ConsoleApp {
 
         Treatment treatment = inputTreatment(clientUsername);
         if (treatment != null) {
-            receptionist.bookTreatment(treatment, database.getClientByUsername(clientUsername), database);
+            try {
+                receptionist.bookTreatment(treatment, database.getClientByUsername(clientUsername), database);
+            } catch (UserNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
@@ -373,7 +383,14 @@ public class ConsoleApp {
         System.out.println("Enter the id of the treatment that you want to update\n");
         int treatmentId = Integer.parseInt(scanner.nextLine());
 
-        Treatment treatment = database.getTreatmentById(treatmentId);
+        Treatment treatment;
+        try {
+            treatment = database.getTreatmentById(treatmentId);
+        } catch (TreatmentNotFoundException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
 
         Date date = treatment.getScheduledDate();
         System.out.println("If you want to change the treatment/'s date enter yes");
@@ -396,10 +413,12 @@ public class ConsoleApp {
             System.out.println("Enter the new treatment type id");
             int newTreatmentTypeId = Integer.parseInt(scanner.nextLine());
 
-            if (database.getTreatmentTypeById(newTreatmentTypeId) == null) {
-                System.out.println("Bad treatment type id");
-            } else {
+            try {
+                database.getTreatmentTypeById(newTreatmentTypeId);
                 treatmentTypeId = newTreatmentTypeId;
+            } catch (TreatmentTypeNotFoundException e) {
+                System.out.println(e.getMessage());
+                return;
             }
         }
 
@@ -466,6 +485,19 @@ public class ConsoleApp {
     private void setLoyaltyThreshold() {
         System.out.println("Enter the new loyalty card threshold");
         database.setLoyaltyThreshold(Double.parseDouble(scanner.nextLine()));
+    }
+
+    private void deleteUser() {
+        System.out.println("All users:");
+        List<User> users = database.getUsers();
+        System.out.println(users);
+        System.out.println("Enter the username of the username that you want to delete");
+        String username = scanner.nextLine();
+        try {
+            database.deleteUser(username);
+        } catch (UserNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /*

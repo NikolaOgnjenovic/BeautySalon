@@ -1,5 +1,9 @@
 package com.mrmi.beautysalon.objects;
 
+import com.mrmi.beautysalon.exceptions.TreatmentNotFoundException;
+import com.mrmi.beautysalon.exceptions.TreatmentTypeNotFoundException;
+import com.mrmi.beautysalon.exceptions.UserNotFoundException;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -72,17 +76,30 @@ public class Database {
         writeUser(user);
     }
 
-    public void removeUser(User user) {
-        this.users.remove(user);
+    public void deleteUser(String username) throws UserNotFoundException {
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
+                users.remove(u);
+                overwriteUsersFile();
+                break;
+            }
+        }
+        throw new UserNotFoundException("User with username " + username + " not found.");
     }
 
-    public void editUser(User user) {
+    public void editUser(User user) throws UserNotFoundException {
         for (User u : users) {
             if (u.getUsername().equals(user.getUsername())) {
                 u = user;
+                overwriteUsersFile();
                 return;
             }
         }
+        throw new UserNotFoundException("User with username " + user.getUsername() + " not found.");
+    }
+
+    public List<User> getUsers() {
+        return users;
     }
     //endregion
 
@@ -96,13 +113,13 @@ public class Database {
         return false;
     }
 
-    public Client getClientByUsername(String username) {
+    public Client getClientByUsername(String username) throws UserNotFoundException{
         for (User u : users) {
             if (u.getClass().equals(Client.class) && u.getUsername().equals(username)) {
                 return (Client) u;
             }
         }
-        return null;
+        throw new UserNotFoundException("Client with username " + username + " not found.");
     }
 
     public List<Client> getLoyalClients() {
@@ -234,14 +251,14 @@ public class Database {
     //endregion
 
     //region Treatment
-    public Treatment getTreatmentById (int id) {
+    public Treatment getTreatmentById (int id) throws TreatmentNotFoundException {
         for (Treatment t : treatments) {
             if (t.getId() == id) {
                 return t;
             }
         }
 
-        return null;
+        throw new TreatmentNotFoundException("Treatment with id " + id + " not found.");
     }
 
     public void updateTreatment(Treatment treatment, Date date, int treatmentTypeId, String clientUsername, String beauticianUsername) {
@@ -265,9 +282,7 @@ public class Database {
     public int getNextTreatmentId() {
         return treatmentId++;
     }
-
-
-    public void cancelTreatment(int treatmentId, boolean clientCancelled, String cancellationReason) {
+    public void cancelTreatment(int treatmentId, boolean clientCancelled, String cancellationReason) throws TreatmentNotFoundException, UserNotFoundException {
         Treatment t = getTreatmentById(treatmentId);
         t.setCancelled(true);
         t.setCancellationReason(cancellationReason);
@@ -276,9 +291,11 @@ public class Database {
         if (clientCancelled) {
             client.changeMoneySpent(t.getPrice() * 0.9, this);
             changeProfit(-t.getPrice() * 0.1);
+            t.setStatus("Cancelled by client");
         } else {
             client.changeMoneySpent(t.getPrice(), this);
             changeProfit(-t.getPrice());
+            t.setStatus("Cancelled by salon");
         }
 
         overwriteTreatmentsFile();
@@ -290,14 +307,14 @@ public class Database {
         return treatmentTypes;
     }
 
-    public TreatmentType getTreatmentTypeById(int id) {
+    public TreatmentType getTreatmentTypeById(int id) throws TreatmentTypeNotFoundException {
         for (TreatmentType t : treatmentTypes) {
             if (t.getId() == id) {
                 return t;
             }
         }
 
-        return null;
+        throw new TreatmentTypeNotFoundException("Treatment type with id " + id + " not found.");
     }
 
     public void addTreatmentType(TreatmentType type) {
@@ -380,8 +397,8 @@ public class Database {
                 }
             }
             in.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -392,8 +409,8 @@ public class Database {
             out.write(user.getFileString());
             out.write("\n");
             out.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -406,8 +423,8 @@ public class Database {
                 out.write("\n");
             }
             out.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     //endregion
@@ -438,8 +455,8 @@ public class Database {
             out.write(treatmentType.getFileString());
             out.write("\n");
             out.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     //endregion
@@ -471,8 +488,8 @@ public class Database {
                 out.write("\n");
             }
             out.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -483,8 +500,8 @@ public class Database {
             out.write(treatment.getFileString());
             out.write("\n");
             out.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     //endregion
@@ -507,7 +524,8 @@ public class Database {
                 loyaltyThreshold = 5000;
             }
             in.close();
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -520,22 +538,19 @@ public class Database {
             out.write(treatmentId + "\n");
             out.write(loyaltyThreshold + "\n");
             out.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     //endregion
 
     private void checkDataFile() {
-        try {
-            new File("data").mkdir();
-        } catch (Exception ignored) {
-        }
+        new File("data").mkdir();
     }
     private void fileCheck(String fileName) {
         try {
             new File(fileName).createNewFile();
-        } catch (Exception ignored) {
+        } catch (IOException ignored) {
         }
     }
 }
