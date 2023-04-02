@@ -10,10 +10,11 @@ public class Database {
     private List<Treatment> treatments;
     public static User CurrentUser;
 
-    private int salonIncome = 0;
+    private double salonIncome = 0;
     private int treatmentTypeId = 0;
 
     private int treatmentId = 0;
+    private double loyaltyThreshold;
     public enum TREATMENT_STATUSES {
         CANCELLED,
         FINISHED,
@@ -61,6 +62,14 @@ public class Database {
 
     public void logout() {
         CurrentUser = null;
+    }
+
+    public double getLoyaltyThreshold() {
+        return loyaltyThreshold;
+    }
+    public void setLoyaltyThreshold(double loyaltyThreshold) {
+        this.loyaltyThreshold = loyaltyThreshold;
+        overwriteVariablesFile();
     }
     //endregion
 
@@ -265,10 +274,10 @@ public class Database {
                 Ukoliko se klijent ne pojavi, salon zadržava sav uplaćen novac.
                  */
                 if (clientCancelled) {
-                    client.changeMoneySpent(t.getPrice() * 0.9);
+                    client.changeMoneySpent(t.getPrice() * 0.9, this);
                     changeProfit(-t.getPrice() * 0.1);
                 } else {
-                    client.changeMoneySpent(t.getPrice());
+                    client.changeMoneySpent(t.getPrice(), this);
                     changeProfit(-t.getPrice());
                 }
             }
@@ -322,14 +331,14 @@ public class Database {
                             userData[4].trim(),
                             userData[5].trim(),
                             userData[6].trim(),
-                            userData[7].trim()));
+                            userData[7].trim(),
+                            Boolean.parseBoolean(userData[8]),
+                            Double.parseDouble(userData[9])));
                     case "B" -> {
                         List<Byte> treatmentTypeIDs = new ArrayList<>();
-                        if (userData.length > 8) {
-                            String[] treatmentTypes = userData[8].split(";");
-                            for(String s : treatmentTypes) {
-                                treatmentTypeIDs.add(Byte.parseByte(s));
-                            }
+                        String[] treatmentTypes = userData[12].split(";");
+                        for(String s : treatmentTypes) {
+                            treatmentTypeIDs.add(Byte.parseByte(s));
                         }
                         users.add(new Beautician(
                                 userData[1].trim(),
@@ -339,7 +348,11 @@ public class Database {
                                 userData[5].trim(),
                                 userData[6].trim(),
                                 userData[7].trim(),
-                                treatmentTypeIDs));
+                                treatmentTypeIDs,
+                                Byte.parseByte(userData[8]),
+                                Byte.parseByte(userData[9]),
+                                Double.parseDouble(userData[10]),
+                                Double.parseDouble(userData[11])));
                     }
                     case "R" -> users.add(new Receptionist(
                             userData[1].trim(),
@@ -348,7 +361,11 @@ public class Database {
                             userData[4].trim(),
                             userData[5].trim(),
                             userData[6].trim(),
-                            userData[7].trim()));
+                            userData[7].trim(),
+                            Byte.parseByte(userData[8]),
+                            Byte.parseByte(userData[9]),
+                            Double.parseDouble(userData[10]),
+                            Double.parseDouble(userData[11])));
                     case "M" -> users.add(new Manager(
                             userData[1].trim(),
                             userData[2].trim(),
@@ -356,7 +373,11 @@ public class Database {
                             userData[4].trim(),
                             userData[5].trim(),
                             userData[6].trim(),
-                            userData[7].trim()));
+                            userData[7].trim(),
+                            Byte.parseByte(userData[8]),
+                            Byte.parseByte(userData[9]),
+                            Double.parseDouble(userData[10]),
+                            Double.parseDouble(userData[11])));
                 }
             }
             in.close();
@@ -476,13 +497,15 @@ public class Database {
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
             try {
-                salonIncome = Integer.parseInt(in.readLine());
+                salonIncome = Double.parseDouble(in.readLine());
                 treatmentTypeId = Integer.parseInt(in.readLine());
                 treatmentId = Integer.parseInt(in.readLine());
+                loyaltyThreshold = Double.parseDouble(in.readLine());
             } catch (NumberFormatException e) {
                 salonIncome = 0;
                 treatmentTypeId = 0;
                 treatmentId = 0;
+                loyaltyThreshold = 5000;
             }
             in.close();
         } catch (Exception ignored) {
@@ -496,6 +519,7 @@ public class Database {
             out.write(salonIncome + "\n");
             out.write(treatmentTypeId + "\n");
             out.write(treatmentId + "\n");
+            out.write(loyaltyThreshold + "\n");
             out.close();
         } catch (Exception ex) {
             ex.printStackTrace();

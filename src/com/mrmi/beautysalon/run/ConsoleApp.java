@@ -15,10 +15,10 @@ public class ConsoleApp {
         System.out.println("Welcome to Mrmi/'s beauty salon app");
 
         String loggedOutOptions = "Options:\n0. Exit\n1. Login\n2. Register as a client";
-        String clientOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View due treatments\n4. View past treatments\n5. Cancel treatment";
+        String clientOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View due treatments\n4. View past treatments\n5. Cancel treatment\n6. View loyalty card status";
         String beauticianOptions = "Options:\n0. Exit\n1. Logout\n2. View due treatments\n3. View past treatments\n4. View schedule";
-        String receptionistOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View all treatments\n3. Cancel treatment\n5. Update treatment";
-        String managerOptions = "Options:\n0. Exit\n1. Logout\n2. View all employees\n3. View all clients with loyalty cards\n4. View salon income and expenses\n5. Register employee\n6. Add treatment type";
+        String receptionistOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View all treatments\n4. Cancel treatment\n5. Update treatment";
+        String managerOptions = "Options:\n0. Exit\n1. Logout\n2. View all employees\n3. View all clients with loyalty cards\n4. View salon income and expenses\n5. Register employee\n6. Add treatment type\n7. Set loyalty card threshhold";
         byte selectedOption;
         boolean running = true;
         while (running) {
@@ -44,6 +44,7 @@ public class ConsoleApp {
                     case 3 -> printDueTreatments(client);
                     case 4 -> printPastTreatments(client);
                     case 5 -> cancelTreatment(client);
+                    case 6 -> viewLoyaltyStatus(client, database);
                     default -> System.out.println("Invalid option.\n");
                 }
             } else if (Database.CurrentUser.getClass().equals(Beautician.class)) {
@@ -86,6 +87,7 @@ public class ConsoleApp {
                     case 4 -> printIncome(manager);
                     case 5 -> registerEmployee();
                     case 6 -> addTreatmentType();
+                    case 7 -> setLoyaltyThreshold();
                     default -> System.out.println("Invalid option.\n");
                 }
             }
@@ -311,6 +313,14 @@ public class ConsoleApp {
             System.out.println(t);
         }
     }
+
+    private void viewLoyaltyStatus(Client client, Database database) {
+        if (client.hasLoyaltyCard()) {
+            System.out.println("You have a loyalty card which grants you a 10% discount on all treatments!");
+        } else {
+            System.out.println("You need to spend " + (database.getLoyaltyThreshold() - client.getMoneySpent()) + " more money in order to get a loyalty card.");
+        }
+    }
     //endregion
 
     //region Receptionist options
@@ -440,6 +450,11 @@ public class ConsoleApp {
         System.out.println("Enter the treatment type price");
         int price = Integer.parseInt(scanner.nextLine());
         database.addTreatmentType(new TreatmentType(name, price, database.getNextTreatmentTypeId()));
+    }
+
+    private void setLoyaltyThreshold() {
+        System.out.println("Enter the new loyalty card threshold");
+        database.setLoyaltyThreshold(Double.parseDouble(scanner.nextLine()));
     }
 
     /*

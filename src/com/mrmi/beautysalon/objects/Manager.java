@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 public class Manager extends Employee {
-    public static int LoyaltyThreshold;
 
     public Manager(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
         super(username, password, name, surname, gender, phoneNumber, address);

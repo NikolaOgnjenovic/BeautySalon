@@ -1,7 +1,5 @@
 package com.mrmi.beautysalon.objects;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Client extends User {
@@ -14,6 +12,12 @@ public class Client extends User {
         this.moneySpent = 0;
     }
 
+    public Client(String username, String password, String name, String surname, String gender, String phoneNumber, String address, boolean hasLoyaltyCard, Double moneySpent) {
+        super(username, password, name, surname, gender, phoneNumber, address);
+        this.hasLoyaltyCard = hasLoyaltyCard;
+        this.moneySpent = moneySpent;
+    }
+
     public void bookTreatment(Treatment treatment, Database database) {
         double price = treatment.getPrice();
         if (hasLoyaltyCard) {
@@ -21,7 +25,7 @@ public class Client extends User {
             treatment.setPrice(price);
         }
         database.bookTreatment(treatment);
-        this.changeMoneySpent(-price);
+        this.changeMoneySpent(-price, database);
     }
 
     public List<Treatment> getDueTreatments(Database database) {
@@ -40,21 +44,21 @@ public class Client extends User {
         return moneySpent;
     }
 
-    public void changeMoneySpent(double moneySpent) {
+    public void changeMoneySpent(double moneySpent, Database database) {
         this.moneySpent += moneySpent;
-        checkLoyaltyCard();
+        checkLoyaltyCard(database);
     }
 
     public boolean hasLoyaltyCard() {
         return hasLoyaltyCard;
     }
 
-    private void checkLoyaltyCard() {
-        this.hasLoyaltyCard = this.moneySpent >= Manager.LoyaltyThreshold;
+    private void checkLoyaltyCard(Database database) {
+        this.hasLoyaltyCard = this.moneySpent >= database.getLoyaltyThreshold();
     }
 
     @Override
     public String getFileString() {
-        return "C" + super.getFileString();
+        return "C" + super.getFileString() + hasLoyaltyCard + "," + moneySpent;
     }
 }

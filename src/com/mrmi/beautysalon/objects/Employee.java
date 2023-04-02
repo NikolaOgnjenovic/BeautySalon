@@ -67,6 +67,6 @@ public class Employee extends User {
 
     @Override
     public String getFileString() {
-        return super.getFileString() + qualificationLevel + "," + yearsOfExperience + "," + bonus + "," + monthlySalary;
+        return super.getFileString() + qualificationLevel + "," + yearsOfExperience + "," + bonus + "," + monthlySalary + ",";
     }
 }

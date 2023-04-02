@@ -1,0 +1,1 @@
+5,Mon Oct 10 00:00:00 CEST 2022,false,mrmica,Beautician,0,100.0

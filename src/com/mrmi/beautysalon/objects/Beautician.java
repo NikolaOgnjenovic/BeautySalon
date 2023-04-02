@@ -10,8 +10,9 @@ public class Beautician extends Employee {
         this.treatmentTypeIDs = treatmentTypeIDs;
     }
 
-    public Beautician(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+    public Beautician(String username, String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
         super(username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
+        this.treatmentTypeIDs = treatmentTypeIDs;
     }
 
     public List<Treatment> getDueTreatments(Database database) {
@@ -44,7 +45,7 @@ public class Beautician extends Employee {
             sb.append(type);
             sb.append(";");
         }
-        return "B" + super.getFileString() + sb;
+        return sb.toString();
     }
 
     @Override

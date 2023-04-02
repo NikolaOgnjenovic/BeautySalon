@@ -22,7 +22,7 @@ public class Receptionist extends Employee {
         }
 
         database.bookTreatment(treatment);
-        client.changeMoneySpent(-price);
+        client.changeMoneySpent(-price, database);
     }
 
     public List<Treatment> getAllTreatments() {
