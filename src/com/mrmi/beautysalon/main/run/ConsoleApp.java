@@ -21,7 +21,7 @@ public class ConsoleApp {
         String clientOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View due treatments\n4. View past treatments\n5. Cancel treatment\n6. View loyalty card status";
         String beauticianOptions = "Options:\n0. Exit\n1. Logout\n2. View due treatments\n3. View past treatments\n4. View schedule";
         String receptionistOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View all treatments\n4. Cancel treatment\n5. Update treatment";
-        String managerOptions = "Options:\n0. Exit\n1. Logout\n2. View all employees\n3. View all clients with loyalty cards\n4. View salon income and expenses\n5. Register employee\n6. Add treatment type\n7. Set loyalty card threshhold";
+        String managerOptions = "Options:\n0. Exit\n1. Logout\n2. View all employees\n3. View all clients with loyalty cards\n4. View salon income and expenses\n5. Register employee\n6. Add treatment type\n7. Set loyalty card threshhold\n8. Delete user\n9. View beautician statistics\n10. View treatment cancellation statistics\n11. View treatment type statistics";
         byte selectedOption;
         boolean running = true;
         while (running) {
@@ -92,6 +92,9 @@ public class ConsoleApp {
                     case 6 -> addTreatmentType();
                     case 7 -> setLoyaltyThreshold();
                     case 8 -> deleteUser();
+                    case 9 -> viewBeauticianStats();
+                    case 10 -> viewCancellationStats();
+                    case 11 -> viewTreatmentTypeStats();
                     default -> System.out.println("Invalid option.\n");
                 }
             }
@@ -500,18 +503,72 @@ public class ConsoleApp {
         }
     }
 
+    // TODO: opseg datuma
+    // Koliko je kozmetičkih tretmana svaki kozmetičar izvršio i koliko je prihodovao za izabrani opseg datuma
+    private void viewBeauticianStats() {
+        List<Treatment> treatmentsByBeauticians = database.getTreatmentsSortedByBeauticians();
+        if (treatmentsByBeauticians.size() < 1) {
+            System.out.println("No treatment stats to display");
+            return;
+        }
+
+        String currentBeautician = treatmentsByBeauticians.get(0).getBeauticianUsername();
+        int count = 0;
+        double profit = 0;
+        for (Treatment t : treatmentsByBeauticians) {
+            if (!t.getBeauticianUsername().equals(currentBeautician)) {
+                System.out.println("Beautician with username " + currentBeautician + " finished " + count + " treatments with a profit of " + profit + ".");
+                currentBeautician = t.getBeauticianUsername();
+                count = 0;
+                profit = 0;
+            } else {
+                count++;
+                profit += t.getPrice();
+            }
+        }
+    }
+
+    // TODO: opseg datuma
+    // Koliko kozmetičkih tretmana je potvrđeno, a koliko otkazano (po razlozima) za odabrani opseg datuma
+    private void viewCancellationStats() {
+        List<Treatment> treatmentsByCancellation = database.getTreatmentsSortedByCancellationReason();
+        if (treatmentsByCancellation.size() < 1) {
+            System.out.println("No treatment stats to display");
+            return;
+        }
+
+        String currentReason = treatmentsByCancellation.get(0).getCancellationReason();
+        int count = 0;
+        for (Treatment t : treatmentsByCancellation) {
+            if (!t.getCancellationReason().equals(currentReason)) {
+                if (!currentReason.equals("-")) {
+                    System.out.println(count + " treatments have been cancelled with the following reason: " + currentReason);
+                } else {
+                    System.out.println(count + " treatments have been finished.");
+                }
+                currentReason = t.getCancellationReason();
+            } else {
+                count++;
+            }
+        }
+
+        if (!currentReason.equals("-")) {
+            System.out.println(count + " treatments have been cancelled with the following reason: " + currentReason);
+        } else {
+            System.out.println(count + " treatments have been finished.");
+        }
+    }
+
+    // TODO: date range
     /*
-    Potrebno je uraditi izveštaje:
-        ● koliko je kozmetičkih tretmana svaki kozmetičar izvršio i koliko je prihodovao za
-        izabrani opseg datuma,
-        ● koliko kozmetičkih tretmana je potvrđeno, a koliko otkazano (po razlozima) za
-        odabrani opseg datuma
-        ● za prikaz kozmetičke usluge, što podrazumeva prikaz podataka o samoj usluzi i
-        njenom tipu, ukupan broj zakaznih tretmana za tu uslugu i ostvarene prihode za
-        izabrani opseg datuma.
-        ●
-        Klijenata koji ispunjavaju uslove za karticu lojalnosti (potrošili su na tretmane više
-        novca od iznosa koji zadaje menadžer).
+    Prikaz kozmetičke usluge, što podrazumeva prikaz podataka o samoj usluzi injenom tipu,
+    ukupan broj zakaznih tretmana za tu uslugu i ostvarene prihode za izabrani opseg datuma.
      */
+    private void viewTreatmentTypeStats() {
+        List<TreatmentType> treatmentTypes = database.getTreatmentTypes();
+        for (TreatmentType t : treatmentTypes) {
+            System.out.println(t);
+        }
+    }
     //endregion
 }

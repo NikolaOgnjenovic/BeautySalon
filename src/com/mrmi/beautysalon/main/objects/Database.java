@@ -277,6 +277,16 @@ public class Database {
     }
 
     public void bookTreatment(Treatment treatment) {
+        try {
+            TreatmentType treatmentType = getTreatmentTypeById(treatment.getTreatmentTypeId());
+            treatmentType.changeTimesBooked(1);
+            treatmentType.changeProfit(treatment.getPrice());
+            overwriteTreatmentTypesFile();
+        } catch (TreatmentTypeNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
         addTreatment(treatment);
         writeTreatment(treatment);
         changeProfit(treatment.getPrice());
@@ -304,17 +314,28 @@ public class Database {
             return;
         }
 
+        double refundedPrice = t.getPrice();
         if (clientCancelled) {
-            client.changeMoneySpent(t.getPrice() * 0.9, this);
-            changeProfit(-t.getPrice() * 0.1);
+            changeProfit(refundedPrice * 0.1);
+            refundedPrice *= 0.9;
             t.setStatus("Cancelled by client");
         } else {
-            client.changeMoneySpent(t.getPrice(), this);
-            changeProfit(-t.getPrice());
+            changeProfit(refundedPrice);
             t.setStatus("Cancelled by salon");
         }
 
         overwriteTreatmentsFile();
+        client.changeMoneySpent(refundedPrice, this);
+        overwriteUsersFile();
+
+        try {
+            TreatmentType treatmentType = getTreatmentTypeById(t.getTreatmentTypeId());
+            treatmentType.changeTimesBooked(-1);
+            treatmentType.changeProfit(-refundedPrice);
+            overwriteTreatmentTypesFile();
+        } catch (TreatmentTypeNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<Treatment> getTreatments() {
@@ -345,6 +366,14 @@ public class Database {
 
     public int getNextTreatmentTypeId() {
         return treatmentTypeId++;
+    }
+
+    public List<Treatment> getTreatmentsSortedByBeauticians() {
+        return treatments.stream().sorted(Comparator.comparing(Treatment::getBeauticianUsername)).toList();
+    }
+
+    public List<Treatment> getTreatmentsSortedByCancellationReason() {
+        return treatments.stream().sorted(Comparator.comparing(Treatment::getCancellationReason)).toList();
     }
     //endregion
 
@@ -460,7 +489,7 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                treatmentTypes.add(new TreatmentType(data[0], Double.parseDouble(data[1]), Integer.parseInt(data[2])));
+                treatmentTypes.add(new TreatmentType(data[0], Double.parseDouble(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4])));
             }
             in.close();
         } catch (Exception e) {
@@ -474,6 +503,20 @@ public class Database {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
             out.write(treatmentType.getFileString());
             out.write("\n");
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void overwriteTreatmentTypesFile() {
+        String fileName = filePathPrefix + "data/treatmentTypes.txt";
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            for (TreatmentType t: treatmentTypes) {
+                out.write(t.getFileString());
+                out.write("\n");
+            }
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
