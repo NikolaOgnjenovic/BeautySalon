@@ -1,1 +1,2 @@
-5,Mon Oct 10 00:00:00 CEST 2022,false,mrmica,Beautician,0,100.0
+5,Mon Oct 10 00:00:00 CEST 2022,false,mrmica,Beautician,0,100.0,FINISHED,-
+6,Mon Apr 03 00:00:00 CEST 2023,false,Mrmi,beautician,1,200.0,SCHEDULED,-

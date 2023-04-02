@@ -15,13 +15,6 @@ public class Database {
 
     private int treatmentId = 0;
     private double loyaltyThreshold;
-    public enum TREATMENT_STATUSES {
-        CANCELLED,
-        FINISHED,
-        CANCELLED_BY_CLIENT,
-        CANCELLED_BY_SALON,
-        DID_NOT_ARRIVE
-    }
 
     //region Database data & static variables
     public Database() {
@@ -219,6 +212,19 @@ public class Database {
         }
         return beauticians;
     }
+
+    public List<Beautician> getBeauticiansByTreatmentType(byte treatmentTypeId) {
+        List<Beautician> beauticians = new ArrayList<>();
+        for (User u : users) {
+            if (u.getClass().equals(Beautician.class)) {
+                if (((Beautician) u).getTreatmentTypeIDs().contains(treatmentTypeId)) {
+                    beauticians.add((Beautician) u);
+
+                }
+            }
+        }
+        return beauticians;
+    }
     //endregion
 
     //region Receptionist
@@ -261,27 +267,20 @@ public class Database {
     }
 
 
-    public void cancelTreatment(int treatmentId, boolean clientCancelled) {
-        for (Treatment t : treatments) {
-            if (t.getId() == treatmentId) {
-                t.setCancelled(true);
-                Client client = getClientByUsername(t.getClientUsername());
+    public void cancelTreatment(int treatmentId, boolean clientCancelled, String cancellationReason) {
+        Treatment t = getTreatmentById(treatmentId);
+        t.setCancelled(true);
+        t.setCancellationReason(cancellationReason);
 
-                /*
-                Posle otkazanog tretmana na zahtev klijenta,
-                klijentu se vraća 90% uplaćenog novca dok 10% kozmetički salon zadržava u cilju pokrivanja gubitaka.
-                Ukoliko salon otkaže, klijentu se vraća 100% novca.
-                Ukoliko se klijent ne pojavi, salon zadržava sav uplaćen novac.
-                 */
-                if (clientCancelled) {
-                    client.changeMoneySpent(t.getPrice() * 0.9, this);
-                    changeProfit(-t.getPrice() * 0.1);
-                } else {
-                    client.changeMoneySpent(t.getPrice(), this);
-                    changeProfit(-t.getPrice());
-                }
-            }
+        Client client = getClientByUsername(t.getClientUsername());
+        if (clientCancelled) {
+            client.changeMoneySpent(t.getPrice() * 0.9, this);
+            changeProfit(-t.getPrice() * 0.1);
+        } else {
+            client.changeMoneySpent(t.getPrice(), this);
+            changeProfit(-t.getPrice());
         }
+
         overwriteTreatmentsFile();
     }
     //endregion
@@ -456,7 +455,7 @@ public class Database {
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
             while ((line = in.readLine()) != null) {
                 String[] data = line.split(",");
-                treatments.add(new Treatment(Integer.parseInt(data[0]), sdf.parse(data[1]), Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Double.parseDouble(data[6])));
+                treatments.add(new Treatment(Integer.parseInt(data[0]), sdf.parse(data[1]), Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Double.parseDouble(data[6]), data[7], data[8]));
             }
             in.close();
         } catch (Exception e) {

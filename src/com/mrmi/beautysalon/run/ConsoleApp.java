@@ -197,23 +197,14 @@ public class ConsoleApp {
     }
 
     private Treatment inputTreatment(String clientUsername) {
-        System.out.println("Enter date in dd.MM.yyyy format");
-        Date scheduledDate;
-        try {
-            scheduledDate = sdf.parse(scanner.nextLine());
-        } catch (ParseException e) {
-            System.out.println("Invalid date");
-            return null;
-        }
-
         System.out.println("Pick a treatment type");
-        int treatmentTypeId;
+        byte treatmentTypeId;
         System.out.println("Available treatment types: ");
         for (TreatmentType treatmentType : database.getTreatmentTypes()) {
             System.out.println(treatmentType);
         }
         System.out.println("Enter the new treatment type id");
-        treatmentTypeId = Integer.parseInt(scanner.nextLine());
+        treatmentTypeId = Byte.parseByte(scanner.nextLine());
 
         TreatmentType treatmentType = database.getTreatmentTypeById(treatmentTypeId);
         if (treatmentType == null) {
@@ -221,7 +212,7 @@ public class ConsoleApp {
             return null;
         }
 
-        List<Beautician> beauticians = database.getBeauticians();
+        List<Beautician> beauticians = database.getBeauticiansByTreatmentType(treatmentTypeId);
         if (beauticians.size() < 1) {
             System.out.println("No beauticians available");
             return null;
@@ -236,6 +227,22 @@ public class ConsoleApp {
         if (beauticianUsername.length() < 1) {
             beauticianUsername = beauticians.get(0).getUsername();
         }
+
+        /*
+        TODO:
+        Zatim korisnik bira termin – datum i vreme (od dostupnih termina kada je dostupan
+        odabrani kozmetičar, u toku radnog vremena kozmetičkog salona).
+        Zbog pojednostavljivanja, smatrati da tretmani počinju uvek na pun sat.
+         */
+        System.out.println("Enter date in dd.MM.yyyy format");
+        Date scheduledDate;
+        try {
+            scheduledDate = sdf.parse(scanner.nextLine());
+        } catch (ParseException e) {
+            System.out.println("Invalid date");
+            return null;
+        }
+
         return new Treatment(database.getNextTreatmentId(), scheduledDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentType.getPrice());
     }
     //endregion
@@ -262,7 +269,9 @@ public class ConsoleApp {
         printDueTreatments(client);
         System.out.println("Enter the id of the treatment that you want to cancel\n");
         int id = Integer.parseInt(scanner.nextLine());
-        client.cancelTreatment(id, database);
+        System.out.println("Why do you want to cancel the treatment?");
+        String cancellationReason = scanner.nextLine();
+        client.cancelTreatment(id, database, cancellationReason);
     }
     //endregion
 
@@ -352,9 +361,11 @@ public class ConsoleApp {
 
     private void cancelTreatment(Receptionist receptionist) {
         printAllTreatments(receptionist);
-        System.out.println("Enter the id of the treatment that you want to cancel\n");
+        System.out.println("Enter the id of the treatment that the client wants to cancel\n");
         int id = Integer.parseInt(scanner.nextLine());
-        receptionist.cancelTreatment(id, database);
+        System.out.println("Why does the client want to cancel the treatment?");
+        String cancellationReason = scanner.nextLine();
+        receptionist.cancelTreatment(id, database, cancellationReason);
     }
 
     private void updateTreatment(Receptionist receptionist) {

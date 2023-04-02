@@ -36,8 +36,8 @@ public class Client extends User {
         return database.getClientPastTreatments(this.getUsername());
     }
 
-    public void cancelTreatment(int treatmentId, Database database) {
-        database.cancelTreatment(treatmentId, true);
+    public void cancelTreatment(int treatmentId, Database database, String cancellationReason) {
+        database.cancelTreatment(treatmentId, true, cancellationReason);
     }
 
     public double getMoneySpent() {

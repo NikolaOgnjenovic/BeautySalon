@@ -29,8 +29,8 @@ public class Receptionist extends Employee {
         return new ArrayList<>();
     }
 
-    public void cancelTreatment(int treatmentId, Database database) {
-        database.cancelTreatment(treatmentId, false);
+    public void cancelTreatment(int treatmentId, Database database, String cancellationReason) {
+        database.cancelTreatment(treatmentId, false, cancellationReason);
     }
 
     public void updateTreatment(Treatment treatment, Date date, int treatmentTypeId, String clientUsername, String beauticianUsername, Database database) {
