@@ -45,16 +45,17 @@ public class Database {
         overwriteVariablesFile();
     }
 
-    public void login(String username, String password) {
+    public boolean login(String username, String password) {
         for (Map.Entry<String, User> u : users.entrySet()) {
             if (u.getKey().equals(username) && u.getValue().getPassword().equals(password)) {
                 currentUsername = u.getKey();
                 currentUser = u.getValue();
-                return;
+                return true;
             }
         }
         currentUsername = "";
         currentUser = null;
+        return false;
     }
 
     public void logout() {
@@ -251,6 +252,10 @@ public class Database {
         treatment.setTreatmentTypeId(treatmentTypeId);
         treatment.setClientUsername(clientUsername);
         treatment.setBeauticianUsername(beauticianUsername);
+        overwriteTreatmentsFile();
+    }
+
+    public void updateTreatment(Treatment treatment) {
         overwriteTreatmentsFile();
     }
 

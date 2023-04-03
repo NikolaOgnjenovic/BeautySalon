@@ -1,5 +1,5 @@
 5,Mon Oct 10 00:00:00 CEST 2022,false,mrmica,Beautician,0,100.0,FINISHED,-
-6,Mon Apr 03 00:00:00 CEST 2023,false,Mrmi,beautician,1,200.0,SCHEDULED,-
-7,Tue Oct 10 00:00:00 CEST 2023,false,Mrmi,Beautician,1,200.0,SCHEDULED,-
-8,Tue Oct 10 00:00:00 CEST 2023,false,Mrmi,Beauticia,0,1000.0,SCHEDULED,-
-9,Mon Oct 10 00:00:00 CEST 2022,false,Mrmi,beautician,0,1000.0,SCHEDULED,-
+6,Mon Apr 03 00:00:00 CEST 2023,true,Mrmi,beautician,1,200.0,SCHEDULED,reasongadgadgad
+7,Tue Oct 10 00:00:00 CEST 2023,true,MRMIGADG,Beautician,1,200.0,SCHEDULED,-vFSFs
+8,Tue Oct 10 00:00:00 CEST 2023,true,Mrmi,Beauticia,0,1000.0,SCHEDULED,reasongadgadgadgdagad
+9,Mon Oct 10 00:00:00 CEST 2022,true,Mrmi,beautician,0,1000.0,SCHEDULED,reason

@@ -47,18 +47,12 @@ public class Treatment {
         this.scheduledDate = scheduledDate;
     }
 
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
-    }
-
-
-    public int getTreatmentTypeId() {
-        return treatmentTypeId;
-    }
-
-    public void setTreatmentTypeId(int treatmentTypeId) {
-        this.treatmentTypeId = treatmentTypeId;
     }
 
     public String getClientUsername() {
@@ -69,7 +63,6 @@ public class Treatment {
         this.clientUsername = clientUsername;
     }
 
-
     public String getBeauticianUsername() {
         return beauticianUsername;
     }
@@ -78,12 +71,24 @@ public class Treatment {
         this.beauticianUsername = beauticianUsername;
     }
 
+    public int getTreatmentTypeId() {
+        return treatmentTypeId;
+    }
+
+    public void setTreatmentTypeId(int treatmentTypeId) {
+        this.treatmentTypeId = treatmentTypeId;
+    }
+
     public Double getPrice() {
         return price;
     }
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public void setStatus(String status) {

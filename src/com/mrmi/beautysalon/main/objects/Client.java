@@ -29,6 +29,9 @@ public class Client extends User {
         this.changeMoneySpent(-price, database);
     }
 
+    public HashMap<Integer, Treatment> getTreatments(Database database, String username) {
+        return database.getClientTreatments(username);
+    }
     public HashMap<Integer, Treatment> getDueTreatments(Database database, String username) {
         return database.getClientDueTreatments(username);
     }
