@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.objects;
 
 public abstract class User {
-    private String username;
     private String password;
     private String name;
     private String surname;
@@ -9,22 +8,13 @@ public abstract class User {
     private String phoneNumber;
     private String address;
 
-    public User(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
-        this.username = username;
+    public User(String password, String name, String surname, String gender, String phoneNumber, String address) {
         this.password = password;
         this.name = name;
         this.surname = surname;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.address = address;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
@@ -78,7 +68,6 @@ public abstract class User {
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
@@ -88,7 +77,7 @@ public abstract class User {
                 '}';
     }
 
-    public String getFileString() {
+    public String getFileString(String username) {
         return "," + username + "," + password + "," + name + "," + surname + "," + gender + "," + phoneNumber + "," + address + ",";
     }
 }

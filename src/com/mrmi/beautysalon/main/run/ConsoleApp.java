@@ -21,11 +21,11 @@ public class ConsoleApp {
         String clientOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View due treatments\n4. View past treatments\n5. Cancel treatment\n6. View loyalty card status";
         String beauticianOptions = "Options:\n0. Exit\n1. Logout\n2. View due treatments\n3. View past treatments\n4. View schedule";
         String receptionistOptions = "Options:\n0. Exit\n1. Logout\n2. Book treatment\n3. View all treatments\n4. Cancel treatment\n5. Update treatment";
-        String managerOptions = "Options:\n0. Exit\n1. Logout\n2. View all employees\n3. View all clients with loyalty cards\n4. View salon income and expenses\n5. Register employee\n6. Add treatment type\n7. Set loyalty card threshhold\n8. Delete user\n9. View beautician statistics\n10. View treatment cancellation statistics\n11. View treatment type statistics";
+        String managerOptions = "Options:\n0. Exit\n1. Logout\n2. View all employees\n3. View all clients with loyalty cards\n4. View salon income and expenses\n5. Register employee\n6. Add treatment type\n7. Set loyalty card threshhold\n8. Delete user\n9. View beautician statistics\n10. View treatment cancellation statistics\n11. View treatment type statistics\n12. Edit user";
         byte selectedOption;
         boolean running = true;
         while (running) {
-            if (Database.CurrentUser == null) {
+            if (Database.currentUser == null) {
                 System.out.println(loggedOutOptions);
                 selectedOption = getMenuOption();
 
@@ -35,39 +35,39 @@ public class ConsoleApp {
                     case 2 -> registerUser("C");
                     default -> System.out.println("Invalid option.\n");
                 }
-            } else if (Database.CurrentUser.getClass().equals(Client.class)) {
+            } else if (Database.currentUser.getClass().equals(Client.class)) {
                 System.out.println(clientOptions);
                 selectedOption = getMenuOption();
 
-                Client client = (Client) Database.CurrentUser;
+                Client client = (Client) Database.currentUser;
                 switch (selectedOption) {
                     case 0 -> running = false;
                     case 1 -> logout();
-                    case 2 -> bookTreatment(client);
-                    case 3 -> printDueTreatments(client);
-                    case 4 -> printPastTreatments(client);
-                    case 5 -> cancelTreatment(client);
+                    case 2 -> bookTreatment(client, Database.currentUsername);
+                    case 3 -> printDueTreatments(client, Database.currentUsername);
+                    case 4 -> printPastTreatments(client, Database.currentUsername);
+                    case 5 -> cancelTreatment(client, Database.currentUsername);
                     case 6 -> viewLoyaltyStatus(client, database);
                     default -> System.out.println("Invalid option.\n");
                 }
-            } else if (Database.CurrentUser.getClass().equals(Beautician.class)) {
+            } else if (Database.currentUser.getClass().equals(Beautician.class)) {
                 System.out.println(beauticianOptions);
                 selectedOption = getMenuOption();
 
-                Beautician beautician = (Beautician) Database.CurrentUser;
+                Beautician beautician = (Beautician) Database.currentUser;
                 switch (selectedOption) {
                     case 0 -> running = false;
                     case 1 -> logout();
-                    case 2 -> printDueTreatments(beautician);
-                    case 3 -> printPastTreatments(beautician);
-                    case 4 -> printSchedule(beautician);
+                    case 2 -> printDueTreatments(beautician, Database.currentUsername);
+                    case 3 -> printPastTreatments(beautician, Database.currentUsername);
+                    case 4 -> printSchedule(beautician, Database.currentUsername);
                     default -> System.out.println("Invalid option.\n");
                 }
-            } else if (Database.CurrentUser.getClass().equals(Receptionist.class)) {
+            } else if (Database.currentUser.getClass().equals(Receptionist.class)) {
                 System.out.println(receptionistOptions);
                 selectedOption = getMenuOption();
 
-                Receptionist receptionist = (Receptionist) Database.CurrentUser;
+                Receptionist receptionist = (Receptionist) Database.currentUser;
                 switch (selectedOption) {
                     case 0 -> running = false;
                     case 1 -> logout();
@@ -77,11 +77,11 @@ public class ConsoleApp {
                     case 5 -> updateTreatment(receptionist);
                     default -> System.out.println("Invalid option.\n");
                 }
-            } else if (Database.CurrentUser.getClass().equals(Manager.class)) {
+            } else if (Database.currentUser.getClass().equals(Manager.class)) {
                 System.out.println(managerOptions);
                 selectedOption = getMenuOption();
 
-                Manager manager = (Manager) Database.CurrentUser;
+                Manager manager = (Manager) Database.currentUser;
                 switch (selectedOption) {
                     case 0 -> running = false;
                     case 1 -> logout();
@@ -95,6 +95,7 @@ public class ConsoleApp {
                     case 9 -> viewBeauticianStats();
                     case 10 -> viewCancellationStats();
                     case 11 -> viewTreatmentTypeStats();
+                    case 12 -> editUser();
                     default -> System.out.println("Invalid option.\n");
                 }
             }
@@ -153,11 +154,11 @@ public class ConsoleApp {
 
         User newUser = null;
         switch (userType) {
-            case "C" -> newUser = new Client(username, password, name, surname, gender, phoneNumber, address);
+            case "C" -> newUser = new Client(password, name, surname, gender, phoneNumber, address);
             case "B" -> {
                 System.out.println("Available treatment types: ");
-                for (TreatmentType treatmentType : database.getTreatmentTypes()) {
-                    System.out.println(treatmentType);
+                for (TreatmentType t : database.getTreatmentTypes().values()) {
+                    System.out.println(t);
                 }
                 System.out.println("Enter treatment type ids separated by commas (0,1,2)");
                 String[] types = scanner.nextLine().split(",");
@@ -172,19 +173,19 @@ public class ConsoleApp {
                     }
                 }
 
-                newUser = new Beautician(username, password, name, surname, gender, phoneNumber, address, treatmentTypeIDs);
+                newUser = new Beautician(password, name, surname, gender, phoneNumber, address, treatmentTypeIDs);
                 setEmployeeAttributes((Beautician) newUser);
             }
             case "R" -> {
-                newUser = new Receptionist(username, password, name, surname, gender, phoneNumber, address);
+                newUser = new Receptionist(password, name, surname, gender, phoneNumber, address);
                 setEmployeeAttributes((Receptionist) newUser);
             }
             case "M" -> {
-                newUser = new Manager(username, password, name, surname, gender, phoneNumber, address);
+                newUser = new Manager(password, name, surname, gender, phoneNumber, address);
                 setEmployeeAttributes((Manager) newUser);
             }
         }
-        database.addUser(newUser);
+        database.addUser(newUser, username);
     }
 
     private void setEmployeeAttributes(Employee employee) {
@@ -207,8 +208,8 @@ public class ConsoleApp {
         System.out.println("Pick a treatment type");
         byte treatmentTypeId;
         System.out.println("Available treatment types: ");
-        for (TreatmentType treatmentType : database.getTreatmentTypes()) {
-            System.out.println(treatmentType);
+        for (TreatmentType t : database.getTreatmentTypes().values()) {
+            System.out.println(t);
         }
         System.out.println("Enter the new treatment type id");
         treatmentTypeId = Byte.parseByte(scanner.nextLine());
@@ -221,20 +222,25 @@ public class ConsoleApp {
             return null;
         }
 
-        List<Beautician> beauticians = database.getBeauticiansByTreatmentType(treatmentTypeId);
+        HashMap<String, Beautician> beauticians = database.getBeauticiansByTreatmentType(treatmentTypeId);
         if (beauticians.size() < 1) {
             System.out.println("No beauticians available");
             return null;
         }
         System.out.println("Available beauticians:");
-        for (Beautician b : beauticians) {
+        for (Beautician b : beauticians.values()) {
             System.out.println(b);
         }
 
         System.out.println("Pick a beautician by entering one's username or get a random one by inserting enter");
         String beauticianUsername = scanner.nextLine();
         if (beauticianUsername.length() < 1) {
-            beauticianUsername = beauticians.get(0).getUsername();
+            for (Map.Entry<String, Beautician> b : beauticians.entrySet()) {
+                if (b.getValue().getTreatmentTypeIDs().contains(treatmentTypeId)) {
+                    beauticianUsername = b.getKey();
+                    break;
+                }
+            }
         }
 
         /*
@@ -252,30 +258,30 @@ public class ConsoleApp {
             return null;
         }
 
-        return new Treatment(database.getNextTreatmentId(), scheduledDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentType.getPrice());
+        return new Treatment(scheduledDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentType.getPrice());
     }
     //endregion
 
     //region Client options
-    private void bookTreatment(Client client) {
-        Treatment treatment = inputTreatment(client.getUsername());
+    private void bookTreatment(Client client, String username) {
+        Treatment treatment = inputTreatment(username);
         if (treatment != null) {
             client.bookTreatment(treatment, database);
         }
     }
 
-    private void printDueTreatments(Client client) {
-        List<Treatment> dueTreatments = client.getDueTreatments(database);
+    private void printDueTreatments(Client client, String username) {
+        HashMap<Integer, Treatment> dueTreatments = client.getDueTreatments(database, username);
         printDueTreatments(dueTreatments);
     }
 
-    private void printPastTreatments(Client client) {
-        List<Treatment> pastTreatments = client.getPastTreatments(database);
+    private void printPastTreatments(Client client, String username) {
+        HashMap<Integer, Treatment> pastTreatments = client.getPastTreatments(database, username);
         printPastTreatments(pastTreatments);
     }
 
-    private void cancelTreatment(Client client) {
-        printDueTreatments(client);
+    private void cancelTreatment(Client client, String username) {
+        printDueTreatments(client, username);
         System.out.println("Enter the id of the treatment that you want to cancel\n");
         int id = Integer.parseInt(scanner.nextLine());
         System.out.println("Why do you want to cancel the treatment?");
@@ -285,49 +291,50 @@ public class ConsoleApp {
     //endregion
 
     //region Beautician options
-    private void printDueTreatments(Beautician beautician) {
-        List<Treatment> dueTreatments = beautician.getDueTreatments(database);
+    private void printDueTreatments(Beautician beautician, String username) {
+        HashMap<Integer, Treatment> dueTreatments = beautician.getDueTreatments(database, username);
         printDueTreatments(dueTreatments);
     }
 
-    private void printPastTreatments(Beautician beautician) {
-        List<Treatment> pastTreatments = beautician.getPastTreatments(database);
+    private void printPastTreatments(Beautician beautician, String username) {
+        HashMap<Integer, Treatment> pastTreatments = beautician.getPastTreatments(database, username);
         printPastTreatments(pastTreatments);
     }
 
-    private void printSchedule(Beautician beautician) {
-        List<Treatment> dueTreatments = beautician.getDueTreatments(database);
+    // TODO
+    private void printSchedule(Beautician beautician, String username) {
+        HashMap<Integer, Treatment> dueTreatments = beautician.getDueTreatments(database, username);
         if (dueTreatments.size() < 1) {
             System.out.println("You have no due treatments");
             return;
         }
-        dueTreatments.sort(Comparator.comparing(Treatment::getScheduledDate));
+        //dueTreatments.sort(Comparator.comparing(Treatment::getScheduledDate));
         System.out.println("Schedule:\n");
         int day = dueTreatments.get(0).getScheduledDate().getDay();
-        for (Treatment t : dueTreatments) {
+        for (Treatment t : dueTreatments.values()) {
             System.out.println("Day " + day);
             System.out.println(t);
         }
     }
 
-    private void printDueTreatments(List<Treatment> dueTreatments) {
+    private void printDueTreatments(HashMap<Integer, Treatment> dueTreatments) {
         if (dueTreatments.size() < 1) {
             System.out.println("You have no due treatments.");
             return;
         }
         System.out.println("Due treatments: ");
-        for (Treatment t : dueTreatments) {
+        for (Treatment t : dueTreatments.values()) {
             System.out.println(t);
         }
     }
 
-    private void printPastTreatments(List<Treatment> pastTreatments) {
+    private void printPastTreatments(HashMap<Integer, Treatment> pastTreatments) {
         if (pastTreatments.size() < 1) {
             System.out.println("You have no past treatments.");
             return;
         }
         System.out.println("Past treatments: ");
-        for (Treatment t : pastTreatments) {
+        for (Treatment t : pastTreatments.values()) {
             System.out.println(t);
         }
     }
@@ -361,13 +368,13 @@ public class ConsoleApp {
     }
 
     private void printAllTreatments(Receptionist receptionist) {
-        List<Treatment> treatments = receptionist.getAllTreatments();
+        HashMap<Integer, Treatment> treatments = receptionist.getAllTreatments();
         if (treatments.size() < 1) {
             System.out.println("You have no treatments.");
             return;
         }
         System.out.println("All treatments: ");
-        for (Treatment t : treatments) {
+        for (Treatment t : treatments.values()) {
             System.out.println(t);
         }
     }
@@ -410,8 +417,9 @@ public class ConsoleApp {
         System.out.println("If you want to change the treatment/'s type enter yes");
         if (scanner.nextLine().equals("yes")) {
             System.out.println("Available types: ");
-            for (TreatmentType treatmentType : database.getTreatmentTypes()) {
-                System.out.println(treatmentType);
+            for (TreatmentType t : database.getTreatmentTypes().values()) {
+            //for (TreatmentType treatmentType : database.getTreatmentTypes()) {
+                System.out.println(t);
             }
             System.out.println("Enter the new treatment type id");
             int newTreatmentTypeId = Integer.parseInt(scanner.nextLine());
@@ -448,16 +456,16 @@ public class ConsoleApp {
     //region Manager options
     private void printEmployees(Manager manager) {
         System.out.println("Employees:");
-        List<Employee> employees = manager.getEmployees(database);
-        for (Employee e : employees) {
+        HashMap<String, Employee> employees = manager.getEmployees(database);
+        for (Employee e : employees.values()) {
             System.out.println(e);
         }
     }
 
     private void printLoyalClients(Manager manager) {
         System.out.println("Clients:");
-        List<Client> clients = manager.getLoyalClients(database);
-        for (Client c : clients) {
+        HashMap<String, Client> clients = manager.getLoyalClients(database);
+        for (Client c : clients.values()) {
             System.out.println(c);
         }
     }
@@ -482,7 +490,7 @@ public class ConsoleApp {
         String name = scanner.nextLine();
         System.out.println("Enter the treatment type price");
         int price = Integer.parseInt(scanner.nextLine());
-        database.addTreatmentType(new TreatmentType(name, price, database.getNextTreatmentTypeId()));
+        database.addTreatmentType(new TreatmentType(name, price), database.getNextTreatmentTypeId());
     }
 
     private void setLoyaltyThreshold() {
@@ -492,7 +500,7 @@ public class ConsoleApp {
 
     private void deleteUser() {
         System.out.println("All users:");
-        List<User> users = database.getUsers();
+        HashMap<String, User> users = database.getUsers();
         System.out.println(users);
         System.out.println("Enter the username of the username that you want to delete");
         String username = scanner.nextLine();
@@ -565,10 +573,16 @@ public class ConsoleApp {
     ukupan broj zakaznih tretmana za tu uslugu i ostvarene prihode za izabrani opseg datuma.
      */
     private void viewTreatmentTypeStats() {
-        List<TreatmentType> treatmentTypes = database.getTreatmentTypes();
-        for (TreatmentType t : treatmentTypes) {
+        HashMap<Integer, TreatmentType> treatmentTypes = database.getTreatmentTypes();
+        //List<TreatmentType> treatmentTypes = database.getTreatmentTypes();
+        for (TreatmentType t : treatmentTypes.values()) {
+        //for (TreatmentType t : treatmentTypes) {
             System.out.println(t);
         }
+    }
+
+    private void editUser() {
+
     }
     //endregion
 }

@@ -6,12 +6,12 @@ public class Employee extends User {
     private double bonus;
     private double monthlySalary;
 
-    public Employee(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
-        super(username, password, name, surname, gender, phoneNumber, address);
+    public Employee(String password, String name, String surname, String gender, String phoneNumber, String address) {
+        super(password, name, surname, gender, phoneNumber, address);
     }
 
-    public Employee(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
-        super(username, password, name, surname, gender, phoneNumber, address);
+    public Employee(String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(password, name, surname, gender, phoneNumber, address);
         this.qualificationLevel = qualificationLevel;
         this.yearsOfExperience = yearsOfExperience;
         this.bonus = bonus;
@@ -66,7 +66,7 @@ public class Employee extends User {
     }
 
     @Override
-    public String getFileString() {
-        return super.getFileString() + qualificationLevel + "," + yearsOfExperience + "," + bonus + "," + monthlySalary + ",";
+    public String getFileString(String username) {
+        return super.getFileString(username) + qualificationLevel + "," + yearsOfExperience + "," + bonus + "," + monthlySalary + ",";
     }
 }

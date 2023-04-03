@@ -1,11 +1,8 @@
 package com.mrmi.beautysalon.tests;
 
 import com.mrmi.beautysalon.main.objects.*;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.xml.crypto.Data;
 
 import java.util.ArrayList;
 
@@ -15,7 +12,7 @@ public class DatabaseTest {
     private Database database;
 
     @BeforeEach
-    private void setup() {
+    public void setup() {
         database = new Database("test/");
     }
     @Test
@@ -27,10 +24,10 @@ public class DatabaseTest {
 
     @Test
     public void addUsersTest() {
-        database.addUser(new Manager("manager", "pass", "Manager", "McGee", "F", "1234", "Manager Street 50", (byte) 7, (byte) 5, 0, 100000));
-        database.addUser(new Beautician("beautician", "pass", "Beautician", "McGee", "F", "123456", "Beautician Street 50", new ArrayList<>(), (byte) 7, (byte) 5, 0, 100000));
-        database.addUser(new Receptionist("receptionist", "pass", "Receptionist", "McGee", "F", "123456", "Receptionist Street 50", (byte) 7, (byte) 5, 0, 100000));
-        database.addUser(new Client("client", "pass", "Client", "McGee", "F", "1234567", "Client Street 50"));
+        database.addUser(new Manager("pass", "Manager", "McGee", "F", "1234", "Manager Street 50", (byte) 7, (byte) 5, 0, 100000), "Manager");
+        database.addUser(new Beautician("pass", "Beautician", "McGee", "F", "123456", "Beautician Street 50", new ArrayList<>(), (byte) 7, (byte) 5, 0, 100000), "Beautician");
+        database.addUser(new Receptionist("pass", "Receptionist", "McGee", "F", "123456", "Receptionist Street 50", (byte) 7, (byte) 5, 0, 100000), "Receptionist");
+        database.addUser(new Client("pass", "Client", "McGee", "F", "1234567", "Client Street 50"), "Client");
         assertEquals(4, database.getUsers().size());
     }
 }

@@ -1,26 +1,27 @@
 package com.mrmi.beautysalon.main.objects;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Beautician extends Employee {
     private List<Byte> treatmentTypeIDs;
 
-    public Beautician(String username, String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs) {
-        super(username, password, name, surname, gender, phoneNumber, address);
+    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs) {
+        super(password, name, surname, gender, phoneNumber, address);
         this.treatmentTypeIDs = treatmentTypeIDs;
     }
 
-    public Beautician(String username, String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
-        super(username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
+    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
         this.treatmentTypeIDs = treatmentTypeIDs;
     }
 
-    public List<Treatment> getDueTreatments(Database database) {
-        return database.getBeauticianDueTreatments(this.getUsername());
+    public HashMap<Integer, Treatment> getDueTreatments(Database database, String username) {
+        return database.getBeauticianDueTreatments(username);
     }
 
-    public List<Treatment> getPastTreatments(Database database) {
-        return database.getBeauticianPastTreatments(this.getUsername());
+    public HashMap<Integer, Treatment> getPastTreatments(Database database, String username) {
+        return database.getBeauticianPastTreatments(username);
     }
 
     // TODO : GUI
@@ -37,10 +38,10 @@ public class Beautician extends Employee {
     }
 
     @Override
-    public String getFileString() {
+    public String getFileString(String username) {
         StringBuilder sb = new StringBuilder();
         sb.append("B");
-        sb.append(super.getFileString());
+        sb.append(super.getFileString(username));
         for (Byte type : treatmentTypeIDs) {
             sb.append(type);
             sb.append(";");

@@ -9,10 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Database {
-    private List<User> users;
-    private List<TreatmentType> treatmentTypes;
-    private List<Treatment> treatments;
-    public static User CurrentUser;
+    private HashMap<String, User> users;
+    private HashMap<Integer, TreatmentType> treatmentTypes;
+    private HashMap<Integer, Treatment> treatments;
+    public static User currentUser;
+    public static String currentUsername;
 
     private double salonIncome = 0;
     private int treatmentTypeId = 0;
@@ -25,23 +26,18 @@ public class Database {
     //region Database data & static variables
     public Database(String filePathPrefix) {
         this.filePathPrefix = filePathPrefix;
-        this.users = new ArrayList<>();
-        this.treatments = new ArrayList<>();
-        this.treatmentTypes = new ArrayList<>();
+        this.users = new HashMap<>();
+        this.treatments = new HashMap<>();
+        this.treatmentTypes = new HashMap<>();
         loadData();
     }
 
     private void loadData() {
         checkDataFile();
-        //testWrite();
         readUsersFile();
         readTreatmentsFile();
         readTreatmentTypesFile();
         readVariablesFile();
-    }
-
-    private void testWrite() {
-        addUser(new Manager("manager", "manager", "Manager", "McGee", "F", "1234", "ManagerStreet 50", (byte) 7, (byte) 5, 0, 100000));
     }
 
     public void changeProfit(double profit) {
@@ -50,18 +46,20 @@ public class Database {
     }
 
     public void login(String username, String password) {
-        for (User u : users) {
-            if (u.getPassword().equals(password) && u.getUsername().equals(username)) {
-                CurrentUser = u;
+        for (Map.Entry<String, User> u : users.entrySet()) {
+            if (u.getKey().equals(username) && u.getValue().getPassword().equals(password)) {
+                currentUsername = u.getKey();
+                currentUser = u.getValue();
                 return;
             }
         }
-
-        CurrentUser = null;
+        currentUsername = "";
+        currentUser = null;
     }
 
     public void logout() {
-        CurrentUser = null;
+        currentUsername = "";
+        currentUser = null;
     }
 
     public double getLoyaltyThreshold() {
@@ -74,98 +72,86 @@ public class Database {
     //endregion
 
     //region User
-    public void addUser(User user) {
-        users.add(user);
-        writeUser(user);
+    public void addUser(User user, String username) {
+        users.put(username, user);
+        writeUser(user, username);
     }
 
     public void deleteUser(String username) throws UserNotFoundException {
-        for (User u : users) {
-            if (u.getUsername().equals(username)) {
-                users.remove(u);
-                overwriteUsersFile();
-                break;
-            }
+        if (!users.containsKey(username)) {
+            throw new UserNotFoundException("User with username " + username + " not found.");
         }
-        throw new UserNotFoundException("User with username " + username + " not found.");
+        users.remove(username);
     }
 
-    public void editUser(User user) throws UserNotFoundException {
-        for (User u : users) {
-            if (u.getUsername().equals(user.getUsername())) {
-                u = user;
-                overwriteUsersFile();
-                return;
-            }
+    public void editUser(User user, String username) throws UserNotFoundException {
+        if (!users.containsKey(username)) {
+            throw new UserNotFoundException("User with username " + username + " not found.");
         }
-        throw new UserNotFoundException("User with username " + user.getUsername() + " not found.");
+        users.put(username, user);
     }
 
-    public List<User> getUsers() {
+    public HashMap<String, User> getUsers() {
         return users;
     }
     //endregion
 
     //region Client
     public boolean clientExists(String username) {
-        for (User u : users) {
-            if (u.getClass().equals(Client.class) && u.getUsername().equals(username)) {
-                return true;
-            }
-        }
-        return false;
+        return users.containsKey(username);
     }
 
     public Client getClientByUsername(String username) throws UserNotFoundException{
-        for (User u : users) {
-            if (u.getClass().equals(Client.class) && u.getUsername().equals(username)) {
-                return (Client) u;
-            }
+        if (!users.containsKey(username)) {
+            throw new UserNotFoundException("Client with username " + username + " not found.");
         }
-        throw new UserNotFoundException("Client with username " + username + " not found.");
+        return (Client) users.get(username);
     }
 
-    public List<Client> getLoyalClients() {
-        List<Client> clients = new ArrayList<>();
-        for(User u : users) {
-            if (u.getClass().equals(Client.class)) {
-                clients.add((Client) u);
+    public HashMap<String, Client> getLoyalClients() {
+        HashMap<String, Client> clients = new HashMap<>();
+        for(Map.Entry<String, User> u : users.entrySet()) {
+            if (u.getValue().getClass().equals(Client.class)) {
+                Client c = (Client) u.getValue();
+                if (c.hasLoyaltyCard()) {
+                    clients.put(u.getKey(), c);
+                }
             }
         }
 
         return clients;
     }
 
-    public List<Treatment> getClientTreatments(String clientUsername) {
-        List<Treatment> clientTreatments = new ArrayList<>();
-        for (Treatment t : treatments) {
-            if (t.getClientUsername().equals(clientUsername)) {
-                clientTreatments.add(t);
+    public HashMap<Integer, Treatment> getClientTreatments(String clientUsername) {
+        HashMap<Integer, Treatment> clientTreatments = new HashMap<>();
+        for (Map.Entry<Integer, Treatment> t : treatments.entrySet()) {
+            if (t.getValue().getClientUsername().equals(clientUsername)) {
+                clientTreatments.put(t.getKey(), t.getValue());
             }
         }
         return clientTreatments;
     }
 
-    public List<Treatment> getClientDueTreatments(String clientUsername) {
-        List<Treatment> dueTreatments = new ArrayList<>();
-        List<Treatment> userTreatments = getClientTreatments(clientUsername);
+    public HashMap<Integer, Treatment> getClientDueTreatments(String clientUsername) {
+        HashMap<Integer, Treatment> dueTreatments = new HashMap<>();
+        HashMap<Integer, Treatment> userTreatments = getClientTreatments(clientUsername);
         Date currentDate = new Date();
-        for (Treatment t : userTreatments) {
-            if (t.getScheduledDate().after(currentDate)) {
-                dueTreatments.add(t);
+        for (Map.Entry<Integer, Treatment> t : userTreatments.entrySet()) {
+            if (t.getValue().getScheduledDate().after(currentDate)) {
+                dueTreatments.put(t.getKey(), t.getValue());
             }
         }
 
         return dueTreatments;
     }
 
-    public List<Treatment> getClientPastTreatments(String clientUsername) {
-        List<Treatment> pastTreatments = new ArrayList<>();
-        List<Treatment> userTreatments = getClientTreatments(clientUsername);
+    public HashMap<Integer, Treatment> getClientPastTreatments(String clientUsername) {
+        HashMap<Integer, Treatment> pastTreatments = new HashMap<>();
+        HashMap<Integer, Treatment> userTreatments = getClientTreatments(clientUsername);
         Date currentDate = new Date();
-        for (Treatment t : userTreatments) {
-            if (t.getScheduledDate().before(currentDate)) {
-                pastTreatments.add(t);
+        for (Map.Entry<Integer, Treatment> t : userTreatments.entrySet()) {
+            if (t.getValue().getScheduledDate().before(currentDate)) {
+                pastTreatments.put(t.getKey(), t.getValue());
             }
         }
 
@@ -174,11 +160,11 @@ public class Database {
     //endregion
 
     //region Employee
-    public List<Employee> getEmployees() {
-        List<Employee> employees = new ArrayList<>();
-        for (User u : users) {
-            if (!u.getClass().isInstance(User.class)) {
-                employees.add((Employee) u);
+    public HashMap<String, Employee> getEmployees() {
+        HashMap<String, Employee> employees = new HashMap<>();
+        for (Map.Entry<String, User> u : users.entrySet()) {
+            if (!u.getValue().getClass().isInstance(User.class)) {
+                employees.put(u.getKey(), (Employee) u);
             }
         }
         return employees;
@@ -186,60 +172,59 @@ public class Database {
     //endregion
 
     //region Beautician
-    public List<Treatment> getBeauticianTreatments(String beauticianUsername) {
-        List<Treatment> beauticianTreatments = new ArrayList<>();
-        for (Treatment t : treatments) {
-            if (t.getBeauticianUsername().equals(beauticianUsername)) {
-                beauticianTreatments.add(t);
+    public HashMap<Integer, Treatment> getBeauticianTreatments(String beauticianUsername) {
+        HashMap<Integer, Treatment> beauticianTreatments = new HashMap<>();
+        for (Map.Entry<Integer, Treatment> t : treatments.entrySet()) {
+            if (t.getValue().getBeauticianUsername().equals(beauticianUsername)) {
+                beauticianTreatments.put(t.getKey(), t.getValue());
             }
         }
 
         return beauticianTreatments;
     }
 
-    public List<Treatment> getBeauticianDueTreatments(String beauticianUsername) {
-        List<Treatment> dueTreatments = new ArrayList<>();
-        List<Treatment> beauticianTreatments = getBeauticianTreatments(beauticianUsername);
+    public HashMap<Integer, Treatment> getBeauticianDueTreatments(String beauticianUsername) {
+        HashMap<Integer, Treatment> dueTreatments = new HashMap<>();
+        HashMap<Integer, Treatment> beauticianTreatments = getBeauticianTreatments(beauticianUsername);
         Date currentDate = new Date();
-        for (Treatment t : beauticianTreatments) {
-            if (t.getScheduledDate().after(currentDate)) {
-                dueTreatments.add(t);
+        for (Map.Entry<Integer, Treatment> t : beauticianTreatments.entrySet()) {
+            if (t.getValue().getScheduledDate().after(currentDate)) {
+                dueTreatments.put(t.getKey(), t.getValue());
             }
         }
 
         return dueTreatments;
     }
 
-    public List<Treatment> getBeauticianPastTreatments(String beauticianUsername) {
-        List<Treatment> pastTreatments = new ArrayList<>();
-        List<Treatment> beauticianTreatments = getBeauticianTreatments(beauticianUsername);
+    public HashMap<Integer, Treatment> getBeauticianPastTreatments(String beauticianUsername) {
+        HashMap<Integer, Treatment> pastTreatments = new HashMap<>();
+        HashMap<Integer, Treatment> beauticianTreatments = getBeauticianTreatments(beauticianUsername);
         Date currentDate = new Date();
-        for (Treatment t : beauticianTreatments) {
-            if (t.getScheduledDate().before(currentDate)) {
-                pastTreatments.add(t);
+        for (Map.Entry<Integer, Treatment> t : beauticianTreatments.entrySet()) {
+            if (t.getValue().getScheduledDate().before(currentDate)) {
+                pastTreatments.put(t.getKey(), t.getValue());
             }
         }
 
         return pastTreatments;
     }
 
-    public List<Beautician> getBeauticians() {
-        List<Beautician> beauticians = new ArrayList<>();
-        for (User u : users) {
-            if (u.getClass().equals(Beautician.class)) {
-                beauticians.add((Beautician) u);
+    public HashMap<String, Beautician> getBeauticians() {
+        HashMap<String, Beautician> beauticians = new HashMap<>();
+        for (Map.Entry<String, User> u : users.entrySet()) {
+            if (u.getValue().getClass().equals(Beautician.class)) {
+                beauticians.put(u.getKey(), (Beautician) u.getValue());
             }
         }
         return beauticians;
     }
 
-    public List<Beautician> getBeauticiansByTreatmentType(byte treatmentTypeId) {
-        List<Beautician> beauticians = new ArrayList<>();
-        for (User u : users) {
-            if (u.getClass().equals(Beautician.class)) {
-                if (((Beautician) u).getTreatmentTypeIDs().contains(treatmentTypeId)) {
-                    beauticians.add((Beautician) u);
-
+    public HashMap<String, Beautician> getBeauticiansByTreatmentType(byte treatmentTypeId) {
+        HashMap<String, Beautician> beauticians = new HashMap<>();
+        for (Map.Entry<String, User> u : users.entrySet()) {
+            if (u.getValue().getClass().equals(Beautician.class)) {
+                if (((Beautician) u.getValue()).getTreatmentTypeIDs().contains(treatmentTypeId)) {
+                    beauticians.put(u.getKey(), (Beautician) u.getValue());
                 }
             }
         }
@@ -255,13 +240,10 @@ public class Database {
 
     //region Treatment
     public Treatment getTreatmentById (int id) throws TreatmentNotFoundException {
-        for (Treatment t : treatments) {
-            if (t.getId() == id) {
-                return t;
-            }
+        if (!treatments.containsKey(id)) {
+            throw new TreatmentNotFoundException("Treatment with id " + id + " not found.");
         }
-
-        throw new TreatmentNotFoundException("Treatment with id " + id + " not found.");
+        return treatments.get(id);
     }
 
     public void updateTreatment(Treatment treatment, Date date, int treatmentTypeId, String clientUsername, String beauticianUsername) {
@@ -272,11 +254,11 @@ public class Database {
         overwriteTreatmentsFile();
     }
 
-    public void addTreatment(Treatment treatment) {
-        treatments.add(treatment);
+    public void addTreatment(Treatment treatment, int id) {
+        treatments.put(id, treatment);
     }
 
-    public void bookTreatment(Treatment treatment) {
+    public void bookTreatment(Treatment treatment, int id) {
         try {
             TreatmentType treatmentType = getTreatmentTypeById(treatment.getTreatmentTypeId());
             treatmentType.changeTimesBooked(1);
@@ -287,8 +269,8 @@ public class Database {
             return;
         }
 
-        addTreatment(treatment);
-        writeTreatment(treatment);
+        addTreatment(treatment, id);
+        writeTreatment(treatment, id);
         changeProfit(treatment.getPrice());
     }
 
@@ -338,29 +320,26 @@ public class Database {
         }
     }
 
-    public List<Treatment> getTreatments() {
+    public HashMap<Integer, Treatment> getTreatments() {
         return treatments;
     }
     //endregion
 
     //region Treatment types
-    public List<TreatmentType> getTreatmentTypes() {
+    public HashMap<Integer, TreatmentType> getTreatmentTypes() {
         return treatmentTypes;
     }
-
     public TreatmentType getTreatmentTypeById(int id) throws TreatmentTypeNotFoundException {
-        for (TreatmentType t : treatmentTypes) {
-            if (t.getId() == id) {
-                return t;
-            }
-        }
+        if (!treatmentTypes.containsKey(id)) {
+            throw new TreatmentTypeNotFoundException("Treatment type with id " + id + " not found.");
 
-        throw new TreatmentTypeNotFoundException("Treatment type with id " + id + " not found.");
+        }
+        return treatmentTypes.get(id);
     }
 
-    public void addTreatmentType(TreatmentType type) {
-        treatmentTypes.add(type);
-        writeTreatmentType(type);
+    public void addTreatmentType(TreatmentType type, int id) {
+        treatmentTypes.put(id, type);
+        writeTreatmentType(type, id);
         overwriteVariablesFile();
     }
 
@@ -368,18 +347,19 @@ public class Database {
         return treatmentTypeId++;
     }
 
+    // TODO: sort -> to list vs counting sort?d
     public List<Treatment> getTreatmentsSortedByBeauticians() {
-        return treatments.stream().sorted(Comparator.comparing(Treatment::getBeauticianUsername)).toList();
+        return treatments.values().stream().sorted(Comparator.comparing(Treatment::getBeauticianUsername)).toList();
     }
 
     public List<Treatment> getTreatmentsSortedByCancellationReason() {
-        return treatments.stream().sorted(Comparator.comparing(Treatment::getCancellationReason)).toList();
+        return treatments.values().stream().sorted(Comparator.comparing(Treatment::getCancellationReason)).toList();
     }
     //endregion
 
     //region Users IO
     private void readUsersFile() {
-        users = new ArrayList<>();
+        users = new HashMap<>();
         String fileName = filePathPrefix + "data/users.txt";
         fileCheck(fileName);
         try {
@@ -389,14 +369,13 @@ public class Database {
                 line = line.trim();
                 String[] userData = line.split(",");
                 switch (userData[0]) {
-                    case "C" -> users.add(new Client(
-                            userData[1].trim(),
-                            userData[2].trim(),
-                            userData[3].trim(),
-                            userData[4].trim(),
-                            userData[5].trim(),
-                            userData[6].trim(),
-                            userData[7].trim(),
+                    case "C" -> users.put(userData[1], new Client(
+                            userData[2],
+                            userData[3],
+                            userData[4],
+                            userData[5],
+                            userData[6],
+                            userData[7],
                             Boolean.parseBoolean(userData[8]),
                             Double.parseDouble(userData[9])));
                     case "B" -> {
@@ -405,40 +384,37 @@ public class Database {
                         for(String s : treatmentTypes) {
                             treatmentTypeIDs.add(Byte.parseByte(s));
                         }
-                        users.add(new Beautician(
-                                userData[1].trim(),
-                                userData[2].trim(),
-                                userData[3].trim(),
-                                userData[4].trim(),
-                                userData[5].trim(),
-                                userData[6].trim(),
-                                userData[7].trim(),
+                        users.put(userData[1], new Beautician(
+                                userData[2],
+                                userData[3],
+                                userData[4],
+                                userData[5],
+                                userData[6],
+                                userData[7],
                                 treatmentTypeIDs,
                                 Byte.parseByte(userData[8]),
                                 Byte.parseByte(userData[9]),
                                 Double.parseDouble(userData[10]),
                                 Double.parseDouble(userData[11])));
                     }
-                    case "R" -> users.add(new Receptionist(
-                            userData[1].trim(),
-                            userData[2].trim(),
-                            userData[3].trim(),
-                            userData[4].trim(),
-                            userData[5].trim(),
-                            userData[6].trim(),
-                            userData[7].trim(),
+                    case "R" -> users.put(userData[1], new Receptionist(
+                            userData[2],
+                            userData[3],
+                            userData[4],
+                            userData[5],
+                            userData[6],
+                            userData[7],
                             Byte.parseByte(userData[8]),
                             Byte.parseByte(userData[9]),
                             Double.parseDouble(userData[10]),
                             Double.parseDouble(userData[11])));
-                    case "M" -> users.add(new Manager(
-                            userData[1].trim(),
-                            userData[2].trim(),
-                            userData[3].trim(),
-                            userData[4].trim(),
-                            userData[5].trim(),
-                            userData[6].trim(),
-                            userData[7].trim(),
+                    case "M" -> users.put(userData[1], new Manager(
+                            userData[2],
+                            userData[3],
+                            userData[4],
+                            userData[5],
+                            userData[6],
+                            userData[7],
                             Byte.parseByte(userData[8]),
                             Byte.parseByte(userData[9]),
                             Double.parseDouble(userData[10]),
@@ -451,11 +427,11 @@ public class Database {
         }
     }
 
-    private void writeUser(User user) {
+    private void writeUser(User user, String username) {
         String fileName = filePathPrefix + "data/users.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
-            out.write(user.getFileString());
+            out.write(user.getFileString(username));
             out.write("\n");
             out.close();
         } catch (IOException e) {
@@ -467,8 +443,8 @@ public class Database {
         String fileName = filePathPrefix + "data/users.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-            for (User user : users) {
-                out.write(user.getFileString());
+            for (Map.Entry<String, User> u : users.entrySet()) {
+                out.write(u.getValue().getFileString(u.getKey()));
                 out.write("\n");
             }
             out.close();
@@ -480,7 +456,7 @@ public class Database {
 
     //region TreatmentTypes IO
     private void readTreatmentTypesFile() {
-        treatmentTypes = new ArrayList<>();
+        treatmentTypes = new HashMap<>();
         String fileName = filePathPrefix + "data/treatmentTypes.txt";
         fileCheck(fileName);
         try {
@@ -489,7 +465,7 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                treatmentTypes.add(new TreatmentType(data[0], Double.parseDouble(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4])));
+                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4])));
             }
             in.close();
         } catch (Exception e) {
@@ -497,11 +473,11 @@ public class Database {
         }
     }
 
-    private void writeTreatmentType(TreatmentType treatmentType) {
+    private void writeTreatmentType(TreatmentType treatmentType, int id) {
         String fileName = filePathPrefix + "data/treatmentTypes.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
-            out.write(treatmentType.getFileString());
+            out.write(treatmentType.getFileString(id));
             out.write("\n");
             out.close();
         } catch (IOException e) {
@@ -513,8 +489,8 @@ public class Database {
         String fileName = filePathPrefix + "data/treatmentTypes.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-            for (TreatmentType t: treatmentTypes) {
-                out.write(t.getFileString());
+            for (Map.Entry<Integer, TreatmentType> t : treatmentTypes.entrySet()) {
+                out.write(t.getValue().getFileString(t.getKey()));
                 out.write("\n");
             }
             out.close();
@@ -526,7 +502,7 @@ public class Database {
 
     //region Treatments IO
     private void readTreatmentsFile() {
-        treatments = new ArrayList<>();
+        treatments = new HashMap<>();
         String fileName = filePathPrefix + "data/treatments.txt";
         fileCheck(fileName);
         try {
@@ -535,7 +511,7 @@ public class Database {
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
             while ((line = in.readLine()) != null) {
                 String[] data = line.split(",");
-                treatments.add(new Treatment(Integer.parseInt(data[0]), sdf.parse(data[1]), Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Double.parseDouble(data[6]), data[7], data[8]));
+                treatments.put(Integer.parseInt(data[0]), new Treatment(sdf.parse(data[1]), Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Double.parseDouble(data[6]), data[7], data[8]));
             }
             in.close();
         } catch (Exception e) {
@@ -546,8 +522,8 @@ public class Database {
         String fileName = filePathPrefix + "data/treatments.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-            for (Treatment t: treatments) {
-                out.write(t.getFileString());
+            for (Map.Entry<Integer, Treatment> t: treatments.entrySet()) {
+                out.write(t.getValue().getFileString(t.getKey()));
                 out.write("\n");
             }
             out.close();
@@ -556,11 +532,11 @@ public class Database {
         }
     }
 
-    private void writeTreatment(Treatment treatment) {
+    private void writeTreatment(Treatment treatment, int id) {
         String fileName = filePathPrefix + "data/treatments.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
-            out.write(treatment.getFileString());
+            out.write(treatment.getFileString(id));
             out.write("\n");
             out.close();
         } catch (IOException e) {

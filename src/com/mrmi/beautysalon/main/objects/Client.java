@@ -1,19 +1,20 @@
 package com.mrmi.beautysalon.main.objects;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Client extends User {
     private double moneySpent;
     private boolean hasLoyaltyCard;
 
-    public Client(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
-        super(username, password, name, surname, gender, phoneNumber, address);
+    public Client(String password, String name, String surname, String gender, String phoneNumber, String address) {
+        super(password, name, surname, gender, phoneNumber, address);
         this.hasLoyaltyCard = false;
         this.moneySpent = 0;
     }
 
-    public Client(String username, String password, String name, String surname, String gender, String phoneNumber, String address, boolean hasLoyaltyCard, Double moneySpent) {
-        super(username, password, name, surname, gender, phoneNumber, address);
+    public Client(String password, String name, String surname, String gender, String phoneNumber, String address, boolean hasLoyaltyCard, Double moneySpent) {
+        super(password, name, surname, gender, phoneNumber, address);
         this.hasLoyaltyCard = hasLoyaltyCard;
         this.moneySpent = moneySpent;
     }
@@ -24,16 +25,16 @@ public class Client extends User {
             price *= 0.9;
             treatment.setPrice(price);
         }
-        database.bookTreatment(treatment);
+        database.bookTreatment(treatment, database.getNextTreatmentId());
         this.changeMoneySpent(-price, database);
     }
 
-    public List<Treatment> getDueTreatments(Database database) {
-        return database.getClientDueTreatments(this.getUsername());
+    public HashMap<Integer, Treatment> getDueTreatments(Database database, String username) {
+        return database.getClientDueTreatments(username);
     }
 
-    public List<Treatment> getPastTreatments(Database database) {
-        return database.getClientPastTreatments(this.getUsername());
+    public HashMap<Integer, Treatment> getPastTreatments(Database database, String username) {
+        return database.getClientPastTreatments(username);
     }
 
     public void cancelTreatment(int treatmentId, Database database, String cancellationReason) {
@@ -58,7 +59,7 @@ public class Client extends User {
     }
 
     @Override
-    public String getFileString() {
-        return "C" + super.getFileString() + hasLoyaltyCard + "," + moneySpent;
+    public String getFileString(String username) {
+        return "C" + super.getFileString(username) + hasLoyaltyCard + "," + moneySpent;
     }
 }

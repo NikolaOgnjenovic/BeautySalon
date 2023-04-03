@@ -3,7 +3,6 @@ package com.mrmi.beautysalon.main.objects;
 import java.util.Date;
 
 public class Treatment {
-    private int id;
     private Date scheduledDate; // Zbog pojednostavljivanja, smatrati da tretmani počinju uvek na pun sat.
     private boolean cancelled;
 
@@ -18,8 +17,7 @@ public class Treatment {
 
     private String cancellationReason;
 
-    public Treatment(int id, Date scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price) {
-        this.id = id;
+    public Treatment(Date scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price) {
         this.scheduledDate = scheduledDate;
         this.cancelled = cancelled;
         this.clientUsername = clientUsername;
@@ -30,8 +28,7 @@ public class Treatment {
         this.cancellationReason = "-";
     }
 
-    public Treatment(int id, Date scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price, String status, String cancellationReason) {
-        this.id = id;
+    public Treatment(Date scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price, String status, String cancellationReason) {
         this.scheduledDate = scheduledDate;
         this.cancelled = cancelled;
         this.clientUsername = clientUsername;
@@ -50,17 +47,11 @@ public class Treatment {
         this.scheduledDate = scheduledDate;
     }
 
-    public boolean isCancelled() {
-        return cancelled;
-    }
 
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getTreatmentTypeId() {
         return treatmentTypeId;
@@ -78,9 +69,6 @@ public class Treatment {
         this.clientUsername = clientUsername;
     }
 
-    public int getId() {
-        return id;
-    }
 
     public String getBeauticianUsername() {
         return beauticianUsername;
@@ -98,10 +86,6 @@ public class Treatment {
         this.price = price;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
     public void setStatus(String status) {
         this.status = status;
     }
@@ -114,7 +98,7 @@ public class Treatment {
         this.cancellationReason = cancellationReason;
     }
 
-    public String getFileString() {
+    public String getFileString(int id) {
         return id + "," + scheduledDate + "," + cancelled + "," + clientUsername + "," + beauticianUsername + "," + treatmentTypeId + "," + price + "," + status + "," + cancellationReason;
     }
 }

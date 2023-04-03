@@ -2,16 +2,17 @@ package com.mrmi.beautysalon.main.objects;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class Receptionist extends Employee {
 
-    public Receptionist(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
-        super(username, password, name, surname, gender, phoneNumber, address);
+    public Receptionist(String password, String name, String surname, String gender, String phoneNumber, String address) {
+        super(password, name, surname, gender, phoneNumber, address);
     }
 
-    public Receptionist(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
-        super(username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
+    public Receptionist(String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
     }
 
     public void bookTreatment(Treatment treatment, Client client, Database database) {
@@ -21,12 +22,12 @@ public class Receptionist extends Employee {
             treatment.setPrice(price);
         }
 
-        database.bookTreatment(treatment);
+        database.bookTreatment(treatment, database.getNextTreatmentId());
         client.changeMoneySpent(-price, database);
     }
 
-    public List<Treatment> getAllTreatments() {
-        return new ArrayList<>();
+    public HashMap<Integer, Treatment> getAllTreatments() {
+        return new HashMap<>();
     }
 
     public void cancelTreatment(int treatmentId, Database database, String cancellationReason) {
@@ -38,7 +39,7 @@ public class Receptionist extends Employee {
     }
 
     @Override
-    public String getFileString() {
-        return "R" + super.getFileString();
+    public String getFileString(String username) {
+        return "R" + super.getFileString(username);
     }
 }
