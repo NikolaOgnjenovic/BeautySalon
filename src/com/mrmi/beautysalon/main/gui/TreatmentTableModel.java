@@ -1,4 +1,4 @@
-package com.mrmi.beautysalon.main.run;
+package com.mrmi.beautysalon.main.gui;
 
 import com.mrmi.beautysalon.main.objects.Client;
 import com.mrmi.beautysalon.main.objects.Database;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TreatmentTableModel extends AbstractTableModel {
-    private final List<Treatment> treatments;
+    private final HashMap<Integer, Treatment> treatments;
     private final Database database;
     private final boolean canEdit;
 
@@ -22,7 +22,7 @@ public class TreatmentTableModel extends AbstractTableModel {
             Date.class, Integer.class, Double.class, String.class, String.class, String.class, Boolean.class, String.class
     };
 
-    public TreatmentTableModel(Database database, List<Treatment> treatments, boolean canEdit)
+    public TreatmentTableModel(Database database, HashMap<Integer, Treatment> treatments, boolean canEdit)
     {
         this.database = database;
         this.treatments = treatments;
@@ -56,7 +56,7 @@ public class TreatmentTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        Treatment treatment = treatments.get(rowIndex);
+        Treatment treatment = treatments.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
             case 0 -> {
                 return treatment.getScheduledDate();
@@ -96,7 +96,7 @@ public class TreatmentTableModel extends AbstractTableModel {
         if (!canEdit) {
             return;
         }
-        Treatment treatment = treatments.get(rowIndex);
+        Treatment treatment = treatments.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
             case 0 -> {
                 treatment.setScheduledDate((Date) aValue);

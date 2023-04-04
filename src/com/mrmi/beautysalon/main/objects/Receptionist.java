@@ -26,8 +26,8 @@ public class Receptionist extends Employee {
         client.changeMoneySpent(-price, database);
     }
 
-    public HashMap<Integer, Treatment> getAllTreatments() {
-        return new HashMap<>();
+    public HashMap<Integer, Treatment> getAllTreatments(Database database) {
+        return database.getTreatments();
     }
 
     public void cancelTreatment(int treatmentId, Database database, String cancellationReason) {

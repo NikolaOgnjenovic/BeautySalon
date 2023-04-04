@@ -1,1 +1,4 @@
-0,Manicure,1000.0,2,2000.0
+1,Manicureee,1.013541E8,2,2000.0
+3,badgadgggadgda,1.2312312E7,0,0.0
+4,badgadgggadgda,1.2312312E7,0,0.0
+5,badgadgggadgda,1.2312312E7,0,0.0

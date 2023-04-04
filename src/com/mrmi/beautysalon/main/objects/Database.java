@@ -46,12 +46,15 @@ public class Database {
     }
 
     public boolean login(String username, String password) {
-        for (Map.Entry<String, User> u : users.entrySet()) {
-            if (u.getKey().equals(username) && u.getValue().getPassword().equals(password)) {
-                currentUsername = u.getKey();
-                currentUser = u.getValue();
-                return true;
-            }
+        if (!users.containsKey(username)) {
+            currentUsername = "";
+            currentUser = null;
+            return false;
+        }
+        if (users.get(username).getPassword().equals(password)) {
+            currentUser = users.get(username);
+            currentUsername = "";
+            return true;
         }
         currentUsername = "";
         currentUser = null;
@@ -66,6 +69,7 @@ public class Database {
     public double getLoyaltyThreshold() {
         return loyaltyThreshold;
     }
+
     public void setLoyaltyThreshold(double loyaltyThreshold) {
         this.loyaltyThreshold = loyaltyThreshold;
         overwriteVariablesFile();
@@ -83,13 +87,15 @@ public class Database {
             throw new UserNotFoundException("User with username " + username + " not found.");
         }
         users.remove(username);
+        overwriteUsersFile();
     }
 
-    public void editUser(User user, String username) throws UserNotFoundException {
+    public void updateUser(String username, User user) throws UserNotFoundException {
         if (!users.containsKey(username)) {
             throw new UserNotFoundException("User with username " + username + " not found.");
         }
         users.put(username, user);
+        overwriteUsersFile();
     }
 
     public HashMap<String, User> getUsers() {
@@ -102,7 +108,7 @@ public class Database {
         return users.containsKey(username);
     }
 
-    public Client getClientByUsername(String username) throws UserNotFoundException{
+    public Client getClientByUsername(String username) throws UserNotFoundException {
         if (!users.containsKey(username)) {
             throw new UserNotFoundException("Client with username " + username + " not found.");
         }
@@ -111,7 +117,7 @@ public class Database {
 
     public HashMap<String, Client> getLoyalClients() {
         HashMap<String, Client> clients = new HashMap<>();
-        for(Map.Entry<String, User> u : users.entrySet()) {
+        for (Map.Entry<String, User> u : users.entrySet()) {
             if (u.getValue().getClass().equals(Client.class)) {
                 Client c = (Client) u.getValue();
                 if (c.hasLoyaltyCard()) {
@@ -240,7 +246,7 @@ public class Database {
     //endregion
 
     //region Treatment
-    public Treatment getTreatmentById (int id) throws TreatmentNotFoundException {
+    public Treatment getTreatmentById(int id) throws TreatmentNotFoundException {
         if (!treatments.containsKey(id)) {
             throw new TreatmentNotFoundException("Treatment with id " + id + " not found.");
         }
@@ -282,6 +288,7 @@ public class Database {
     public int getNextTreatmentId() {
         return treatmentId++;
     }
+
     public void cancelTreatment(int treatmentId, boolean clientCancelled, String cancellationReason) {
         Treatment t;
         try {
@@ -328,12 +335,18 @@ public class Database {
     public HashMap<Integer, Treatment> getTreatments() {
         return treatments;
     }
+
+    public void deleteTreatment(int id) {
+        this.treatments.remove(id);
+        overwriteTreatmentsFile();
+    }
     //endregion
 
     //region Treatment types
     public HashMap<Integer, TreatmentType> getTreatmentTypes() {
         return treatmentTypes;
     }
+
     public TreatmentType getTreatmentTypeById(int id) throws TreatmentTypeNotFoundException {
         if (!treatmentTypes.containsKey(id)) {
             throw new TreatmentTypeNotFoundException("Treatment type with id " + id + " not found.");
@@ -359,6 +372,16 @@ public class Database {
 
     public List<Treatment> getTreatmentsSortedByCancellationReason() {
         return treatments.values().stream().sorted(Comparator.comparing(Treatment::getCancellationReason)).toList();
+    }
+
+    public void updateTreatmentType(int id, TreatmentType treatmentType) {
+        treatmentTypes.put(id, treatmentType);
+        overwriteTreatmentTypesFile();
+    }
+
+    public void deleteTreatmentType(int id) {
+        treatmentTypes.remove(id);
+        overwriteTreatmentTypesFile();
     }
     //endregion
 
@@ -386,7 +409,7 @@ public class Database {
                     case "B" -> {
                         List<Byte> treatmentTypeIDs = new ArrayList<>();
                         String[] treatmentTypes = userData[12].split(";");
-                        for(String s : treatmentTypes) {
+                        for (String s : treatmentTypes) {
                             treatmentTypeIDs.add(Byte.parseByte(s));
                         }
                         users.put(userData[1], new Beautician(
@@ -523,11 +546,12 @@ public class Database {
             e.printStackTrace();
         }
     }
+
     private void overwriteTreatmentsFile() {
         String fileName = filePathPrefix + "data/treatments.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-            for (Map.Entry<Integer, Treatment> t: treatments.entrySet()) {
+            for (Map.Entry<Integer, Treatment> t : treatments.entrySet()) {
                 out.write(t.getValue().getFileString(t.getKey()));
                 out.write("\n");
             }
@@ -591,6 +615,7 @@ public class Database {
     private void checkDataFile() {
         new File(filePathPrefix + "data").mkdir();
     }
+
     private void fileCheck(String fileName) {
         try {
             new File(fileName).createNewFile();

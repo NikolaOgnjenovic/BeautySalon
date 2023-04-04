@@ -368,7 +368,7 @@ public class ConsoleApp {
     }
 
     private void printAllTreatments(Receptionist receptionist) {
-        HashMap<Integer, Treatment> treatments = receptionist.getAllTreatments();
+        HashMap<Integer, Treatment> treatments = receptionist.getAllTreatments(database);
         if (treatments.size() < 1) {
             System.out.println("You have no treatments.");
             return;
@@ -567,20 +567,9 @@ public class ConsoleApp {
         }
     }
 
-    // TODO: date range
-    /*
-    Prikaz kozmetičke usluge, što podrazumeva prikaz podataka o samoj usluzi injenom tipu,
-    ukupan broj zakaznih tretmana za tu uslugu i ostvarene prihode za izabrani opseg datuma.
-     */
     private void viewTreatmentTypeStats() {
-        HashMap<Integer, TreatmentType> treatmentTypes = database.getTreatmentTypes();
-        //List<TreatmentType> treatmentTypes = database.getTreatmentTypes();
-        for (TreatmentType t : treatmentTypes.values()) {
-        //for (TreatmentType t : treatmentTypes) {
-            System.out.println(t);
-        }
-    }
 
+    }
     private void editUser() {
 
     }

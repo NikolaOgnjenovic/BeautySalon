@@ -1,14 +1,12 @@
-package com.mrmi.beautysalon.main.run;
+package com.mrmi.beautysalon.main.gui;
 
-import com.mrmi.beautysalon.main.objects.Client;
-import com.mrmi.beautysalon.main.objects.Database;
+import com.mrmi.beautysalon.main.objects.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 
-public class Login extends JFrame {
-    public Login(Database database) {
+public class LoginFrame extends JFrame {
+    public LoginFrame(Database database) {
         this.setTitle("Login");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(true);
@@ -37,7 +35,16 @@ public class Login extends JFrame {
             } else {
                 if (Database.currentUser.getClass().equals(Client.class)) {
                     this.dispose();
-                    ClientFrame clientFrame = new ClientFrame(database, (Client) Database.currentUser, username.getText());
+                    ClientFrame clientFrame = new ClientFrame(database);
+                } else if (Database.currentUser.getClass().equals(Beautician.class)) {
+                    this.dispose();
+                    BeauticianFrame beauticianFrame = new BeauticianFrame(database);
+                } else if (Database.currentUser.getClass().equals(Receptionist.class)) {
+                    this.dispose();
+                    ReceptionistFrame receptionistFrame = new ReceptionistFrame(database);
+                } else if (Database.currentUser.getClass().equals(Manager.class)) {
+                    this.dispose();
+                    ManagerFrame managerFrame = new ManagerFrame(database);
                 }
             }
         });

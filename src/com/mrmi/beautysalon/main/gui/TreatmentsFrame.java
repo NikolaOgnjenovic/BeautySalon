@@ -1,20 +1,16 @@
-package com.mrmi.beautysalon.main.run;
+package com.mrmi.beautysalon.main.gui;
 
 
 import com.mrmi.beautysalon.main.objects.Database;
-import com.mrmi.beautysalon.main.objects.Employee;
 import com.mrmi.beautysalon.main.objects.Treatment;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 public class TreatmentsFrame extends JFrame {
-    public TreatmentsFrame(Database database, String title, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean canCancel) {
-        TreatmentTableModel tableModel = new TreatmentTableModel(database, treatments.values().stream().toList(), canEdit);
+    public TreatmentsFrame(Database database, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean canCancel, boolean canDelete, JFrame previousFrame) {
+        TreatmentTableModel tableModel = new TreatmentTableModel(database, treatments, canEdit);
         JTable table = new JTable(tableModel);
         this.add(new JScrollPane(table));
 
@@ -41,9 +37,26 @@ public class TreatmentsFrame extends JFrame {
                     t.setCancelled(true);
                     t.setCancellationReason(cancellationReason.getText());
                     database.updateTreatment(t);
+                    tableModel.fireTableDataChanged();
                 }
             });
             this.add(cancel);
         }
+
+        // Svinjarija
+        if (canDelete) {
+            JButton delete = new JButton("Delete treatment");
+            delete.addActionListener(e -> {
+                database.deleteTreatment(treatments.keySet().stream().toList().get(table.getSelectedRow()));
+                tableModel.fireTableDataChanged();
+            });
+            this.add(delete);
+        }
+
+        JButton back = new JButton("Back");
+        back.addActionListener(e -> {
+            this.dispose();
+            previousFrame.setVisible(true);
+        });
     }
 }

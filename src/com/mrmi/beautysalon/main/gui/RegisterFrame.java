@@ -1,10 +1,10 @@
-package com.mrmi.beautysalon.main.run;
+package com.mrmi.beautysalon.main.gui;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Register extends JFrame {
-    public Register() {
+public class RegisterFrame extends JFrame {
+    public RegisterFrame() {
         this.setTitle("Register");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(true);

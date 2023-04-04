@@ -1,4 +1,4 @@
-package com.mrmi.beautysalon.main.run;
+package com.mrmi.beautysalon.main.gui;
 
 import com.mrmi.beautysalon.main.objects.Database;
 
@@ -21,12 +21,12 @@ public class MainFrame extends JFrame {
 
         register.addActionListener(e -> {
             this.dispose();
-            Register registerFrame = new Register();
+            RegisterFrame registerFrame = new RegisterFrame();
         });
 
         login.addActionListener(e -> {
             this.dispose();
-            Login loginFrame = new Login(database);
+            LoginFrame loginFrame = new LoginFrame(database);
         });
     }
 }

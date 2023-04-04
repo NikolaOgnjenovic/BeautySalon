@@ -7,21 +7,6 @@ public class TreatmentType {
     private int timesBooked;
     private double profit;
 
-//    public TreatmentType(String name, double price, int id) {
-//        this.name = name;
-//        this.price = price;
-//        this.id = id;
-//        this.timesBooked = 0;
-//        this.profit = 0;
-//    }
-//
-//    public TreatmentType(String name, double price, int id, int timesBooked, double profit) {
-//        this.name = name;
-//        this.price = price;
-//        this.id = id;
-//        this.timesBooked = timesBooked;
-//        this.profit = profit;
-//    }
 public TreatmentType(String name, double price) {
     this.name = name;
     this.price = price;
@@ -39,11 +24,6 @@ public TreatmentType(String name, double price) {
         return price;
     }
 
-
-//    public int getId() {
-//        return id;
-//    }
-
     public void changeTimesBooked(int amount) {
         this.timesBooked += amount;
     }
@@ -52,20 +32,47 @@ public TreatmentType(String name, double price) {
         this.profit += amount;
     }
 
+    public String getDisplayString(int id) {
+        return "ID: " + id + ", name: " + name + ", price: " + price;
+    }
     @Override
     public String toString() {
         return "TreatmentType{" +
                 "name='" + name + '\'' +
                 ", price=" + price +
-                //", id=" + id +
                 ", timesBooked=" + timesBooked +
                 ", profit=" + profit +
                 '}';
     }
 
-//    public String getFileString() {
-//        return name + "," + price + "," + id + "," + timesBooked + "," + profit;
-//    }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public int getTimesBooked() {
+        return timesBooked;
+    }
+
+    public void setTimesBooked(int timesBooked) {
+        this.timesBooked = timesBooked;
+    }
+
+    public double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(double profit) {
+        this.profit = profit;
+    }
+
     public String getFileString(int id) {
         return id + "," + name + "," + price + "," + timesBooked + "," + profit;
     }
