@@ -10,12 +10,14 @@ import java.util.*;
 
 public class Database {
     private HashMap<String, User> users;
+    private HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories;
     private HashMap<Integer, TreatmentType> treatmentTypes;
     private HashMap<Integer, Treatment> treatments;
     public static User currentUser;
     public static String currentUsername;
 
     private double salonIncome = 0;
+    private int treatmentTypeCategoryId = 0;
     private int treatmentTypeId = 0;
 
     private int treatmentId = 0;
@@ -26,9 +28,6 @@ public class Database {
     //region Database data & static variables
     public Database(String filePathPrefix) {
         this.filePathPrefix = filePathPrefix;
-        this.users = new HashMap<>();
-        this.treatments = new HashMap<>();
-        this.treatmentTypes = new HashMap<>();
         loadData();
     }
 
@@ -37,6 +36,7 @@ public class Database {
         readUsersFile();
         readTreatmentsFile();
         readTreatmentTypesFile();
+        readTreatmentTypeCategoriesFile();
         readVariablesFile();
     }
 
@@ -245,6 +245,83 @@ public class Database {
     //region Manager
     //endregion
 
+    //region Treatment Type Category
+    public HashMap<Integer, TreatmentTypeCategory> getTreatmentTypeCategories() {
+        return treatmentTypeCategories;
+    }
+
+    public void updateTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
+        treatmentTypeCategories.put(id, treatmentTypeCategory);
+        overwriteTreatmentTypeCategoriesFile();
+    }
+
+    public void deleteTreatmentTypeCategory(int id) {
+        treatmentTypeCategories.remove(id);
+        overwriteTreatmentTypeCategoriesFile();
+    }
+
+    public void addTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
+        treatmentTypeCategories.put(id, treatmentTypeCategory);
+        writeTreatmentTypeCategory(treatmentTypeCategory, id);
+        overwriteVariablesFile();
+    }
+
+    public int getNextTreatmentTypeCategoryId() {
+        return treatmentTypeCategoryId++;
+    }
+    //endregion
+
+    //region Treatment types
+    public HashMap<Integer, TreatmentType> getTreatmentTypes() {
+        return treatmentTypes;
+    }
+
+    public TreatmentType getTreatmentTypeById(int id) throws TreatmentTypeNotFoundException {
+        if (!treatmentTypes.containsKey(id)) {
+            throw new TreatmentTypeNotFoundException("Treatment type with id " + id + " not found.");
+
+        }
+        return treatmentTypes.get(id);
+    }
+
+    public void addTreatmentType(TreatmentType type, int id) {
+        treatmentTypes.put(id, type);
+        writeTreatmentType(type, id);
+        overwriteVariablesFile();
+    }
+
+    public int getNextTreatmentTypeId() {
+        return treatmentTypeId++;
+    }
+
+    // TODO: sort -> to list vs counting sort?d
+    public List<Treatment> getTreatmentsSortedByBeauticians() {
+        return treatments.values().stream().sorted(Comparator.comparing(Treatment::getBeauticianUsername)).toList();
+    }
+
+    public List<Treatment> getTreatmentsSortedByCancellationReason() {
+        return treatments.values().stream().sorted(Comparator.comparing(Treatment::getCancellationReason)).toList();
+    }
+
+    public void updateTreatmentType(int id, TreatmentType treatmentType) {
+        treatmentTypes.put(id, treatmentType);
+        overwriteTreatmentTypesFile();
+    }
+
+    public void deleteTreatmentType(int id) {
+        treatmentTypes.remove(id);
+        overwriteTreatmentTypesFile();
+    }
+
+    public HashMap<Integer, TreatmentType> getTreatmentTypesByCategoryList(List<Integer> treatmentTypeCategoryIDs) {
+        HashMap<Integer, TreatmentType> treatmentTypes = new HashMap<>();
+        for (int i : treatmentTypeCategoryIDs) {
+            treatmentTypes.put(i, treatmentTypes.get(i));
+        }
+        return treatmentTypes;
+    }
+    //endregion
+
     //region Treatment
     public Treatment getTreatmentById(int id) throws TreatmentNotFoundException {
         if (!treatments.containsKey(id)) {
@@ -261,7 +338,8 @@ public class Database {
         overwriteTreatmentsFile();
     }
 
-    public void updateTreatment(Treatment treatment) {
+    public void updateTreatment(Treatment treatment, int id) {
+        treatments.put(id, treatment);
         overwriteTreatmentsFile();
     }
 
@@ -332,6 +410,14 @@ public class Database {
         }
     }
 
+    public Double getTotalCost(HashMap<Integer, Treatment> treatments) {
+        Double cost = 0d;
+        for (Treatment t : treatments.values()) {
+            cost += t.getPrice();
+        }
+        return cost;
+    }
+
     public HashMap<Integer, Treatment> getTreatments() {
         return treatments;
     }
@@ -339,49 +425,6 @@ public class Database {
     public void deleteTreatment(int id) {
         this.treatments.remove(id);
         overwriteTreatmentsFile();
-    }
-    //endregion
-
-    //region Treatment types
-    public HashMap<Integer, TreatmentType> getTreatmentTypes() {
-        return treatmentTypes;
-    }
-
-    public TreatmentType getTreatmentTypeById(int id) throws TreatmentTypeNotFoundException {
-        if (!treatmentTypes.containsKey(id)) {
-            throw new TreatmentTypeNotFoundException("Treatment type with id " + id + " not found.");
-
-        }
-        return treatmentTypes.get(id);
-    }
-
-    public void addTreatmentType(TreatmentType type, int id) {
-        treatmentTypes.put(id, type);
-        writeTreatmentType(type, id);
-        overwriteVariablesFile();
-    }
-
-    public int getNextTreatmentTypeId() {
-        return treatmentTypeId++;
-    }
-
-    // TODO: sort -> to list vs counting sort?d
-    public List<Treatment> getTreatmentsSortedByBeauticians() {
-        return treatments.values().stream().sorted(Comparator.comparing(Treatment::getBeauticianUsername)).toList();
-    }
-
-    public List<Treatment> getTreatmentsSortedByCancellationReason() {
-        return treatments.values().stream().sorted(Comparator.comparing(Treatment::getCancellationReason)).toList();
-    }
-
-    public void updateTreatmentType(int id, TreatmentType treatmentType) {
-        treatmentTypes.put(id, treatmentType);
-        overwriteTreatmentTypesFile();
-    }
-
-    public void deleteTreatmentType(int id) {
-        treatmentTypes.remove(id);
-        overwriteTreatmentTypesFile();
     }
     //endregion
 
@@ -482,6 +525,57 @@ public class Database {
     }
     //endregion
 
+    //region TreatmentTypeCategory IO
+    private void readTreatmentTypeCategoriesFile() {
+        treatmentTypeCategories = new HashMap<>();
+        String fileName = filePathPrefix + "data/treatmentTypeCategories.txt";
+        fileCheck(fileName);
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = in.readLine()) != null) {
+                line = line.trim();
+                String[] data = line.split(",");
+                String[] treatmentTypeArr = data[2].split(";");
+                ArrayList<Integer> treatmentTypeIDs = new ArrayList<>();
+                for (String s : treatmentTypeArr) {
+                    treatmentTypeIDs.add(Integer.parseInt(s));
+                }
+                treatmentTypeCategories.put(Integer.parseInt(data[0]), new TreatmentTypeCategory(data[1], treatmentTypeIDs));
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory, int id) {
+        String fileName = filePathPrefix + "data/treatmentTypeCategories.txt";
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+            out.write(treatmentTypeCategory.getFileString(id));
+            out.write("\n");
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void overwriteTreatmentTypeCategoriesFile() {
+        String fileName = filePathPrefix + "data/treatmentTypeCategories.txt";
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            for (Map.Entry<Integer, TreatmentTypeCategory> t : treatmentTypeCategories.entrySet()) {
+                out.write(t.getValue().getFileString(t.getKey()));
+                out.write("\n");
+            }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    //endregion
+
     //region TreatmentTypes IO
     private void readTreatmentTypesFile() {
         treatmentTypes = new HashMap<>();
@@ -493,7 +587,7 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4])));
+                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4]), data[5]));
             }
             in.close();
         } catch (Exception e) {
@@ -585,11 +679,13 @@ public class Database {
                 treatmentTypeId = Integer.parseInt(in.readLine());
                 treatmentId = Integer.parseInt(in.readLine());
                 loyaltyThreshold = Double.parseDouble(in.readLine());
+                treatmentTypeCategoryId = Integer.parseInt(in.readLine());
             } catch (NumberFormatException e) {
                 salonIncome = 0;
                 treatmentTypeId = 0;
                 treatmentId = 0;
                 loyaltyThreshold = 5000;
+                treatmentTypeCategoryId = 0;
             }
             in.close();
         } catch (Exception e) {
@@ -605,6 +701,7 @@ public class Database {
             out.write(treatmentTypeId + "\n");
             out.write(treatmentId + "\n");
             out.write(loyaltyThreshold + "\n");
+            out.write(treatmentTypeCategoryId + "\n");
             out.close();
         } catch (Exception e) {
             e.printStackTrace();

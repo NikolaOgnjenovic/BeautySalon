@@ -45,8 +45,6 @@ public class BeauticianFrame extends JFrame {
 
         // TODO
         JButton viewSchedule = new JButton("View schedule");
-        viewSchedule.addActionListener(e -> {
-            System.out.println(beautician.getSchedule());
-        });
+        viewSchedule.addActionListener(e -> System.out.println(beautician.getSchedule()));
     }
 }

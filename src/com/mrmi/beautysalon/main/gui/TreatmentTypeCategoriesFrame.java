@@ -6,16 +6,16 @@ import com.mrmi.beautysalon.main.objects.TreatmentTypeCategory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TreatmentTypesFrame extends JFrame {
-    public TreatmentTypesFrame(Database database, HashMap<Integer, TreatmentType> treatmentTypes, boolean canEdit, boolean canDelete) {
-        TreatmentTypeTableModel tableModel = new TreatmentTypeTableModel(database, treatmentTypes, canEdit);
+public class TreatmentTypeCategoriesFrame extends JFrame {
+    public TreatmentTypeCategoriesFrame(Database database, HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories, boolean canEdit, boolean canDelete) {
+        TreatmentTypeCategoryTableModel tableModel = new TreatmentTypeCategoryTableModel(database, treatmentTypeCategories, canEdit);
         JTable table = new JTable(tableModel);
         this.add(new JScrollPane(table));
 
-        this.setTitle("Treatment types");
+        this.setTitle("Treatment type categories");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         this.setVisible(true);
@@ -23,9 +23,9 @@ public class TreatmentTypesFrame extends JFrame {
 
         // Svinjarija
         if (canDelete) {
-            JButton delete = new JButton("Delete treatment type");
+            JButton delete = new JButton("Delete treatment type category");
             delete.addActionListener(e -> {
-                database.deleteTreatmentType(treatmentTypes.keySet().stream().toList().get(table.getSelectedRow()));
+                database.deleteTreatmentTypeCategory(treatmentTypeCategories.keySet().stream().toList().get(table.getSelectedRow()));
                 tableModel.fireTableDataChanged();
             });
             this.add(delete);
@@ -34,16 +34,10 @@ public class TreatmentTypesFrame extends JFrame {
         this.add(new JLabel("Name"));
         JTextField nameField = new JTextField();
         this.add(nameField);
-        this.add(new JLabel("Price"));
-        JTextField priceField = new JTextField();
-        this.add(priceField);
-        this.add(new JLabel("Treatment type category name"));
-        JTextField categoryField = new JTextField();
-        this.add(categoryField);
 
         JButton addButton = new JButton("Add new type");
         addButton.addActionListener(e -> {
-            database.addTreatmentType(new TreatmentType(nameField.getText(), Double.parseDouble(priceField.getText()), categoryField.getText()), database.getNextTreatmentTypeId());
+            database.addTreatmentTypeCategory(database.getNextTreatmentTypeCategoryId(), new TreatmentTypeCategory(nameField.getText(), new ArrayList<>()));
             tableModel.fireTableDataChanged();
         });
         this.add(addButton);

@@ -41,6 +41,7 @@ public class ClientFrame extends JFrame {
         });
         this.add(viewPastTreatments);
 
+
         JButton cancelTreatment = new JButton("Cancel a treatment");
         cancelTreatment.addActionListener(e -> {
             this.dispose();

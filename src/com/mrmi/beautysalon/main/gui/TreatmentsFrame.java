@@ -13,12 +13,18 @@ public class TreatmentsFrame extends JFrame {
         TreatmentTableModel tableModel = new TreatmentTableModel(database, treatments, canEdit);
         JTable table = new JTable(tableModel);
         this.add(new JScrollPane(table));
-
         this.setTitle("Treatments");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         this.setVisible(true);
         this.setLayout(new FlowLayout());
+
+//        JTextField treatmentNameField = new JTextField("Enter treatment name");
+//        this.add(treatmentNameField);
+//        JTextField treatmentLengthField = new JTextField("Enter treatment length");
+//        this.add(treatmentLengthField);
+//        JTextField treatmentPriceField = new JTextField("Enter treatment price");
+//        this.add(treatmentPriceField);
 
         if (canCancel) {
             JTextField cancellationReason = new JTextField();
@@ -36,7 +42,7 @@ public class TreatmentsFrame extends JFrame {
                     t.setStatus("CANCELLED");
                     t.setCancelled(true);
                     t.setCancellationReason(cancellationReason.getText());
-                    database.updateTreatment(t);
+                    database.updateTreatment(t, treatments.keySet().stream().toList().get(table.getSelectedRow()));
                     tableModel.fireTableDataChanged();
                 }
             });
@@ -58,5 +64,13 @@ public class TreatmentsFrame extends JFrame {
             this.dispose();
             previousFrame.setVisible(true);
         });
+
+        Double totalCost = database.getTotalCost(treatments);
+        JLabel total = new JLabel("Total cost: " + totalCost);
+        this.add(total);
+        JLabel totalRefund = new JLabel(totalCost + " will be refunded if the salon cancels the treatments");
+        this.add(totalRefund);
+        JLabel clientRefund = new JLabel(0.9*totalCost + " will be refunded if the client cancels the treatments");
+        this.add(clientRefund);
     }
 }

@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.objects;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class Client extends User {
     private double moneySpent;
@@ -56,6 +55,7 @@ public class Client extends User {
     public boolean hasLoyaltyCard() {
         return hasLoyaltyCard;
     }
+
 
     private void checkLoyaltyCard(Database database) {
         this.hasLoyaltyCard = this.moneySpent >= database.getLoyaltyThreshold();

@@ -1,3 +1,2 @@
-R,Receptionist,pass,Rec,eptionisto,F,123,adr,6,2,0.0,30000.0,
 M,manager,manager,Manager,McGee,F,1234,dagdag,7,3,0.0,100000.0,
 C,Mrmi,pass,Mrmki,Mrmic,M,123,adre,false,0.0

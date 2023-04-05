@@ -1,14 +1,11 @@
 package com.mrmi.beautysalon.main.gui;
 
-import com.mrmi.beautysalon.main.objects.Client;
 import com.mrmi.beautysalon.main.objects.Database;
-import com.mrmi.beautysalon.main.objects.Employee;
 import com.mrmi.beautysalon.main.objects.Treatment;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 public class TreatmentTableModel extends AbstractTableModel {
     private final HashMap<Integer, Treatment> treatments;
@@ -98,34 +95,17 @@ public class TreatmentTableModel extends AbstractTableModel {
         }
         Treatment treatment = treatments.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
-            case 0 -> {
-                treatment.setScheduledDate((Date) aValue);
-            }
-            case 1 -> {
-                treatment.setTreatmentTypeId((Integer) aValue);
-            }
-            case 2 -> {
-                treatment.setPrice((Double) aValue);
-            }
-            case 3 -> {
-                treatment.setClientUsername((String) aValue);
-            }
-            case 4 -> {
-                treatment.setBeauticianUsername((String) aValue);
-            }
-            case 5 -> {
-                treatment.setStatus((String) aValue);
-            }
-
-            case 6 -> {
-                treatment.setCancelled((Boolean) aValue);
-            }
-            case 7 -> {
-                treatment.setCancellationReason((String) aValue);
-            }
+            case 0 -> treatment.setScheduledDate((Date) aValue);
+            case 1 -> treatment.setTreatmentTypeId((Integer) aValue);
+            case 2 -> treatment.setPrice((Double) aValue);
+            case 3 -> treatment.setClientUsername((String) aValue);
+            case 4 -> treatment.setBeauticianUsername((String) aValue);
+            case 5 -> treatment.setStatus((String) aValue);
+            case 6 -> treatment.setCancelled((Boolean) aValue);
+            case 7 -> treatment.setCancellationReason((String) aValue);
         }
 
-        database.updateTreatment(treatment);
+        database.updateTreatment(treatment, treatments.keySet().stream().toList().get(rowIndex));
     }
 
     @Override

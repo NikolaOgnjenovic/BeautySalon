@@ -490,7 +490,7 @@ public class ConsoleApp {
         String name = scanner.nextLine();
         System.out.println("Enter the treatment type price");
         int price = Integer.parseInt(scanner.nextLine());
-        database.addTreatmentType(new TreatmentType(name, price), database.getNextTreatmentTypeId());
+        database.addTreatmentType(new TreatmentType(name, price, "nokti"), database.getNextTreatmentTypeId());
     }
 
     private void setLoyaltyThreshold() {

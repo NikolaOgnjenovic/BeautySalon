@@ -2,7 +2,6 @@ package com.mrmi.beautysalon.main.gui;
 
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.objects.Database;
-import com.mrmi.beautysalon.main.objects.Treatment;
 import com.mrmi.beautysalon.main.objects.User;
 
 import javax.swing.*;
@@ -14,7 +13,6 @@ public class UsersFrame extends JFrame {
         UserTableModel tableModel = new UserTableModel(database, users, canEdit);
         JTable table = new JTable(tableModel);
         this.add(new JScrollPane(table));
-
         this.setTitle("Users");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();

@@ -3,21 +3,23 @@ package com.mrmi.beautysalon.main.objects;
 public class TreatmentType {
     private String name;
     private double price;
-    //private int id;
     private int timesBooked;
     private double profit;
+    private String categoryName;
 
-public TreatmentType(String name, double price) {
-    this.name = name;
-    this.price = price;
-    this.timesBooked = 0;
-    this.profit = 0;
-}
-    public TreatmentType(String name, double price, int timesBooked, double profit) {
+    public TreatmentType(String name, double price, String categoryName) {
+        this.name = name;
+        this.price = price;
+        this.timesBooked = 0;
+        this.profit = 0;
+        this.categoryName = categoryName;
+    }
+    public TreatmentType(String name, double price, int timesBooked, double profit, String categoryName) {
         this.name = name;
         this.price = price;
         this.timesBooked = timesBooked;
         this.profit = profit;
+        this.categoryName = categoryName;
     }
 
     public double getPrice() {
@@ -73,7 +75,15 @@ public TreatmentType(String name, double price) {
         this.profit = profit;
     }
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     public String getFileString(int id) {
-        return id + "," + name + "," + price + "," + timesBooked + "," + profit;
+        return id + "," + name + "," + price + "," + timesBooked + "," + profit + "," + categoryName;
     }
 }

@@ -61,9 +61,7 @@ public class BookTreatmentFrame extends JFrame {
         }
              */
         JButton bookButton = new JButton("Book");
-        bookButton.addActionListener(e -> {
-            database.bookTreatment(new Treatment(new Date(), false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), database.getNextTreatmentId());
-        });
+        bookButton.addActionListener(e -> database.bookTreatment(new Treatment(new Date(), false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), database.getNextTreatmentId()));
         this.add(bookButton);
     }
 

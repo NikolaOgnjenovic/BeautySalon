@@ -1,0 +1,3 @@
+5,Manicure,;
+6,Pedicure,;
+7,Hair,;

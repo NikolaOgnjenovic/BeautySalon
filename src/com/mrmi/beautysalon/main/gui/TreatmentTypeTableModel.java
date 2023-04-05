@@ -1,12 +1,9 @@
 package com.mrmi.beautysalon.main.gui;
 
-import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.objects.*;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class TreatmentTypeTableModel extends AbstractTableModel {
     private final HashMap<Integer, TreatmentType> treatmentTypes;
@@ -20,10 +17,10 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
                 ", profit=" + profit +
      */
     private final String[] columnNames = new String[] {
-            "Name", "Price", "Times booked", "Profit"
+            "Category name", "Name", "Price", "Times booked", "Profit"
     };
     private final Class[] columnClass = new Class[] {
-            String.class, Double.class, Integer.class, Double.class
+            String.class, String.class, Double.class, Integer.class, Double.class
     };
 
     public TreatmentTypeTableModel(Database database, HashMap<Integer, TreatmentType> treatmentTypes, boolean canEdit)
@@ -63,15 +60,18 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
         TreatmentType treatmentType = treatmentTypes.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
             case 0 -> {
-                return treatmentType.getName();
+                return treatmentType.getCategoryName();
             }
             case 1 -> {
-                return treatmentType.getPrice();
+                return treatmentType.getName();
             }
             case 2 -> {
-                return treatmentType.getTimesBooked();
+                return treatmentType.getPrice();
             }
             case 3 -> {
+                return treatmentType.getTimesBooked();
+            }
+            case 4 -> {
                 return treatmentType.getProfit();
             }
             default -> {
@@ -88,10 +88,11 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
         }
         TreatmentType treatmentType = treatmentTypes.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
-            case 0 -> treatmentType.setName(aValue.toString());
-            case 1 -> treatmentType.setPrice(Double.parseDouble(aValue.toString()));
-            case 2 -> treatmentType.setTimesBooked(Integer.parseInt(aValue.toString()));
-            case 3 -> treatmentType.setProfit(Double.parseDouble(aValue.toString()));
+            case 0 -> treatmentType.setCategoryName(aValue.toString());
+            case 1 -> treatmentType.setName(aValue.toString());
+            case 2 -> treatmentType.setPrice(Double.parseDouble(aValue.toString()));
+            case 3 -> treatmentType.setTimesBooked(Integer.parseInt(aValue.toString()));
+            case 4 -> treatmentType.setProfit(Double.parseDouble(aValue.toString()));
         }
 
         database.updateTreatmentType(treatmentTypes.keySet().stream().toList().get(rowIndex), treatmentType);

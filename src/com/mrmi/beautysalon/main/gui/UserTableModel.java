@@ -1,6 +1,5 @@
 package com.mrmi.beautysalon.main.gui;
 
-import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.objects.*;
 
@@ -14,11 +13,11 @@ public class UserTableModel extends AbstractTableModel {
 
     private final String[] columnNames = new String[] {
             "Username", "Password", "Name", "Surname", "Gender", "Phone number", "Address", "Qualification level",
-            "Years of experience", "Monthly salary", "Bonus", "Known treatment types"
+            "Years of experience", "Monthly salary", "Bonus", "Known treatment types", "Has loyalty card"
     };
     private final Class[] columnClass = new Class[] {
             String.class, String.class, String.class, String.class, String.class, String.class, String.class, Byte.class,
-            Byte.class, Double.class, Double.class, String.class
+            Byte.class, Double.class, Double.class, String.class, Boolean.class
     };
 
     public UserTableModel(Database database, HashMap<String, User> users, boolean canEdit)
@@ -108,6 +107,12 @@ public class UserTableModel extends AbstractTableModel {
                     return b.getTreatmentTypeIDs().toString();
                 }
             }
+            case 12 -> {
+                if (user.getClass().equals(Client.class)) {
+                    Client c = (Client) user;
+                    return c.hasLoyaltyCard();
+                }
+            }
             default -> {
                 return null;
             }
@@ -154,7 +159,7 @@ public class UserTableModel extends AbstractTableModel {
                 }
             }
             case 11 -> {
-                if (!user.getClass().equals(Client.class)) {
+                if (user.getClass().equals(Beautician.class)) {
                     Beautician b = (Beautician) user;
                     List<Byte> treatmentTypeIDs = new ArrayList<>();
                     String[] values = aValue.toString().substring(1, aValue.toString().length() - 1).split(", ");

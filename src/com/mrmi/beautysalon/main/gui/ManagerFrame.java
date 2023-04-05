@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.gui;
 
 import com.mrmi.beautysalon.main.objects.Database;
-import com.mrmi.beautysalon.main.objects.Manager;
 import com.mrmi.beautysalon.main.objects.Treatment;
 import com.mrmi.beautysalon.main.objects.User;
 
@@ -19,15 +18,6 @@ public class ManagerFrame extends JFrame {
         this.getContentPane().setBackground(new Color(235, 235, 235));
         this.setLayout(new FlowLayout());
 
-        // Cancel & update
-        JButton editTreatment = new JButton("Edit treatments");
-        editTreatment.addActionListener(e -> {
-            this.dispose();
-            HashMap<Integer, Treatment> clientTreatments = database.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(database, clientTreatments, true, true, true, this);
-        });
-        this.add(editTreatment);
-
         JButton editUsers = new JButton("Edit users");
         editUsers.addActionListener(e -> {
             this.dispose();
@@ -39,10 +29,15 @@ public class ManagerFrame extends JFrame {
         JLabel loyaltyThresholdLabel = new JLabel("Loyalty threshold");
         this.add(loyaltyThresholdLabel);
         JTextField loyaltyThreshold = new JTextField(String.valueOf(database.getLoyaltyThreshold()));
-        loyaltyThreshold.addActionListener(e -> {
-            database.setLoyaltyThreshold(Double.parseDouble(loyaltyThreshold.getText()));
-        });
+        loyaltyThreshold.addActionListener(e -> database.setLoyaltyThreshold(Double.parseDouble(loyaltyThreshold.getText())));
         this.add(loyaltyThreshold);
+
+        JButton editTreatmentTypeCategories = new JButton("Edit treatment type categories");
+        editTreatmentTypeCategories.addActionListener(e -> {
+            this.dispose();
+            TreatmentTypeCategoriesFrame treatmentTypeCategoriesFrame = new TreatmentTypeCategoriesFrame(database, database.getTreatmentTypeCategories(), true, true);
+        });
+        this.add(editTreatmentTypeCategories);
 
         // TODO: graph by profit
         JButton editTreatmentTypes = new JButton("Edit treatment types");
