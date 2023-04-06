@@ -1,5 +1,6 @@
 package com.mrmi.beautysalon.main;
 
+import com.mrmi.beautysalon.main.run.ConsoleApp;
 import com.mrmi.beautysalon.main.run.GUIApp;
 
 public class Main {

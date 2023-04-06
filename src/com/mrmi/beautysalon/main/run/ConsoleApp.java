@@ -173,7 +173,7 @@ public class ConsoleApp {
                     }
                 }
 
-                newUser = new Beautician(password, name, surname, gender, phoneNumber, address, treatmentTypeIDs);
+                newUser = new Beautician(password, name, surname, gender, phoneNumber, address, treatmentTypeIDs, 0);
                 setEmployeeAttributes((Beautician) newUser);
             }
             case "R" -> {
@@ -490,7 +490,7 @@ public class ConsoleApp {
         String name = scanner.nextLine();
         System.out.println("Enter the treatment type price");
         int price = Integer.parseInt(scanner.nextLine());
-        database.addTreatmentType(new TreatmentType(name, price, "nokti", (byte) 3), database.getNextTreatmentTypeId());
+        database.addTreatmentType(new TreatmentType(name, price, 0, (byte) 3), database.getNextTreatmentTypeId());
     }
 
     private void setLoyaltyThreshold() {

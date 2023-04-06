@@ -366,7 +366,11 @@ public class Database {
             TreatmentType treatmentType = getTreatmentTypeById(treatment.getTreatmentTypeId());
             treatmentType.changeTimesBooked(1);
             treatmentType.changeProfit(treatment.getPrice());
+            TreatmentTypeCategory category = treatmentTypeCategories.get(treatmentType.getCategoryId());
+            category.setProfit(category.getProfit() + treatment.getPrice());
             overwriteTreatmentTypesFile();
+            Beautician b = (Beautician) users.get(treatment.getBeauticianUsername());
+            b.setFinishedTreatments(b.getFinishedTreatments() + 1);
         } catch (TreatmentTypeNotFoundException e) {
             e.printStackTrace();
             return;
@@ -440,6 +444,19 @@ public class Database {
         this.treatments.remove(id);
         overwriteTreatmentsFile();
     }
+
+    public HashMap<String, Integer> getStatusCountMap() {
+        HashMap<String, Integer> statusCountMap = new HashMap<>();
+        for (Treatment t : treatments.values()) {
+            if (!statusCountMap.containsKey(t.getStatus())) {
+                statusCountMap.put(t.getStatus(), 0);
+            } else {
+                statusCountMap.put(t.getStatus(), statusCountMap.get(t.getStatus()) + 1);
+            }
+        }
+
+        return statusCountMap;
+    }
     //endregion
 
     //region Users IO
@@ -465,7 +482,7 @@ public class Database {
                             Double.parseDouble(userData[9])));
                     case "B" -> {
                         List<Byte> treatmentTypeIDs = new ArrayList<>();
-                        String[] treatmentTypes = userData[12].split(";");
+                        String[] treatmentTypes = userData[13].split(";");
                         for (String s : treatmentTypes) {
                             treatmentTypeIDs.add(Byte.parseByte(s));
                         }
@@ -480,7 +497,8 @@ public class Database {
                                 Byte.parseByte(userData[8]),
                                 Byte.parseByte(userData[9]),
                                 Double.parseDouble(userData[10]),
-                                Double.parseDouble(userData[11])));
+                                Double.parseDouble(userData[11]),
+                                Integer.parseInt(userData[12])));
                     }
                     case "R" -> users.put(userData[1], new Receptionist(
                             userData[2],
@@ -550,12 +568,12 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                String[] treatmentTypeArr = data[2].split(";");
+                String[] treatmentTypeArr = data[3].split(";");
                 ArrayList<Integer> treatmentTypeIDs = new ArrayList<>();
                 for (String s : treatmentTypeArr) {
                     treatmentTypeIDs.add(Integer.parseInt(s));
                 }
-                treatmentTypeCategories.put(Integer.parseInt(data[0]), new TreatmentTypeCategory(data[1], treatmentTypeIDs));
+                treatmentTypeCategories.put(Integer.parseInt(data[0]), new TreatmentTypeCategory(data[1], treatmentTypeIDs, Double.parseDouble(data[2])));
             }
             in.close();
         } catch (Exception e) {
@@ -601,7 +619,7 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4]), data[5], Byte.parseByte(data[6])));
+                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4]), Integer.parseInt(data[5]), Byte.parseByte(data[6])));
             }
             in.close();
         } catch (Exception e) {

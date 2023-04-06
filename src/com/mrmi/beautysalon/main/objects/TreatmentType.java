@@ -5,22 +5,22 @@ public class TreatmentType {
     private double price;
     private int timesBooked;
     private double profit;
-    private String categoryName;
+    private int categoryId;
     private byte duration;
-    public TreatmentType(String name, double price, String categoryName, byte duration) {
+    public TreatmentType(String name, double price, int categoryId, byte duration) {
         this.name = name;
         this.price = price;
         this.timesBooked = 0;
         this.profit = 0;
-        this.categoryName = categoryName;
+        this.categoryId = categoryId;
         this.duration = duration;
     }
-    public TreatmentType(String name, double price, int timesBooked, double profit, String categoryName, byte duration) {
+    public TreatmentType(String name, double price, int timesBooked, double profit, int categoryId, byte duration) {
         this.name = name;
         this.price = price;
         this.timesBooked = timesBooked;
         this.profit = profit;
-        this.categoryName = categoryName;
+        this.categoryId = categoryId;
         this.duration = duration;
     }
 
@@ -68,16 +68,16 @@ public class TreatmentType {
         this.profit = profit;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getFileString(int id) {
-        return id + "," + name + "," + price + "," + timesBooked + "," + profit + "," + categoryName + "," + duration;
+        return id + "," + name + "," + price + "," + timesBooked + "," + profit + "," + categoryId + "," + duration;
     }
 
     public byte getDuration() {

@@ -60,7 +60,7 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
         TreatmentType treatmentType = treatmentTypes.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
             case 0 -> {
-                return treatmentType.getCategoryName();
+                return database.getTreatmentTypeCategoryName(treatmentType.getCategoryId());
             }
             case 1 -> {
                 return treatmentType.getName();
@@ -91,7 +91,8 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
         }
         TreatmentType treatmentType = treatmentTypes.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
-            case 0 -> treatmentType.setCategoryName(aValue.toString());
+            // TODO: combo box category picker
+            //case 0 -> treatmentType.setCategoryName(aValue.toString());
             case 1 -> treatmentType.setName(aValue.toString());
             case 2 -> treatmentType.setPrice(Double.parseDouble(aValue.toString()));
             case 3 -> treatmentType.setTimesBooked(Integer.parseInt(aValue.toString()));

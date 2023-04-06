@@ -7,15 +7,18 @@ import java.util.List;
 
 public class Beautician extends Employee {
     private List<Byte> treatmentTypeIDs;
+    private int finishedTreatments;
 
-    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs) {
+    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs, int finishedTreatments) {
         super(password, name, surname, gender, phoneNumber, address);
         this.treatmentTypeIDs = treatmentTypeIDs;
+        this.finishedTreatments = finishedTreatments;
     }
 
-    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary, int finishedTreatments) {
         super(password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
         this.treatmentTypeIDs = treatmentTypeIDs;
+        this.finishedTreatments = finishedTreatments;
     }
 
     public HashMap<Integer, Treatment> getDueTreatments(Database database, String username) {
@@ -60,6 +63,8 @@ public class Beautician extends Employee {
         StringBuilder sb = new StringBuilder();
         sb.append("B");
         sb.append(super.getFileString(username));
+        sb.append(finishedTreatments);
+        sb.append(",");
         for (Byte type : treatmentTypeIDs) {
             sb.append(type);
             sb.append(";");
@@ -72,5 +77,13 @@ public class Beautician extends Employee {
         return super.toString() + "Beautician{" +
                 "treatmentTypeIDs=" + treatmentTypeIDs +
                 '}';
+    }
+
+    public int getFinishedTreatments() {
+        return finishedTreatments;
+    }
+
+    public void setFinishedTreatments(int finishedTreatments) {
+        this.finishedTreatments = finishedTreatments;
     }
 }

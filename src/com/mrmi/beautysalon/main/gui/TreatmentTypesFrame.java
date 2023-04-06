@@ -56,7 +56,8 @@ public class TreatmentTypesFrame extends JFrame {
         this.add(durationField);
         JButton addButton = new JButton("Add new type");
         addButton.addActionListener(e -> {
-            database.addTreatmentType(new TreatmentType(nameField.getText(), Double.parseDouble(priceField.getText()), categoryField.getText(), Byte.parseByte(durationField.getText())), database.getNextTreatmentTypeId());
+            //TODO: parse category enum combo box
+            database.addTreatmentType(new TreatmentType(nameField.getText(), Double.parseDouble(priceField.getText()), Integer.parseInt(categoryField.getText()), Byte.parseByte(durationField.getText())), database.getNextTreatmentTypeId());
             tableModel.fireTableDataChanged();
         });
         this.add(addButton);

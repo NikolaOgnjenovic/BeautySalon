@@ -5,10 +5,12 @@ import java.util.List;
 public class TreatmentTypeCategory {
     private String name;
     private List<Integer> treatmentTypeIds;
+    private double profit;
 
-    public TreatmentTypeCategory(String name, List<Integer> treatmentTypeIds) {
+    public TreatmentTypeCategory(String name, List<Integer> treatmentTypeIds, Double profit) {
         this.name = name;
         this.treatmentTypeIds = treatmentTypeIds;
+        this.profit = profit;
     }
 
     public String getName() {
@@ -27,11 +29,21 @@ public class TreatmentTypeCategory {
         this.treatmentTypeIds = treatmentTypeIds;
     }
 
+    public double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(double profit) {
+        this.profit = profit;
+    }
+
     public String getFileString(int id) {
         StringBuilder sb = new StringBuilder();
         sb.append(id);
         sb.append(",");
         sb.append(name);
+        sb.append(",");
+        sb.append(profit);
         sb.append(",");
         sb.append(";");
         for (int i : treatmentTypeIds) {

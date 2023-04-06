@@ -37,7 +37,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
 
         JButton addButton = new JButton("Add new type");
         addButton.addActionListener(e -> {
-            database.addTreatmentTypeCategory(database.getNextTreatmentTypeCategoryId(), new TreatmentTypeCategory(nameField.getText(), new ArrayList<>()));
+            database.addTreatmentTypeCategory(database.getNextTreatmentTypeCategoryId(), new TreatmentTypeCategory(nameField.getText(), new ArrayList<>(), 0d));
             tableModel.fireTableDataChanged();
         });
         this.add(addButton);
