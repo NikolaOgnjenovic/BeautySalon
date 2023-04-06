@@ -6,20 +6,22 @@ public class TreatmentType {
     private int timesBooked;
     private double profit;
     private String categoryName;
-
-    public TreatmentType(String name, double price, String categoryName) {
+    private byte duration;
+    public TreatmentType(String name, double price, String categoryName, byte duration) {
         this.name = name;
         this.price = price;
         this.timesBooked = 0;
         this.profit = 0;
         this.categoryName = categoryName;
+        this.duration = duration;
     }
-    public TreatmentType(String name, double price, int timesBooked, double profit, String categoryName) {
+    public TreatmentType(String name, double price, int timesBooked, double profit, String categoryName, byte duration) {
         this.name = name;
         this.price = price;
         this.timesBooked = timesBooked;
         this.profit = profit;
         this.categoryName = categoryName;
+        this.duration = duration;
     }
 
     public double getPrice() {
@@ -35,16 +37,7 @@ public class TreatmentType {
     }
 
     public String getDisplayString(int id) {
-        return "ID: " + id + ", name: " + name + ", price: " + price;
-    }
-    @Override
-    public String toString() {
-        return "TreatmentType{" +
-                "name='" + name + '\'' +
-                ", price=" + price +
-                ", timesBooked=" + timesBooked +
-                ", profit=" + profit +
-                '}';
+        return "ID: " + id + ", name: " + name + ", price: " + price + ", duration: " + duration;
     }
 
     public String getName() {
@@ -84,6 +77,14 @@ public class TreatmentType {
     }
 
     public String getFileString(int id) {
-        return id + "," + name + "," + price + "," + timesBooked + "," + profit + "," + categoryName;
+        return id + "," + name + "," + price + "," + timesBooked + "," + profit + "," + categoryName + "," + duration;
+    }
+
+    public byte getDuration() {
+        return duration;
+    }
+
+    public void setDuration(byte duration) {
+        this.duration = duration;
     }
 }

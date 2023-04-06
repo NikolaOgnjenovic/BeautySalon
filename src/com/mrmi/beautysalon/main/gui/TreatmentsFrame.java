@@ -5,10 +5,14 @@ import com.mrmi.beautysalon.main.objects.Database;
 import com.mrmi.beautysalon.main.objects.Treatment;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.HashMap;
 
 public class TreatmentsFrame extends JFrame {
+    private final TableRowSorter<TableModel> tableSorter;
+    private final JTextField filterText;
     public TreatmentsFrame(Database database, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean canCancel, boolean canDelete, JFrame previousFrame) {
         TreatmentTableModel tableModel = new TreatmentTableModel(database, treatments, canEdit);
         JTable table = new JTable(tableModel);
@@ -19,12 +23,13 @@ public class TreatmentsFrame extends JFrame {
         this.setVisible(true);
         this.setLayout(new FlowLayout());
 
-//        JTextField treatmentNameField = new JTextField("Enter treatment name");
-//        this.add(treatmentNameField);
-//        JTextField treatmentLengthField = new JTextField("Enter treatment length");
-//        this.add(treatmentLengthField);
-//        JTextField treatmentPriceField = new JTextField("Enter treatment price");
-//        this.add(treatmentPriceField);
+        table.setAutoCreateRowSorter(true);
+        tableSorter = new TableRowSorter<>(table.getModel());
+        table.setRowSorter(tableSorter);
+
+        filterText = new JTextField("Search", 20);
+        filterText.addActionListener(e -> filter(filterText.getText()));
+        this.add(filterText);
 
         if (canCancel) {
             JTextField cancellationReason = new JTextField();
@@ -72,5 +77,16 @@ public class TreatmentsFrame extends JFrame {
         this.add(totalRefund);
         JLabel clientRefund = new JLabel(0.9*totalCost + " will be refunded if the client cancels the treatments");
         this.add(clientRefund);
+    }
+
+    private void filter(String text) {
+        RowFilter<TableModel, Object> rf;
+        //If current expression doesn't parse, don't update.
+        try {
+            rf = RowFilter.regexFilter(text, 0, 1, 2);
+        } catch (java.util.regex.PatternSyntaxException e) {
+            return;
+        }
+        tableSorter.setRowFilter(rf);
     }
 }

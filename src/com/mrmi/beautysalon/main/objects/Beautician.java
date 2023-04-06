@@ -1,5 +1,7 @@
 package com.mrmi.beautysalon.main.objects;
 
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,9 +26,25 @@ public class Beautician extends Employee {
         return database.getBeauticianPastTreatments(username);
     }
 
-    // TODO : GUI
-    public String getSchedule() {
-        return "";
+    public String getSchedule(Database database, String username) {
+        List<Treatment> treatments = database.getBeauticianTreatments(username).values().stream().sorted(Comparator.comparing(Treatment::getScheduledDate)).toList();
+        if (treatments.size() < 1) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        Date currentDate = treatments.get(0).getScheduledDate();
+        sb.append(currentDate);
+        sb.append("\n");
+        for (Treatment t : treatments) {
+            if (t.getScheduledDate().getDate() > currentDate.getDate()) {
+                currentDate = t.getScheduledDate();
+                sb.append(currentDate);
+            }
+            sb.append(t);
+            sb.append("\n");
+        }
+
+        return sb.toString();
     }
 
     public List<Byte> getTreatmentTypeIDs() {

@@ -1,6 +1,4 @@
-1,Manicureee,6.776791013541E14,2,2000.0,Nokti
-3,badgadgggadgda,1.2312312E7,0,0.0,Nokti
-4,badgadgggadgda,1.2312312E7,7,8.6186184E7,Nokti
-5,badgadgggadgda,1.2312312E7,1,1.2312312E7,Nokti
-0,Izlivanje,20000.0,0,0.0,Nokti
-1,Gel,10000.0,0,0.0,Nokti
+6,Izlivanje,2200.0,1,0.0,Nokti,3
+7,Gel,2.20015E7,1,2.20015E7,Nokti,3
+8,Sisanje,800.0,2,800.0,Kosa,31
+9,Farbanje,1500.0,2,1500.0,Kosa,3

@@ -43,8 +43,8 @@ public class BeauticianFrame extends JFrame {
         });
         this.add(viewPastTreatments);
 
-        // TODO
         JButton viewSchedule = new JButton("View schedule");
-        viewSchedule.addActionListener(e -> System.out.println(beautician.getSchedule()));
+        JLabel schedule = new JLabel("Schedule");
+        viewSchedule.addActionListener(e -> schedule.setText(beautician.getSchedule(database, username)));
     }
 }

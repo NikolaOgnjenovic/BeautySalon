@@ -34,16 +34,17 @@ public class BookTreatmentFrame extends JFrame {
             JRadioButton newButton = new JRadioButton(t.getValue().getName());
             newButton.addActionListener(e -> {
                         treatmentTypeId = Byte.parseByte(labelText.substring(4, labelText.indexOf(",")));
-                        treatmentPrice = Double.parseDouble(labelText.substring(labelText.lastIndexOf(", price: " ) + 9));
-                        System.out.println("Treatment type: " + treatmentTypeId);
+                        treatmentPrice = Double.parseDouble(labelText.substring(labelText.lastIndexOf(", price: " ) + 9, labelText.indexOf(", duration")));
                         displayAvailableBeauticians(treatmentTypeId);
                     }
             );
             treatmentTypeGroup.add(newButton);
             this.add(newButton);
         }
+
+        Date selectedDate = new Date();
         /*
-        TODO:
+        TODO: date & time picker
         Zatim korisnik bira termin – datum i vreme (od dostupnih termina kada je dostupan
         odabrani kozmetičar, u toku radnog vremena kozmetičkog salona).
         Zbog pojednostavljivanja, smatrati da tretmani počinju uvek na pun sat.
@@ -59,14 +60,15 @@ public class BookTreatmentFrame extends JFrame {
 
             return new Treatment(scheduledDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentType.getPrice());
         }
-             */
+        */
         JButton bookButton = new JButton("Book");
-        bookButton.addActionListener(e -> database.bookTreatment(new Treatment(new Date(), false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), database.getNextTreatmentId()));
+        bookButton.addActionListener(e -> database.bookTreatment(new Treatment(selectedDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), database.getNextTreatmentId()));
         this.add(bookButton);
     }
 
     private void displayAvailableBeauticians(byte treatmentTypeId) {
         HashMap<String, Beautician> beauticians = database.getBeauticiansByTreatmentType(treatmentTypeId);
+        //HashMap<String, Beautician> beauticians = database.getBeauticians(treatmentTypeId, Date selecteddDate);
         if (beauticians.size() < 1) {
             return;
         }

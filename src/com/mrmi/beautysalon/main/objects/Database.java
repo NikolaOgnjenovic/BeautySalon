@@ -25,6 +25,8 @@ public class Database {
 
     private final String filePathPrefix; // Used to differentiate test & regular files
 
+    private byte salonOpeningHour, salonClosingHour;
+
     //region Database data & static variables
     public Database(String filePathPrefix) {
         this.filePathPrefix = filePathPrefix;
@@ -73,6 +75,14 @@ public class Database {
     public void setLoyaltyThreshold(double loyaltyThreshold) {
         this.loyaltyThreshold = loyaltyThreshold;
         overwriteVariablesFile();
+    }
+
+    public void setSalonOpeningHour(byte hour) {
+        this.salonOpeningHour = hour;
+    }
+
+    public void setSalonClosingHour(byte hour) {
+        this.salonClosingHour = hour;
     }
     //endregion
 
@@ -268,6 +278,10 @@ public class Database {
 
     public int getNextTreatmentTypeCategoryId() {
         return treatmentTypeCategoryId++;
+    }
+
+    public String getTreatmentTypeCategoryName(int treatmentTypeCategoryId) {
+        return treatmentTypeCategories.get(treatmentTypeCategoryId).getName();
     }
     //endregion
 
@@ -587,7 +601,7 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4]), data[5]));
+                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4]), data[5], Byte.parseByte(data[6])));
             }
             in.close();
         } catch (Exception e) {
@@ -680,12 +694,16 @@ public class Database {
                 treatmentId = Integer.parseInt(in.readLine());
                 loyaltyThreshold = Double.parseDouble(in.readLine());
                 treatmentTypeCategoryId = Integer.parseInt(in.readLine());
+                salonOpeningHour = Byte.parseByte(in.readLine());
+                salonClosingHour = Byte.parseByte(in.readLine());
             } catch (NumberFormatException e) {
                 salonIncome = 0;
                 treatmentTypeId = 0;
                 treatmentId = 0;
                 loyaltyThreshold = 5000;
                 treatmentTypeCategoryId = 0;
+                salonOpeningHour = 8;
+                salonClosingHour = 20;
             }
             in.close();
         } catch (Exception e) {
@@ -702,6 +720,8 @@ public class Database {
             out.write(treatmentId + "\n");
             out.write(loyaltyThreshold + "\n");
             out.write(treatmentTypeCategoryId + "\n");
+            out.write(salonOpeningHour + "\n");
+            out.write(salonClosingHour + "\n");
             out.close();
         } catch (Exception e) {
             e.printStackTrace();

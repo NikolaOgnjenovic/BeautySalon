@@ -1,6 +1,9 @@
 package com.mrmi.beautysalon.main.objects;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 public class Treatment {
     private Date scheduledDate; // Zbog pojednostavljivanja, smatrati da tretmani počinju uvek na pun sat.
