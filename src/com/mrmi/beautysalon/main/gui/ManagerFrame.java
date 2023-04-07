@@ -40,7 +40,6 @@ public class ManagerFrame extends JFrame {
         });
         this.add(editTreatmentTypeCategories);
 
-        // TODO: graph by profit
         JButton editTreatmentTypes = new JButton("Edit treatment types");
         editTreatmentTypes.addActionListener(e -> {
             this.dispose();
@@ -48,7 +47,6 @@ public class ManagerFrame extends JFrame {
         });
         this.add(editTreatmentTypes);
 
-        // TODO: graph treatments by cancellation reason by date
         JButton editTreatments = new JButton("Edit all treatments");
         editTreatments.addActionListener(e -> {
             this.dispose();
@@ -57,18 +55,11 @@ public class ManagerFrame extends JFrame {
         });
         this.add(editTreatments);
 
-        Random random = new Random();
         JButton treatmentStatusGraphButton = new JButton("View treatment status graph");
-        Collection<Treatment> treatments = database.getTreatments().values();
-        Color[] sliceColors = new Color[treatments.size()];
-        for (int i = 0; i < treatments.size(); i++) {
-            sliceColors[i] = new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255));
-        }
-        Color[] finalSliceColors1 = sliceColors;
         HashMap<String, Integer> statusCount = database.getStatusCountMap();
         treatmentStatusGraphButton.addActionListener(e -> {
             PieChart chart = new PieChartBuilder().width(800).height(600).title("Treatments by cancellation reason").build();
-            chart.getStyler().setSeriesColors(finalSliceColors1);
+            chart.getStyler().setSeriesColors(getChartColors(statusCount.size()));
             for (Map.Entry<String, Integer> entry : statusCount.entrySet()) {
                 chart.addSeries(entry.getKey(), entry.getValue());
             }
@@ -79,14 +70,9 @@ public class ManagerFrame extends JFrame {
 
         JButton beauticianStatsButton = new JButton("View beautician finished treatments graph");
         Collection<Beautician> beauticians = database.getBeauticians().values();
-        sliceColors = new Color[beauticians.size()];
-        for (int i = 0; i < beauticians.size(); i++) {
-            sliceColors[i] = new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255));
-        }
-        Color[] finalSliceColors = sliceColors;
         beauticianStatsButton.addActionListener(e -> {
             PieChart chart = new PieChartBuilder().width(800).height(600).title("Beauticians by number of finished treatments").build();
-            chart.getStyler().setSeriesColors(finalSliceColors);
+            chart.getStyler().setSeriesColors(getChartColors(beauticians.size()));
             for (Beautician b : beauticians) {
                 chart.addSeries(b.getName(), b.getFinishedTreatments());
             }
@@ -96,26 +82,33 @@ public class ManagerFrame extends JFrame {
         this.add(beauticianStatsButton);
 
         JButton treatmentCategoryProfitButton = new JButton("View profit by treatment category graph");
-        Collection<TreatmentTypeCategory> categories = database.getTreatmentTypeCategories().values();
-        Color[] chartColors = new Color[beauticians.size()];
-        for (int i = 0; i < categories.size(); i++) {
-            chartColors[i] = new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255));
-        }
+        HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories = database.getTreatmentTypeCategories();
         treatmentCategoryProfitButton.addActionListener(e -> {
             XYChart chart = new XYChartBuilder().width(800).height(600).xAxisTitle("Profit").yAxisTitle("Time").build();
             chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNE);
-            chart.getStyler().setSeriesColors(finalSliceColors);
-            for (TreatmentTypeCategory category : categories) {
-                //chart.addSeries(category.getName(), category.getProfit(), category.getTreatmentTypeIds());
+            chart.getStyler().setSeriesColors(getChartColors(treatmentTypeCategories.size()));
+            chart.setXAxisTitle("Month");
+            chart.setYAxisTitle("Profit");
+            chart.setTitle("Profit by treatment type category per month");
+            for (Map.Entry<Integer, TreatmentTypeCategory> category : treatmentTypeCategories.entrySet()) {
+                chart.addSeries(category.getValue().getName(), database.getCategoryProfitByMonths(category.getKey()));
             }
             Thread t = new Thread(() -> new SwingWrapper<>(chart).displayChart().setDefaultCloseOperation(DISPOSE_ON_CLOSE));
             t.start();
         });
         this.add(treatmentCategoryProfitButton);
 
-
         // TODO:
         //  salon profit & loss in a date interval
         //  registerEmployee();
+    }
+    private Color[] getChartColors(int size) {
+        Color[] chartColors = new Color[size];
+        Random random = new Random();
+        for (int i = 0; i < size; i++) {
+            chartColors[i] = new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+        }
+
+        return chartColors;
     }
 }

@@ -283,6 +283,17 @@ public class Database {
     public String getTreatmentTypeCategoryName(int treatmentTypeCategoryId) {
         return treatmentTypeCategories.get(treatmentTypeCategoryId).getName();
     }
+
+    public int[] getCategoryProfitByMonths(int treatmentTypeCategoryId) {
+        int[] profit = new int[12];
+        for (Treatment t : treatments.values()) {
+            if (treatmentTypeCategoryId == treatmentTypes.get(t.getTreatmentTypeId()).getCategoryId()) {
+                profit[t.getScheduledDate().getMonth()] += t.getPrice();
+            }
+        }
+
+        return profit;
+    }
     //endregion
 
     //region Treatment types
