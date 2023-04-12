@@ -1,21 +1,28 @@
 package com.mrmi.beautysalon.main.gui;
 
 import com.mrmi.beautysalon.main.objects.*;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 public class BookTreatmentFrame extends JFrame {
     private final Database database;
     private byte treatmentTypeId;
     private double treatmentPrice;
     private String beauticianUsername;
-    BeauticianTableModel beauticianTableModel;
+    private BeauticianTableModel beauticianTableModel;
     private HashMap<String, Beautician> beauticians;
+    private final JTable beauticianTable;
+    private Date selectedDate;
+    private String selectedTime;
+    private Vector<String> timeWindows;
+    private JComboBox<String> treatmentTimeWindows;
     public BookTreatmentFrame(Database database, String clientUsername) {
         this.database = database;
         this.setTitle("Book treatment");
@@ -30,7 +37,7 @@ public class BookTreatmentFrame extends JFrame {
         JTable treatmentTypeTable = new JTable(treatmentTableModel);
         this.add(new JScrollPane(treatmentTypeTable));
         treatmentTypeTable.setAutoCreateRowSorter(true);
-
+        treatmentTypeTable.setSelectionModel(new SingleListSelectionModel());
         TableRowSorter<TableModel> treatmentTableSorter = new TableRowSorter<>(treatmentTypeTable.getModel());
         treatmentTypeTable.setRowSorter(treatmentTableSorter);
         JTextField filterText = new JTextField("Search", 20);
@@ -45,13 +52,12 @@ public class BookTreatmentFrame extends JFrame {
             }
         });
 
-        Date selectedDate = new Date();
-
-        beauticians = database.getBeauticians();
+        beauticians = new HashMap<>();
         beauticianTableModel = new BeauticianTableModel(beauticians);
-        JTable beauticianTable = new JTable(beauticianTableModel);
+        beauticianTable = new JTable(beauticianTableModel);
         this.add(new JScrollPane(beauticianTable));
         beauticianTable.setAutoCreateRowSorter(true);
+        beauticianTable.setSelectionModel(new SingleListSelectionModel());
 
         TableRowSorter<TableModel> beauticianTableSorter = new TableRowSorter<>(beauticianTable.getModel());
         beauticianTable.setRowSorter(beauticianTableSorter);
@@ -62,26 +68,47 @@ public class BookTreatmentFrame extends JFrame {
         beauticianTable.getSelectionModel().addListSelectionListener(e -> {
             beauticianUsername = beauticianTable.getValueAt(beauticianTable.getSelectedRow(), 0).toString();
         });
-        /*
-        TODO: date & time picker
-        Zatim korisnik bira termin – datum i vreme (od dostupnih termina kada je dostupan
-        odabrani kozmetičar, u toku radnog vremena kozmetičkog salona).
-        Zbog pojednostavljivanja, smatrati da tretmani počinju uvek na pun sat.
 
-            System.out.println("Enter date in dd.MM.yyyy format");
-            Date scheduledDate;
-            try {
-                scheduledDate = sdf.parse(scanner.nextLine());
-            } catch (ParseException e) {
-                System.out.println("Invalid date");
+        UtilDateModel model = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new JFormattedTextField.AbstractFormatter() {
+            @Override
+            public Object stringToValue(String text) {
                 return null;
             }
 
-            return new Treatment(scheduledDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentType.getPrice());
-        }
-        */
-        JButton bookButton = new JButton("Book");
-        bookButton.addActionListener(e -> database.bookTreatment(new Treatment(selectedDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), database.getNextTreatmentId()));
+            @Override
+            public String valueToString(Object value) {
+                return null;
+            }
+        });
+        selectedDate = (Date) datePicker.getModel().getValue();
+        datePicker.addActionListener(e -> {
+            selectedDate = (Date) datePicker.getModel().getValue();
+            refreshTimeComboBox();
+        });
+        this.add(datePicker);
+
+        timeWindows = database.getTreatmentTimeWindows(new Date(), 7);
+        treatmentTimeWindows = new JComboBox<>(timeWindows);
+        treatmentTimeWindows.addActionListener(e -> {
+            if (treatmentTimeWindows.getSelectedItem() != null) {
+                selectedTime = treatmentTimeWindows.getSelectedItem().toString();
+            }
+        });
+        this.add(treatmentTimeWindows);
+
+        JButton bookButton = new JButton("Book treatment");
+        bookButton.addActionListener(e -> {
+            selectedDate.setHours(Integer.parseInt(selectedTime.substring(0, 2)));
+            selectedDate.setMinutes(0);
+            selectedDate.setSeconds(0);
+            database.bookTreatment(new Treatment(selectedDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), database.getNextTreatmentId());
+        });
         this.add(bookButton);
     }
 
@@ -90,7 +117,8 @@ public class BookTreatmentFrame extends JFrame {
         if (beauticians.size() < 1) {
             return;
         }
-        beauticianTableModel.fireTableDataChanged();
+        beauticianTableModel = new BeauticianTableModel(beauticians);
+        beauticianTable.setModel(beauticianTableModel);
     }
 
     private void filter(String text, TableRowSorter<TableModel> tableSorter) {
@@ -102,5 +130,11 @@ public class BookTreatmentFrame extends JFrame {
             return;
         }
         tableSorter.setRowFilter(rf);
+    }
+
+    private void refreshTimeComboBox() {
+        timeWindows = database.getTreatmentTimeWindows(selectedDate, treatmentTypeId);
+        treatmentTimeWindows.removeAllItems();
+        treatmentTimeWindows.setModel(new DefaultComboBoxModel<>(timeWindows));
     }
 }

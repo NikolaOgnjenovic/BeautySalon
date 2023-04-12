@@ -243,12 +243,6 @@ public class ConsoleApp {
             }
         }
 
-        /*
-        TODO:
-        Zatim korisnik bira termin – datum i vreme (od dostupnih termina kada je dostupan
-        odabrani kozmetičar, u toku radnog vremena kozmetičkog salona).
-        Zbog pojednostavljivanja, smatrati da tretmani počinju uvek na pun sat.
-         */
         System.out.println("Enter date in dd.MM.yyyy format");
         Date scheduledDate;
         try {
@@ -301,7 +295,6 @@ public class ConsoleApp {
         printPastTreatments(pastTreatments);
     }
 
-    // TODO
     private void printSchedule(Beautician beautician, String username) {
         HashMap<Integer, Treatment> dueTreatments = beautician.getDueTreatments(database, username);
         if (dueTreatments.size() < 1) {
@@ -433,7 +426,6 @@ public class ConsoleApp {
             }
         }
 
-        // TODO: verification
         String clientUsername = treatment.getClientUsername();
         System.out.println("If you want to change the treatment/'s client username enter yes");
         if (scanner.nextLine().equals("yes")) {
@@ -441,7 +433,6 @@ public class ConsoleApp {
             clientUsername = scanner.nextLine();
         }
 
-        // TODO: verification
         String beauticianUsername = treatment.getBeauticianUsername();
         System.out.println("If you want to change the treatment/'s beautician username enter yes");
         if (scanner.nextLine().equals("yes")) {
@@ -511,7 +502,6 @@ public class ConsoleApp {
         }
     }
 
-    // TODO: opseg datuma
     // Koliko je kozmetičkih tretmana svaki kozmetičar izvršio i koliko je prihodovao za izabrani opseg datuma
     private void viewBeauticianStats() {
         List<Treatment> treatmentsByBeauticians = database.getTreatmentsSortedByBeauticians();
@@ -536,7 +526,6 @@ public class ConsoleApp {
         }
     }
 
-    // TODO: opseg datuma
     // Koliko kozmetičkih tretmana je potvrđeno, a koliko otkazano (po razlozima) za odabrani opseg datuma
     private void viewCancellationStats() {
         List<Treatment> treatmentsByCancellation = database.getTreatmentsSortedByCancellationReason();

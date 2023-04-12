@@ -5,7 +5,9 @@ import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 
 import java.io.*;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 public class Database {
@@ -288,9 +290,13 @@ public class Database {
 
     public int[] getCategoryProfitByMonths(int treatmentTypeCategoryId) {
         int[] profit = new int[12];
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -1);
         for (Treatment t : treatments.values()) {
             if (treatmentTypeCategoryId == treatmentTypes.get(t.getTreatmentTypeId()).getCategoryId()) {
-                profit[t.getScheduledDate().getMonth()] += t.getPrice();
+                if (t.getScheduledDate().after(cal.getTime())) {
+                    profit[t.getScheduledDate().getMonth()] += t.getPrice();
+                }
             }
         }
 
@@ -346,6 +352,48 @@ public class Database {
             treatmentTypes.put(i, treatmentTypes.get(i));
         }
         return treatmentTypes;
+    }
+
+    public Vector<String> getTreatmentTimeWindows(Date date, int treatmentTypeId) {
+        if (!treatmentTypes.containsKey(treatmentTypeId)) {
+            return new Vector<>();
+        }
+        byte duration = treatmentTypes.get(treatmentTypeId).getDuration();
+        Vector<String> timeWindows = new Vector<>();
+        Treatment previousTreatment = null;
+        List<Treatment> sortedTreatments = treatments.values()
+                .stream()
+                .sorted(Comparator.comparing(Treatment::getScheduledDate))
+                .filter(t -> t.getScheduledDate().getDate() == date.getDate())
+                .toList();
+        if (sortedTreatments.size() > 0) {
+            for (Treatment treatment : sortedTreatments) {
+                if (previousTreatment != null ) {
+                    int previousHour = previousTreatment.getScheduledDate().getHours();
+                    int currentHour = treatment.getScheduledDate().getHours();
+                    if (currentHour - previousHour >= duration) {
+                        for (int i = previousHour; duration + i <= currentHour && duration + i <= salonClosingHour; i++) {
+                            timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration) + ":00");
+                        }
+                    }
+                }
+                previousTreatment = treatment;
+            }
+        } else {
+            for (int i = salonOpeningHour; duration + i <= salonClosingHour; i++) {
+                timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration) + ":00");
+            }
+        }
+
+
+        return timeWindows;
+    }
+
+    private String hourToString(int h) {
+        if (h >= 10) {
+            return String.valueOf(h);
+        }
+        return "0" + h;
     }
     //endregion
 
@@ -460,11 +508,15 @@ public class Database {
 
     public HashMap<String, Integer> getStatusCountMap() {
         HashMap<String, Integer> statusCountMap = new HashMap<>();
+        long currentTime = new Date().getTime();
+        currentTime -= 30L * 24 * 3600 * 1000;
         for (Treatment t : treatments.values()) {
-            if (!statusCountMap.containsKey(t.getStatus())) {
-                statusCountMap.put(t.getStatus(), 0);
-            } else {
-                statusCountMap.put(t.getStatus(), statusCountMap.get(t.getStatus()) + 1);
+            if (t.getScheduledDate().getTime() > currentTime) {
+                if (!statusCountMap.containsKey(t.getStatus())) {
+                    statusCountMap.put(t.getStatus(), 0);
+                } else {
+                    statusCountMap.put(t.getStatus(), statusCountMap.get(t.getStatus()) + 1);
+                }
             }
         }
 
