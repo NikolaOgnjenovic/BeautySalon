@@ -2,7 +2,6 @@ package com.mrmi.beautysalon.main.gui;
 
 import com.mrmi.beautysalon.main.objects.*;
 import org.knowm.xchart.*;
-import org.knowm.xchart.internal.chartpart.Chart;
 import org.knowm.xchart.style.Styler;
 
 import javax.swing.*;

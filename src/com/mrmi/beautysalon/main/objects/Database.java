@@ -24,12 +24,14 @@ public class Database {
     private double loyaltyThreshold;
 
     private final String filePathPrefix; // Used to differentiate test & regular files
+    private final String separator;
 
     private byte salonOpeningHour, salonClosingHour;
 
     //region Database data & static variables
-    public Database(String filePathPrefix) {
+    public Database(String filePathPrefix, String separator) {
         this.filePathPrefix = filePathPrefix;
+        this.separator = separator;
         loadData();
     }
 
@@ -473,7 +475,7 @@ public class Database {
     //region Users IO
     private void readUsersFile() {
         users = new HashMap<>();
-        String fileName = filePathPrefix + "data/users.txt";
+        String fileName = filePathPrefix + "data" + separator + "users.txt";
         fileCheck(fileName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -542,7 +544,7 @@ public class Database {
     }
 
     private void writeUser(User user, String username) {
-        String fileName = filePathPrefix + "data/users.txt";
+        String fileName = filePathPrefix + "data" + separator + "users.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
             out.write(user.getFileString(username));
@@ -554,7 +556,7 @@ public class Database {
     }
 
     private void overwriteUsersFile() {
-        String fileName = filePathPrefix + "data/users.txt";
+        String fileName = filePathPrefix + "data" + separator + "users.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
             for (Map.Entry<String, User> u : users.entrySet()) {
@@ -571,7 +573,7 @@ public class Database {
     //region TreatmentTypeCategory IO
     private void readTreatmentTypeCategoriesFile() {
         treatmentTypeCategories = new HashMap<>();
-        String fileName = filePathPrefix + "data/treatmentTypeCategories.txt";
+        String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
         fileCheck(fileName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -593,7 +595,7 @@ public class Database {
     }
 
     private void writeTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory, int id) {
-        String fileName = filePathPrefix + "data/treatmentTypeCategories.txt";
+        String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
             out.write(treatmentTypeCategory.getFileString(id));
@@ -605,7 +607,7 @@ public class Database {
     }
 
     private void overwriteTreatmentTypeCategoriesFile() {
-        String fileName = filePathPrefix + "data/treatmentTypeCategories.txt";
+        String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
             for (Map.Entry<Integer, TreatmentTypeCategory> t : treatmentTypeCategories.entrySet()) {
@@ -622,7 +624,7 @@ public class Database {
     //region TreatmentTypes IO
     private void readTreatmentTypesFile() {
         treatmentTypes = new HashMap<>();
-        String fileName = filePathPrefix + "data/treatmentTypes.txt";
+        String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
         fileCheck(fileName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -639,7 +641,7 @@ public class Database {
     }
 
     private void writeTreatmentType(TreatmentType treatmentType, int id) {
-        String fileName = filePathPrefix + "data/treatmentTypes.txt";
+        String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
             out.write(treatmentType.getFileString(id));
@@ -651,7 +653,7 @@ public class Database {
     }
 
     private void overwriteTreatmentTypesFile() {
-        String fileName = filePathPrefix + "data/treatmentTypes.txt";
+        String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
             for (Map.Entry<Integer, TreatmentType> t : treatmentTypes.entrySet()) {
@@ -668,7 +670,7 @@ public class Database {
     //region Treatments IO
     private void readTreatmentsFile() {
         treatments = new HashMap<>();
-        String fileName = filePathPrefix + "data/treatments.txt";
+        String fileName = filePathPrefix + "data" + separator + "treatments.txt";
         fileCheck(fileName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -685,7 +687,7 @@ public class Database {
     }
 
     private void overwriteTreatmentsFile() {
-        String fileName = filePathPrefix + "data/treatments.txt";
+        String fileName = filePathPrefix + "data" + separator + "treatments.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
             for (Map.Entry<Integer, Treatment> t : treatments.entrySet()) {
@@ -699,7 +701,7 @@ public class Database {
     }
 
     private void writeTreatment(Treatment treatment, int id) {
-        String fileName = filePathPrefix + "data/treatments.txt";
+        String fileName = filePathPrefix + "data" + separator + "treatments.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
             out.write(treatment.getFileString(id));
@@ -713,7 +715,7 @@ public class Database {
 
     //region Variables IO
     private void readVariablesFile() {
-        String fileName = filePathPrefix + "data/variables.txt";
+        String fileName = filePathPrefix + "data" + separator + "variables.txt";
         fileCheck(fileName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -741,7 +743,7 @@ public class Database {
     }
 
     private void overwriteVariablesFile() {
-        String fileName = filePathPrefix + "data/variables.txt";
+        String fileName = filePathPrefix + "data" + separator + "variables.txt";
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
             out.write(salonIncome + "\n");

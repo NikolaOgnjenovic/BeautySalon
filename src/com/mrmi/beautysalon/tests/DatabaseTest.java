@@ -13,7 +13,7 @@ public class DatabaseTest {
 
     @BeforeEach
     public void setup() {
-        database = new Database("test/");
+        database = new Database("test" + System.getProperty("file.separator"), System.getProperty("file.separator"));
     }
     @Test
     public void emptyDataTest() {

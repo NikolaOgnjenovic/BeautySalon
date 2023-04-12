@@ -11,7 +11,7 @@ import java.util.*;
 
 public class ConsoleApp {
     private final Scanner scanner = new Scanner(System.in);
-    private final Database database = new Database("");
+    private final Database database = new Database("", System.getProperty("file.separator"));
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 
     public void run() {
@@ -228,7 +228,7 @@ public class ConsoleApp {
             return null;
         }
         System.out.println("Available beauticians:");
-        for (Beautician b : beauticians.values()) {
+        for (User b : beauticians.values()) {
             System.out.println(b);
         }
 

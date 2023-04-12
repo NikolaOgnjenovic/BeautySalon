@@ -4,3 +4,8 @@
 3,Thu Sep 06 08:57:23 CEST 2023,true,,null,8,800.0,CANCELLED,adgdagda
 4,Thu Apr 06 08:57:24 CEST 2023,true,,null,9,1500.0,CANCELLED,gdaEnter a reason!
 5,Thu Feb 06 08:57:25 CEST 2023,true,,null,7,2200,CANCELLED,gdaEnter a reason!
+6,Wed Apr 12 14:33:06 CEST 2023,false,,b,6,2200.0,SCHEDULED,-
+7,Wed Apr 12 14:33:06 CEST 2023,false,,b,6,2200.0,SCHEDULED,-
+8,Wed Apr 12 14:33:06 CEST 2023,false,,b,6,2200.0,SCHEDULED,-
+9,Wed Apr 12 15:22:48 CEST 2023,false,,b1,9,1500.0,SCHEDULED,-
+10,Wed Apr 12 15:23:27 CEST 2023,false,,b,9,1500.0,SCHEDULED,-

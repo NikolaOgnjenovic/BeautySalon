@@ -1,21 +1,21 @@
 package com.mrmi.beautysalon.main.gui;
 
-import com.mrmi.beautysalon.main.objects.Beautician;
-import com.mrmi.beautysalon.main.objects.Database;
-import com.mrmi.beautysalon.main.objects.Treatment;
-import com.mrmi.beautysalon.main.objects.TreatmentType;
+import com.mrmi.beautysalon.main.objects.*;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 public class BookTreatmentFrame extends JFrame {
     private final Database database;
     private byte treatmentTypeId;
     private double treatmentPrice;
     private String beauticianUsername;
+    BeauticianTableModel beauticianTableModel;
+    private HashMap<String, Beautician> beauticians;
     public BookTreatmentFrame(Database database, String clientUsername) {
         this.database = database;
         this.setTitle("Book treatment");
@@ -26,23 +26,42 @@ public class BookTreatmentFrame extends JFrame {
         this.getContentPane().setBackground(new Color(235, 235, 235));
         this.setLayout(new FlowLayout());
 
-        // TODO: clean up this mess
-        ButtonGroup treatmentTypeGroup = new ButtonGroup();
-        for (Map.Entry<Integer, TreatmentType> t : database.getTreatmentTypes().entrySet()) {
-            String labelText = t.getValue().getDisplayString(t.getKey());
-            this.add(new JLabel(labelText));
-            JRadioButton newButton = new JRadioButton(t.getValue().getName());
-            newButton.addActionListener(e -> {
-                        treatmentTypeId = Byte.parseByte(labelText.substring(4, labelText.indexOf(",")));
-                        treatmentPrice = Double.parseDouble(labelText.substring(labelText.lastIndexOf(", price: " ) + 9, labelText.indexOf(", duration")));
-                        displayAvailableBeauticians(treatmentTypeId);
-                    }
-            );
-            treatmentTypeGroup.add(newButton);
-            this.add(newButton);
-        }
+        TreatmentTypeTableModel treatmentTableModel = new TreatmentTypeTableModel(database, database.getTreatmentTypes(), false);
+        JTable treatmentTypeTable = new JTable(treatmentTableModel);
+        this.add(new JScrollPane(treatmentTypeTable));
+        treatmentTypeTable.setAutoCreateRowSorter(true);
+
+        TableRowSorter<TableModel> treatmentTableSorter = new TableRowSorter<>(treatmentTypeTable.getModel());
+        treatmentTypeTable.setRowSorter(treatmentTableSorter);
+        JTextField filterText = new JTextField("Search", 20);
+        filterText.addActionListener(e -> filter(filterText.getText(), treatmentTableSorter));
+        this.add(filterText);
+
+        treatmentTypeTable.getSelectionModel().addListSelectionListener(e -> {
+            if (treatmentTypeTable.getSelectedRow() != -1) {
+                treatmentTypeId = Byte.parseByte(treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 6).toString());
+                treatmentPrice = Double.parseDouble(treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 2).toString());
+                displayAvailableBeauticians(treatmentTypeId);
+            }
+        });
 
         Date selectedDate = new Date();
+
+        beauticians = database.getBeauticians();
+        beauticianTableModel = new BeauticianTableModel(beauticians);
+        JTable beauticianTable = new JTable(beauticianTableModel);
+        this.add(new JScrollPane(beauticianTable));
+        beauticianTable.setAutoCreateRowSorter(true);
+
+        TableRowSorter<TableModel> beauticianTableSorter = new TableRowSorter<>(beauticianTable.getModel());
+        beauticianTable.setRowSorter(beauticianTableSorter);
+        JTextField beauticianFilterText = new JTextField("Search", 20);
+        beauticianFilterText.addActionListener(e -> filter(beauticianFilterText.getText(), beauticianTableSorter));
+        this.add(beauticianFilterText);
+
+        beauticianTable.getSelectionModel().addListSelectionListener(e -> {
+            beauticianUsername = beauticianTable.getValueAt(beauticianTable.getSelectedRow(), 0).toString();
+        });
         /*
         TODO: date & time picker
         Zatim korisnik bira termin – datum i vreme (od dostupnih termina kada je dostupan
@@ -67,18 +86,21 @@ public class BookTreatmentFrame extends JFrame {
     }
 
     private void displayAvailableBeauticians(byte treatmentTypeId) {
-        HashMap<String, Beautician> beauticians = database.getBeauticiansByTreatmentType(treatmentTypeId);
-        //HashMap<String, Beautician> beauticians = database.getBeauticians(treatmentTypeId, Date selecteddDate);
+        beauticians = database.getBeauticiansByTreatmentType(treatmentTypeId);
         if (beauticians.size() < 1) {
             return;
         }
-        ButtonGroup beauticianButtonGroup = new ButtonGroup();
-        for (Map.Entry<String, Beautician> b : beauticians.entrySet()) {
-            System.out.println("ADDING");
-            JRadioButton newButton = new JRadioButton(b.toString());
-            newButton.addActionListener(e -> beauticianUsername = b.getKey());
-            beauticianButtonGroup.add(newButton);
-            this.getContentPane().add(newButton);
+        beauticianTableModel.fireTableDataChanged();
+    }
+
+    private void filter(String text, TableRowSorter<TableModel> tableSorter) {
+        RowFilter<TableModel, Object> rf;
+        //If current expression doesn't parse, don't update.
+        try {
+            rf = RowFilter.regexFilter(text);
+        } catch (java.util.regex.PatternSyntaxException e) {
+            return;
         }
+        tableSorter.setRowFilter(rf);
     }
 }

@@ -17,10 +17,10 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
                 ", profit=" + profit +
      */
     private final String[] columnNames = new String[] {
-            "Category name", "Name", "Price", "Times booked", "Profit", "Duration"
+            "Category name", "Name", "Price", "Times booked", "Profit", "Duration", "Id"
     };
     private final Class[] columnClass = new Class[] {
-            String.class, String.class, Double.class, Integer.class, Double.class, Byte.class
+            String.class, String.class, Double.class, Integer.class, Double.class, Byte.class, Integer.class
     };
 
     public TreatmentTypeTableModel(Database database, HashMap<Integer, TreatmentType> treatmentTypes, boolean canEdit)
@@ -76,6 +76,9 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
             }
             case 5 -> {
                 return treatmentType.getDuration();
+            }
+            case 6 -> {
+                return treatmentTypes.keySet().stream().toList().get(rowIndex);
             }
             default -> {
                 return null;
