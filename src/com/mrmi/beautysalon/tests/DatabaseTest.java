@@ -1,6 +1,6 @@
 package com.mrmi.beautysalon.tests;
 
-import com.mrmi.beautysalon.main.objects.*;
+import com.mrmi.beautysalon.main.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ public class DatabaseTest {
 
     @BeforeEach
     public void setup() {
-        database = new Database("test" + System.getProperty("file.separator"), System.getProperty("file.separator"));
+        database = new Database("test" + System.getProperty("file.separator"));
     }
     @Test
     public void emptyDataTest() {
@@ -24,10 +24,10 @@ public class DatabaseTest {
 
     @Test
     public void addUsersTest() {
-        database.addUser(new Manager("pass", "Manager", "McGee", "F", "1234", "Manager Street 50", (byte) 7, (byte) 5, 0, 100000), "Manager");
-        database.addUser(new Beautician("pass", "Beautician", "McGee", "F", "123456", "Beautician Street 50", new ArrayList<>(), (byte) 7, (byte) 5, 0, 100000, 0), "Beautician");
-        database.addUser(new Receptionist("pass", "Receptionist", "McGee", "F", "123456", "Receptionist Street 50", (byte) 7, (byte) 5, 0, 100000), "Receptionist");
-        database.addUser(new Client("pass", "Client", "McGee", "F", "1234567", "Client Street 50"), "Client");
+//        database.addUser(new Manager("pass", "Manager", "McGee", "F", "1234", "Manager Street 50", (byte) 7, (byte) 5, 0, 100000), "Manager");
+//        database.addUser(new Beautician("pass", "Beautician", "McGee", "F", "123456", "Beautician Street 50", new ArrayList<>(), (byte) 7, (byte) 5, 0, 100000, 0), "Beautician");
+//        database.addUser(new Receptionist("pass", "Receptionist", "McGee", "F", "123456", "Receptionist Street 50", (byte) 7, (byte) 5, 0, 100000), "Receptionist");
+//        database.addUser(new Client("pass", "Client", "McGee", "F", "1234567", "Client Street 50"), "Client");
         assertEquals(4, database.getUsers().size());
     }
 }

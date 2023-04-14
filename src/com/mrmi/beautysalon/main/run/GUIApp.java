@@ -1,11 +1,10 @@
 package com.mrmi.beautysalon.main.run;
 
-import com.mrmi.beautysalon.main.gui.MainFrame;
-import com.mrmi.beautysalon.main.objects.Database;
+import com.mrmi.beautysalon.main.view.MainFrame;
+import com.mrmi.beautysalon.main.view.ManagerFrame;
 
 public class GUIApp {
     public void run() {
-        Database database = new Database("", System.getProperty("file.separator"));
-        MainFrame mainFrame = new MainFrame(database);
+        MainFrame mainFrame = new MainFrame();
     }
 }
