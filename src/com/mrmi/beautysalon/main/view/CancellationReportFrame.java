@@ -2,17 +2,12 @@ package com.mrmi.beautysalon.main.view;
 
 import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.entity.Treatment;
-import com.mrmi.beautysalon.main.view.table.BeauticianProfitTableModel;
-import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;

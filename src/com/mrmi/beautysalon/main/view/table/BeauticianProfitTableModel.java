@@ -1,16 +1,12 @@
 package com.mrmi.beautysalon.main.view.table;
 
-import com.mrmi.beautysalon.main.entity.Beautician;
-
-import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class BeauticianProfitTableModel extends AbstractTableModel {
-    private ArrayList<String> beauticianUsernames;
-    private ArrayList<Integer> finishedTreatments;
-    private ArrayList<Double> profits;
+    private final ArrayList<String> beauticianUsernames;
+    private final ArrayList<Integer> finishedTreatments;
+    private final ArrayList<Double> profits;
     private final String[] columnNames = new String[] {
             "Username", "Finished treatments", "Profit"
     };
