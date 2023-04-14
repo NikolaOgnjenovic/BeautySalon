@@ -25,7 +25,8 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
         if (canDelete) {
             JButton delete = new JButton("Delete treatment type category");
             delete.addActionListener(e -> {
-                treatmentController.deleteTreatmentTypeCategory(treatmentTypeCategories.keySet().stream().toList().get(table.getSelectedRow()));
+                treatmentController.deleteTreatmentTypeCategory(new ArrayList<>(treatmentTypeCategories.keySet()).get(table.getSelectedRow()));
+                //treatmentController.deleteTreatmentTypeCategory(treatmentTypeCategories.keySet().stream().toList().get(table.getSelectedRow()));
                 tableModel.fireTableDataChanged();
             });
             this.add(delete);

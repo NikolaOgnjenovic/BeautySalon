@@ -31,21 +31,22 @@ public class LoginFrame extends JFrame {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setResizable(true);
         this.setSize(800, 800);
-        this.setLayout(null);
+        this.setLayout(new FlowLayout());
         this.setVisible(true);
         this.getContentPane().setBackground(new Color(235, 235, 235));
 
         username = new JTextField();
         username.setToolTipText("Username");
         username.setPreferredSize(new Dimension(250, 40));
+        this.add(username);
+        System.out.println("u len: " + username.getText().length());
 
         password = new JPasswordField();
         password.setToolTipText("Password");
         password.setPreferredSize(new Dimension(250, 40));
+        this.add(password);
 
         login = new JButton("Login");
-        this.add(username);
-        this.add(password);
         this.add(login);
     }
 

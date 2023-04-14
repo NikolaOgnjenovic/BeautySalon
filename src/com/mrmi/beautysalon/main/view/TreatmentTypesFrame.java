@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TreatmentTypesFrame extends JFrame {
@@ -36,7 +37,8 @@ public class TreatmentTypesFrame extends JFrame {
         if (canDelete) {
             JButton delete = new JButton("Delete treatment type");
             delete.addActionListener(e -> {
-                treatmentController.deleteTreatmentType(treatmentTypes.keySet().stream().toList().get(table.getSelectedRow()));
+                treatmentController.deleteTreatmentType(new ArrayList<>(treatmentTypes.keySet()).get(table.getSelectedRow()));
+                //treatmentController.deleteTreatmentType(treatmentTypes.keySet().stream().toList().get(table.getSelectedRow()));
                 tableModel.fireTableDataChanged();
             });
             this.add(delete);

@@ -163,7 +163,8 @@ public class Database {
                 line = line.trim();
                 String[] userData = line.split(",");
                 switch (userData[0]) {
-                    case "C" -> users.put(userData[1], new Client(
+                    case "C":
+                        users.put(userData[1], new Client(
                             userData[2],
                             userData[3],
                             userData[4],
@@ -172,7 +173,8 @@ public class Database {
                             userData[7],
                             Boolean.parseBoolean(userData[8]),
                             Double.parseDouble(userData[9])));
-                    case "B" -> {
+                        break;
+                    case "B":
                         List<Byte> treatmentTypeIDs = new ArrayList<>();
                         String[] treatmentTypes = userData[13].split(";");
                         for (String s : treatmentTypes) {
@@ -191,8 +193,9 @@ public class Database {
                                 Double.parseDouble(userData[10]),
                                 Double.parseDouble(userData[11]),
                                 Integer.parseInt(userData[12])));
-                    }
-                    case "R" -> users.put(userData[1], new Receptionist(
+                        break;
+                    case "R":
+                        users.put(userData[1], new Receptionist(
                             userData[2],
                             userData[3],
                             userData[4],
@@ -203,7 +206,9 @@ public class Database {
                             Byte.parseByte(userData[9]),
                             Double.parseDouble(userData[10]),
                             Double.parseDouble(userData[11])));
-                    case "M" -> users.put(userData[1], new Manager(
+                        break;
+                    case "M":
+                        users.put(userData[1], new Manager(
                             userData[2],
                             userData[3],
                             userData[4],
@@ -214,6 +219,7 @@ public class Database {
                             Byte.parseByte(userData[9]),
                             Double.parseDouble(userData[10]),
                             Double.parseDouble(userData[11])));
+                        break;
                 }
             }
             in.close();

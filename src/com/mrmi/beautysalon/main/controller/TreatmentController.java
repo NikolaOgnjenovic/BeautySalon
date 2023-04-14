@@ -6,6 +6,7 @@ import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.entity.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TreatmentController {
     private final Database database;
@@ -77,11 +78,17 @@ public class TreatmentController {
         database.deleteTreatmentType(id);
     }
     public List<Treatment> getTreatmentsSortedByBeauticians() {
-        return database.getTreatments().values().stream().sorted(Comparator.comparing(Treatment::getBeauticianUsername)).toList();
+        List<Treatment> list = new ArrayList<>(database.getTreatments().values());
+        list.sort(Comparator.comparing(Treatment::getBeauticianUsername));
+        return list;
+        //return database.getTreatments().values().stream().sorted(Comparator.comparing(Treatment::getBeauticianUsername)).toList();
     }
 
     public List<Treatment> getTreatmentsSortedByCancellationReason() {
-        return database.getTreatments().values().stream().sorted(Comparator.comparing(Treatment::getCancellationReason)).toList();
+        List<Treatment> list = new ArrayList<>(database.getTreatments().values());
+        list.sort(Comparator.comparing(Treatment::getCancellationReason));
+        return list;
+        //return database.getTreatments().values().stream().sorted().toList();
     }
     public HashMap<Integer, TreatmentType> getTreatmentTypesByCategoryList(List<Integer> treatmentTypeCategoryIDs) {
         HashMap<Integer, TreatmentType> treatmentTypes = new HashMap<>();
@@ -101,11 +108,14 @@ public class TreatmentController {
         byte duration = treatmentTypes.get(treatmentTypeId).getDuration();
         Vector<String> timeWindows = new Vector<>();
         Treatment previousTreatment = null;
-        List<Treatment> sortedTreatments = treatments.values()
-                .stream()
-                .sorted(Comparator.comparing(Treatment::getScheduledDate))
-                .filter(t -> t.getScheduledDate().getDate() == date.getDate())
-                .toList();
+        List<Treatment> sortedTreatments = new ArrayList<>(treatments.values());
+        sortedTreatments.sort(Comparator.comparing(Treatment::getScheduledDate));
+        sortedTreatments = sortedTreatments.stream().filter(t -> t.getScheduledDate().getDate() == date.getDate()).collect(Collectors.toList());
+//        List<Treatment> sortedTreatments = treatments.values()
+//                .stream()
+//                .sorted(Comparator.comparing(Treatment::getScheduledDate))
+//                .filter(t -> t.getScheduledDate().getDate() == date.getDate())
+//                .toList();
         if (sortedTreatments.size() > 0) {
             for (Treatment treatment : sortedTreatments) {
                 if (previousTreatment != null ) {

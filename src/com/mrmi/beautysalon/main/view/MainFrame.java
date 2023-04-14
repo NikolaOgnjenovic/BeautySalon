@@ -27,11 +27,12 @@ public class MainFrame extends JFrame {
         treatmentController = new TreatmentController(database, salonController);
         userController = new UserController(database, treatmentController, salonController);
         authController = new AuthController(userController);
-        intialiseViews();
+
+        initialiseViews();
         initialiseListeners();
     }
 
-    private void intialiseViews() {
+    private void initialiseViews() {
         this.setTitle("Beauty salon");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);

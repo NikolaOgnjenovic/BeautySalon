@@ -5,6 +5,7 @@ import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
 import com.mrmi.beautysalon.main.entity.Treatment;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -67,56 +68,42 @@ public class TreatmentTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        Treatment treatment = treatments.values().stream().toList().get(rowIndex);
+        Treatment treatment = new ArrayList<>(treatments.values()).get(rowIndex);
+        //Treatment treatment = treatments.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
-            case 0 -> {
+            case 0:
                 return treatment.getScheduledDate();
-            }
-            case 1 -> {
+            case 1:
                 try {
                     return treatmentController.getTreatmentTypeCategoryName(treatmentController.getTreatmentTypeById(treatment.getTreatmentTypeId()).getCategoryId());
                 } catch (TreatmentTypeNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            case 2 -> {
+            case 2:
                 try {
                     return treatmentController.getTreatmentTypeById(treatment.getTreatmentTypeId()).getName();
                 } catch (TreatmentTypeNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            case 3 -> {
+            case 3:
                 return treatment.getPrice();
-            }
-            case 4 -> {
+            case 4:
                 return treatment.getClientUsername();
-            }
-            case 5 -> {
+            case 5:
                 return treatment.getBeauticianUsername();
-            }
-            case 6 -> {
+            case 6:
                 return treatment.getStatus();
-            }
-
-            case 7 -> {
+            case 7:
                 return treatment.isCancelled();
-            }
-
-            case 8 -> {
+            case 8:
                 return treatment.getCancellationReason();
-            }
-
-            case 9 -> {
+            case 9:
                 if (isClient) {
                     return treatment.getPrice() * 0.9;
                 }
                 return null;
-            }
-
-            default -> {
+            default:
                 return null;
-            }
         }
     }
 
@@ -126,18 +113,33 @@ public class TreatmentTableModel extends AbstractTableModel {
         if (!canEdit) {
             return;
         }
-        Treatment treatment = treatments.values().stream().toList().get(rowIndex);
+        Treatment treatment = new ArrayList<>(treatments.values()).get(rowIndex);
         switch (columnIndex) {
-            case 0 -> treatment.setScheduledDate((Date) aValue);
-            case 3 -> treatment.setPrice((Double) aValue);
-            case 4 -> treatment.setClientUsername((String) aValue);
-            case 5 -> treatment.setBeauticianUsername((String) aValue);
-            case 6 -> treatment.setStatus((String) aValue);
-            case 7 -> treatment.setCancelled((Boolean) aValue);
-            case 8 -> treatment.setCancellationReason((String) aValue);
+            case 0:
+                treatment.setScheduledDate((Date) aValue);
+                break;
+            case 3:
+                treatment.setPrice((Double) aValue);
+                break;
+            case 4:
+                treatment.setClientUsername((String) aValue);
+                break;
+            case 5:
+                treatment.setBeauticianUsername((String) aValue);
+                break;
+            case 6:
+                treatment.setStatus((String) aValue);
+                break;
+            case 7:
+                treatment.setCancelled((Boolean) aValue);
+                break;
+            case 8:
+                treatment.setCancellationReason((String) aValue);
+                break;
         }
 
-        treatmentController.updateTreatment(treatment, treatments.keySet().stream().toList().get(rowIndex));
+        treatmentController.updateTreatment(treatment, new ArrayList<>(treatments.keySet()).get(rowIndex));
+        //treatmentController.updateTreatment(treatment, treatments.keySet().stream().toList().get(rowIndex));
     }
 
     @Override

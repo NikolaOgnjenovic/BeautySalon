@@ -151,7 +151,7 @@ public class ConsoleApp {
 //        User newUser = null;
 //        switch (userType) {
 //            case "C" -> newUser = new Client(password, name, surname, gender, phoneNumber, address);
-//            case "B" -> {
+//            case "B":
 //                System.out.println("Available treatment types: ");
 //                for (TreatmentType t : database.getTreatmentTypes().values()) {
 //                    System.out.println(t);
@@ -172,11 +172,11 @@ public class ConsoleApp {
 //                newUser = new Beautician(password, name, surname, gender, phoneNumber, address, treatmentTypeIDs, 0);
 //                setEmployeeAttributes((Beautician) newUser);
 //            }
-//            case "R" -> {
+//            case "R":
 //                newUser = new Receptionist(password, name, surname, gender, phoneNumber, address);
 //                setEmployeeAttributes((Receptionist) newUser);
 //            }
-//            case "M" -> {
+//            case "M":
 //                newUser = new Manager(password, name, surname, gender, phoneNumber, address);
 //                setEmployeeAttributes((Manager) newUser);
 //            }

@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TreatmentsFrame extends JFrame {
@@ -45,13 +46,7 @@ public class TreatmentsFrame extends JFrame {
                     // todo: warning popup
                     cancellationReason.setText("Enter a reason!");
                 } else {
-                    //boolean clientCancelled, String cancellationReason, UserController userController, Double loyaltyThreshold
-                    treatmentController.cancelTreatment(table.getSelectedRow(), true, cancellationReason.getText(), userController, loyaltyThreshold);
-                    Treatment t = treatments.values().stream().toList().get(table.getSelectedRow());
-//                    t.setStatus("CANCELLED");
-//                    t.setCancelled(true);
-//                    t.setCancellationReason(cancellationReason.getText());
-//                    treatmentController.updateTreatment(t, treatments.keySet().stream().toList().get(table.getSelectedRow()));
+                    treatmentController.cancelTreatment(table.getSelectedRow(), isClient, cancellationReason.getText(), userController, loyaltyThreshold);
                     tableModel.fireTableDataChanged();
                 }
             });
@@ -62,7 +57,8 @@ public class TreatmentsFrame extends JFrame {
         if (canDelete) {
             JButton delete = new JButton("Delete treatment");
             delete.addActionListener(e -> {
-                treatmentController.deleteTreatment(treatments.keySet().stream().toList().get(table.getSelectedRow()));
+                treatmentController.deleteTreatment(new ArrayList<>(treatments.keySet()).get(table.getSelectedRow()));
+                //treatmentController.deleteTreatment(treatments.keySet().stream().toList().get(table.getSelectedRow()));
                 tableModel.fireTableDataChanged();
             });
             this.add(delete);

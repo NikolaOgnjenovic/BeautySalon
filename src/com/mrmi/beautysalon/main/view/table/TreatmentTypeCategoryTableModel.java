@@ -4,6 +4,7 @@ import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TreatmentTypeCategoryTableModel extends AbstractTableModel {
@@ -52,7 +53,8 @@ public class TreatmentTypeCategoryTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        TreatmentTypeCategory treatmentTypeCategory = treatmentTypeCategories.values().stream().toList().get(rowIndex);
+        TreatmentTypeCategory treatmentTypeCategory = new ArrayList<>(treatmentTypeCategories.values()).get(rowIndex);
+        //TreatmentTypeCategory treatmentTypeCategory = treatmentTypeCategories.values().stream().toList().get(rowIndex);
         if (columnIndex == 0) {
             return treatmentTypeCategory.getName();
         }
@@ -65,12 +67,14 @@ public class TreatmentTypeCategoryTableModel extends AbstractTableModel {
         if (!canEdit) {
             return;
         }
-        TreatmentTypeCategory treatmentTypeCategory = treatmentTypeCategories.values().stream().toList().get(rowIndex);
+        TreatmentTypeCategory treatmentTypeCategory = new ArrayList<>(treatmentTypeCategories.values()).get(rowIndex);
+        //TreatmentTypeCategory treatmentTypeCategory = treatmentTypeCategories.values().stream().toList().get(rowIndex);
         if (columnIndex == 0) {
             treatmentTypeCategory.setName(aValue.toString());
         }
 
-        treatmentController.updateTreatmentTypeCategory(treatmentTypeCategories.keySet().stream().toList().get(rowIndex), treatmentTypeCategory);
+        treatmentController.updateTreatmentTypeCategory(new ArrayList<>(treatmentTypeCategories.keySet()).get(rowIndex), treatmentTypeCategory);
+        //treatmentController.updateTreatmentTypeCategory(treatmentTypeCategories.keySet().stream().toList().get(rowIndex), treatmentTypeCategory);
     }
 
     @Override

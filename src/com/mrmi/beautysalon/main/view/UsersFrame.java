@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class UsersFrame extends JFrame {
@@ -38,7 +39,8 @@ public class UsersFrame extends JFrame {
             JButton delete = new JButton("Delete user");
             delete.addActionListener(e -> {
                 try {
-                    userController.deleteUser(users.keySet().stream().toList().get(table.getSelectedRow()));
+                    userController.deleteUser(new ArrayList<>(users.keySet()).get(table.getSelectedRow()));
+                    //userController.deleteUser(users.keySet().stream().toList().get(table.getSelectedRow()));
                 } catch (UserNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
