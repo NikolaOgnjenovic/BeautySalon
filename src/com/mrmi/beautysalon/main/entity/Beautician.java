@@ -1,8 +1,5 @@
 package com.mrmi.beautysalon.main.entity;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class Beautician extends Employee {

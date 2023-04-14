@@ -1,6 +1,5 @@
 package com.mrmi.beautysalon.main.controller;
 
-import com.mrmi.beautysalon.main.entity.Beautician;
 import com.mrmi.beautysalon.main.entity.BeautySalon;
 
 import java.io.*;

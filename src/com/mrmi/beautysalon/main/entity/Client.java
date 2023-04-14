@@ -1,7 +1,5 @@
 package com.mrmi.beautysalon.main.entity;
 
-import java.util.HashMap;
-
 public class Client extends User {
     private double moneySpent;
     private boolean hasLoyaltyCard;
@@ -26,7 +24,7 @@ public class Client extends User {
         this.moneySpent = moneySpent;
     }
 
-    public void changeMoneySpent(double moneySpent, Database database) {
+    public void changeMoneySpent(double moneySpent) {
         this.moneySpent += moneySpent;
     }
 

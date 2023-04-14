@@ -5,7 +5,7 @@ public class TreatmentType {
     private double price;
     private int timesBooked;
     private double profit;
-    private int categoryId;
+    private final int categoryId;
     private byte duration;
     public TreatmentType(String name, double price, int categoryId, byte duration) {
         this.name = name;
@@ -34,10 +34,6 @@ public class TreatmentType {
 
     public void changeProfit(double amount) {
         this.profit += amount;
-    }
-
-    public String getDisplayString(int id) {
-        return "ID: " + id + ", name: " + name + ", price: " + price + ", duration: " + duration;
     }
 
     public String getName() {
@@ -70,10 +66,6 @@ public class TreatmentType {
 
     public int getCategoryId() {
         return categoryId;
-    }
-
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
     }
 
     public String getFileString(int id) {

@@ -17,16 +17,8 @@ public class AuthController {
         return currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
-    }
-
     public String getCurrentUsername() {
         return currentUsername;
-    }
-
-    public void setCurrentUsername(String currentUsername) {
-        this.currentUsername = currentUsername;
     }
 
     public boolean login(String username, String password) {

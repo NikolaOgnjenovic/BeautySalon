@@ -1,10 +1,10 @@
 package com.mrmi.beautysalon.main.view;
 
+import com.mrmi.beautysalon.main.controller.AuthController;
 import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.controller.UserController;
 import com.mrmi.beautysalon.main.entity.BeautySalon;
 import com.mrmi.beautysalon.main.entity.Client;
-import com.mrmi.beautysalon.main.entity.Database;
 import com.mrmi.beautysalon.main.entity.Treatment;
 
 import javax.swing.*;
@@ -15,6 +15,7 @@ public class ClientFrame extends JFrame {
     private final TreatmentController treatmentController;
     private final UserController userController;
     private final BeautySalon beautySalon;
+    private final AuthController authController;
     private final String clientUsername;
     private final Client client;
     private JButton logout;
@@ -23,20 +24,20 @@ public class ClientFrame extends JFrame {
     private JButton cancelTreatment;
     private JButton bookTreatment;
 
-    public ClientFrame(Client client, String clientUsername, TreatmentController treatmentController, UserController userController, BeautySalon beautySalon) {
+    public ClientFrame(Client client, String clientUsername, TreatmentController treatmentController, UserController userController, BeautySalon beautySalon, AuthController authController) {
         this.client = client;
         this.clientUsername = clientUsername;
         this.treatmentController = treatmentController;
         this.userController = userController;
         this.beautySalon = beautySalon;
-
+        this.authController = authController;
         initialiseViews();
         initialiseListeners();
     }
 
     private void initialiseViews() {
         this.setTitle("Client");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setResizable(true);
         this.setSize(800, 800);
         this.setVisible(true);
@@ -69,6 +70,7 @@ public class ClientFrame extends JFrame {
 
     private void initialiseListeners() {
         logout.addActionListener(e -> {
+            authController.logout();
             this.dispose();
             MainFrame mainFrame = new MainFrame();
         });
@@ -76,19 +78,19 @@ public class ClientFrame extends JFrame {
         viewDueTreatments.addActionListener(e -> {
             this.dispose();
             HashMap<Integer, Treatment> dueTreatments = userController.getClientDueTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, dueTreatments, false, false, false, this);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, dueTreatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), true);
         });
 
         viewPastTreatments.addActionListener(e -> {
             this.dispose();
             HashMap<Integer, Treatment> pastTreatments = userController.getClientPastTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, pastTreatments, false, false, false, this);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, pastTreatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), true);
         });
 
         cancelTreatment.addActionListener(e -> {
             this.dispose();
             HashMap<Integer, Treatment> clientTreatments = userController.getClientTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, clientTreatments, false, true, false, this);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, false, true, false, this, beautySalon.getLoyaltyThreshold(), true);
         });
 
         bookTreatment.addActionListener(e -> {

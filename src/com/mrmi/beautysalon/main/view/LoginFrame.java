@@ -28,7 +28,7 @@ public class LoginFrame extends JFrame {
 
     private void initialiseViews() {
         this.setTitle("Login");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setResizable(true);
         this.setSize(800, 800);
         this.setVisible(true);
@@ -57,10 +57,10 @@ public class LoginFrame extends JFrame {
             } else {
                 if (authController.getCurrentUser().getClass().equals(Client.class)) {
                     this.dispose();
-                    ClientFrame clientFrame = new ClientFrame((Client) authController.getCurrentUser(), authController.getCurrentUsername(), treatmentController, userController, beautySalon);
+                    ClientFrame clientFrame = new ClientFrame((Client) authController.getCurrentUser(), authController.getCurrentUsername(), treatmentController, userController, beautySalon, authController);
                 } else if (authController.getCurrentUser().getClass().equals(Beautician.class)) {
                     this.dispose();
-                    BeauticianFrame beauticianFrame = new BeauticianFrame(authController.getCurrentUsername(), treatmentController, userController);
+                    BeauticianFrame beauticianFrame = new BeauticianFrame(authController.getCurrentUsername(), treatmentController, userController, beautySalon);
                 } else if (authController.getCurrentUser().getClass().equals(Receptionist.class)) {
                     this.dispose();
                     ReceptionistFrame receptionistFrame = new ReceptionistFrame(treatmentController, userController, beautySalon);

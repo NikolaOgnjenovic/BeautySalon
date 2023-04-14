@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.view.table;
 
 import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.entity.Database;
 import com.mrmi.beautysalon.main.entity.TreatmentType;
 
 import javax.swing.table.AbstractTableModel;

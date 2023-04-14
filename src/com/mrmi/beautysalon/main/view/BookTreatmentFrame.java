@@ -4,7 +4,6 @@ import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.controller.UserController;
 import com.mrmi.beautysalon.main.entity.Beautician;
 import com.mrmi.beautysalon.main.entity.BeautySalon;
-import com.mrmi.beautysalon.main.entity.Database;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.table.BeauticianTableModel;
 import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
@@ -14,7 +13,6 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -49,7 +47,7 @@ public class BookTreatmentFrame extends JFrame {
     }
     private void initialiseViews() {
         this.setTitle("Book treatment");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setResizable(true);
         this.setSize(800, 800);
         this.setVisible(true);
@@ -85,7 +83,6 @@ public class BookTreatmentFrame extends JFrame {
 
         this.add(datePicker);
 
-        //timeWindows = treatmentController.getTreatmentTimeWindows(new Date(), 7, beautySalon);
         timeWindows = new Vector<>();
         treatmentTimeWindows = new JComboBox<>(timeWindows);
         this.add(treatmentTimeWindows);
@@ -114,9 +111,7 @@ public class BookTreatmentFrame extends JFrame {
             }
         });
 
-        beauticianTable.getSelectionModel().addListSelectionListener(e -> {
-            beauticianUsername = beauticianTable.getValueAt(beauticianTable.getSelectedRow(), 0).toString();
-        });
+        beauticianTable.getSelectionModel().addListSelectionListener(e -> beauticianUsername = beauticianTable.getValueAt(beauticianTable.getSelectedRow(), 0).toString());
 
         selectedDate = (Date) datePicker.getModel().getValue();
         datePicker.addActionListener(e -> {

@@ -1,8 +1,5 @@
 package com.mrmi.beautysalon.main.entity;
 
-import java.util.Date;
-import java.util.HashMap;
-
 public class Receptionist extends Employee {
 
     public Receptionist(String password, String name, String surname, String gender, String phoneNumber, String address) {

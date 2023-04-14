@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.view;
 
 import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.entity.Database;
 import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
 import com.mrmi.beautysalon.main.view.table.TreatmentTypeCategoryTableModel;
 
@@ -17,7 +16,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
         this.add(new JScrollPane(table));
 
         this.setTitle("Treatment type categories");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.pack();
         this.setVisible(true);
         this.setLayout(new FlowLayout());

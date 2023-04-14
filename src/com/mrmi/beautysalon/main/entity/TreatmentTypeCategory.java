@@ -4,7 +4,7 @@ import java.util.List;
 
 public class TreatmentTypeCategory {
     private String name;
-    private List<Integer> treatmentTypeIds;
+    private final List<Integer> treatmentTypeIds;
     private double profit;
 
     public TreatmentTypeCategory(String name, List<Integer> treatmentTypeIds, Double profit) {
@@ -19,14 +19,6 @@ public class TreatmentTypeCategory {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Integer> getTreatmentTypeIds() {
-        return treatmentTypeIds;
-    }
-
-    public void setTreatmentTypeIds(List<Integer> treatmentTypeIds) {
-        this.treatmentTypeIds = treatmentTypeIds;
     }
 
     public double getProfit() {

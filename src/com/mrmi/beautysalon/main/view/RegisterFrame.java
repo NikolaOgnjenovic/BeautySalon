@@ -10,7 +10,7 @@ public class RegisterFrame extends JFrame {
     }
     private void initialiseViews() {
         this.setTitle("Register");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setResizable(true);
         this.setSize(800, 800);
         this.setVisible(true);

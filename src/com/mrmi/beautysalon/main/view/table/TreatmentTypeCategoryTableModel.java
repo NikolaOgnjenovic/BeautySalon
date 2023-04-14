@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.view.table;
 
 import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.entity.Database;
 import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
 
 import javax.swing.table.AbstractTableModel;
@@ -54,14 +53,10 @@ public class TreatmentTypeCategoryTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex)
     {
         TreatmentTypeCategory treatmentTypeCategory = treatmentTypeCategories.values().stream().toList().get(rowIndex);
-        switch (columnIndex) {
-            case 0 -> {
-                return treatmentTypeCategory.getName();
-            }
-            default -> {
-                return null;
-            }
+        if (columnIndex == 0) {
+            return treatmentTypeCategory.getName();
         }
+        return null;
     }
 
     @Override
@@ -71,8 +66,8 @@ public class TreatmentTypeCategoryTableModel extends AbstractTableModel {
             return;
         }
         TreatmentTypeCategory treatmentTypeCategory = treatmentTypeCategories.values().stream().toList().get(rowIndex);
-        switch (columnIndex) {
-            case 0 -> treatmentTypeCategory.setName(aValue.toString());
+        if (columnIndex == 0) {
+            treatmentTypeCategory.setName(aValue.toString());
         }
 
         treatmentController.updateTreatmentTypeCategory(treatmentTypeCategories.keySet().stream().toList().get(rowIndex), treatmentTypeCategory);

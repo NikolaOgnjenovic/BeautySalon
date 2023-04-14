@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.entity;
 
 import java.util.Date;
-import java.util.HashMap;
 
 public class Manager extends Employee {
 

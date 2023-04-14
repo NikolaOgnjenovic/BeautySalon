@@ -2,7 +2,7 @@ package com.mrmi.beautysalon.main.view;
 
 
 import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.entity.Database;
+import com.mrmi.beautysalon.main.controller.UserController;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.table.TreatmentTableModel;
 
@@ -15,12 +15,12 @@ import java.util.HashMap;
 public class TreatmentsFrame extends JFrame {
     private final TableRowSorter<TableModel> tableSorter;
     private final JTextField filterText;
-    public TreatmentsFrame(TreatmentController treatmentController, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean canCancel, boolean canDelete, JFrame previousFrame) {
-        TreatmentTableModel tableModel = new TreatmentTableModel(treatmentController, treatments, canEdit);
+    public TreatmentsFrame(TreatmentController treatmentController, UserController userController, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean canCancel, boolean canDelete, JFrame previousFrame, Double loyaltyThreshold, boolean isClient) {
+        TreatmentTableModel tableModel = new TreatmentTableModel(treatmentController, treatments, canEdit, isClient);
         JTable table = new JTable(tableModel);
         this.add(new JScrollPane(table));
         this.setTitle("Treatments");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.pack();
         this.setVisible(true);
         this.setLayout(new FlowLayout());
@@ -45,11 +45,13 @@ public class TreatmentsFrame extends JFrame {
                     // todo: warning popup
                     cancellationReason.setText("Enter a reason!");
                 } else {
+                    //boolean clientCancelled, String cancellationReason, UserController userController, Double loyaltyThreshold
+                    treatmentController.cancelTreatment(table.getSelectedRow(), true, cancellationReason.getText(), userController, loyaltyThreshold);
                     Treatment t = treatments.values().stream().toList().get(table.getSelectedRow());
-                    t.setStatus("CANCELLED");
-                    t.setCancelled(true);
-                    t.setCancellationReason(cancellationReason.getText());
-                    treatmentController.updateTreatment(t, treatments.keySet().stream().toList().get(table.getSelectedRow()));
+//                    t.setStatus("CANCELLED");
+//                    t.setCancelled(true);
+//                    t.setCancellationReason(cancellationReason.getText());
+//                    treatmentController.updateTreatment(t, treatments.keySet().stream().toList().get(table.getSelectedRow()));
                     tableModel.fireTableDataChanged();
                 }
             });

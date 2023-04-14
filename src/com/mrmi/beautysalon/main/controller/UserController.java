@@ -50,20 +50,6 @@ public class UserController {
         return (Client) users.get(username);
     }
 
-    public HashMap<String, Client> getLoyalClients() {
-        HashMap<String, Client> clients = new HashMap<>();
-        for (Map.Entry<String, User> u : users.entrySet()) {
-            if (u.getValue().getClass().equals(Client.class)) {
-                Client c = (Client) u.getValue();
-                if (c.hasLoyaltyCard()) {
-                    clients.put(u.getKey(), c);
-                }
-            }
-        }
-
-        return clients;
-    }
-
     public HashMap<Integer, Treatment> getClientTreatments(String clientUsername) {
         HashMap<Integer, Treatment> clientTreatments = new HashMap<>();
         for (Map.Entry<Integer, Treatment> t : treatments.entrySet()) {
@@ -125,16 +111,6 @@ public class UserController {
     //endregion
 
     //region Employee
-    public HashMap<String, Employee> getEmployees() {
-        HashMap<String, Employee> employees = new HashMap<>();
-        for (Map.Entry<String, User> u : users.entrySet()) {
-            if (!u.getValue().getClass().isInstance(User.class)) {
-                employees.put(u.getKey(), (Employee) u);
-            }
-        }
-        return employees;
-    }
-
     public void addEmployee(String username, Employee employee) {
         database.addUser(username, employee);
     }
@@ -201,7 +177,7 @@ public class UserController {
     }
 
     // TODO
-    public String getSchedule(Database database, String username) {
+    public String getSchedule(String username) {
 //        List<Treatment> treatments = database.getBeauticianTreatments(username).values().stream().sorted(Comparator.comparing(Treatment::getScheduledDate)).toList();
 //        if (treatments.size() < 1) {
 //            return "";

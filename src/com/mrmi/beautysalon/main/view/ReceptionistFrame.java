@@ -3,8 +3,6 @@ package com.mrmi.beautysalon.main.view;
 import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.controller.UserController;
 import com.mrmi.beautysalon.main.entity.BeautySalon;
-import com.mrmi.beautysalon.main.entity.Database;
-import com.mrmi.beautysalon.main.entity.Receptionist;
 import com.mrmi.beautysalon.main.entity.Treatment;
 
 import javax.swing.*;
@@ -31,7 +29,7 @@ public class ReceptionistFrame extends JFrame {
     }
     private void initialiseViews() {
         this.setTitle("Receptionist");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setResizable(true);
         this.setSize(800, 800);
         this.setVisible(true);
@@ -62,7 +60,7 @@ public class ReceptionistFrame extends JFrame {
         viewTreatments.addActionListener(e -> {
             this.dispose();
             HashMap<Integer, Treatment> treatments = treatmentController.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, treatments, false, false, false, this);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), false);
         });
 
         bookTreatment.addActionListener(e -> {
@@ -77,7 +75,7 @@ public class ReceptionistFrame extends JFrame {
         editTreatment.addActionListener(e -> {
             this.dispose();
             HashMap<Integer, Treatment> clientTreatments = treatmentController.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, clientTreatments, true, true, false, this);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, true, true, false, this, beautySalon.getLoyaltyThreshold(), false);
         });
     }
 

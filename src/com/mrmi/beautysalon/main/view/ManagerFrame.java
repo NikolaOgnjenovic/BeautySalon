@@ -15,7 +15,6 @@ public class ManagerFrame extends JFrame {
     private final UserController userController;
     private final BeautySalon beautySalon;
     private JButton editUsers;
-    private JLabel loyaltyThresholdLabel;
     private JTextField loyaltyThreshold;
     private JButton editTreatmentTypeCategories;
     private JButton editTreatmentTypes;
@@ -23,6 +22,9 @@ public class ManagerFrame extends JFrame {
     private JButton treatmentStatusGraphButton;
     private JButton treatmentCategoryProfitButton;
     private JButton beauticianStatsButton;
+
+    private JButton cancellationReport;
+    private JButton beauticianReport;
 
     public ManagerFrame(TreatmentController treatmentController, UserController userController, BeautySalon beautySalon) {
         this.treatmentController = treatmentController;
@@ -45,7 +47,7 @@ public class ManagerFrame extends JFrame {
         editUsers = new JButton("Edit users");
         this.add(editUsers);
 
-        loyaltyThresholdLabel = new JLabel("Loyalty threshold");
+        JLabel loyaltyThresholdLabel = new JLabel("Loyalty threshold");
         this.add(loyaltyThresholdLabel);
         loyaltyThreshold = new JTextField(String.valueOf(beautySalon.getLoyaltyThreshold()));
         this.add(loyaltyThreshold);
@@ -68,6 +70,11 @@ public class ManagerFrame extends JFrame {
         treatmentCategoryProfitButton = new JButton("View profit by treatment category graph");
         this.add(treatmentCategoryProfitButton);
 
+        cancellationReport = new JButton("View cancellation report");
+        this.add(cancellationReport);
+
+        beauticianReport = new JButton("Beautician profit report");
+        this.add(beauticianReport);
         // TODO:
         //  salon profit & loss in a date interval
         //  registerEmployee();
@@ -95,7 +102,7 @@ public class ManagerFrame extends JFrame {
         editTreatments.addActionListener(e -> {
             this.dispose();
             HashMap<Integer, Treatment> treatments = treatmentController.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, treatments, true, true, true, this);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, true, true, true, this, beautySalon.getLoyaltyThreshold(), false);
         });
 
         HashMap<String, Integer> statusCount = treatmentController.getStatusCountMap();
@@ -133,6 +140,16 @@ public class ManagerFrame extends JFrame {
             }
             Thread t = new Thread(() -> new SwingWrapper<>(chart).displayChart().setDefaultCloseOperation(DISPOSE_ON_CLOSE));
             t.start();
+        });
+
+        cancellationReport.addActionListener(e -> {
+            this.dispose();
+            CancellationReportFrame cancellationReportFrame = new CancellationReportFrame(treatmentController);
+        });
+
+        beauticianReport.addActionListener(e -> {
+            this.dispose();
+            BeauticianProfitFrame beauticianProfitFrame = new BeauticianProfitFrame(treatmentController);
         });
     }
     private Color[] getChartColors(int size) {

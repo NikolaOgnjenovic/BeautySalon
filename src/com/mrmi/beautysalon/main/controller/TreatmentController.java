@@ -6,6 +6,7 @@ import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.entity.*;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class TreatmentController {
     private final Database database;

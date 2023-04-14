@@ -1,11 +1,7 @@
 package com.mrmi.beautysalon.main.run;
 
-import com.mrmi.beautysalon.main.exceptions.TreatmentNotFoundException;
-import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
-import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.entity.*;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 

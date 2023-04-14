@@ -2,7 +2,6 @@ package com.mrmi.beautysalon.main.view.table;
 
 import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
-import com.mrmi.beautysalon.main.entity.Database;
 import com.mrmi.beautysalon.main.entity.Treatment;
 
 import javax.swing.table.AbstractTableModel;
@@ -13,19 +12,32 @@ public class TreatmentTableModel extends AbstractTableModel {
     private final HashMap<Integer, Treatment> treatments;
     private final TreatmentController treatmentController;
     private final boolean canEdit;
+    private final boolean isClient;
 
-    private final String[] columnNames = new String[] {
-            "Date", "Category", "Type", "Price", "Client", "Beautician", "Status", "Cancelled", "Cancellation reason"
-    };
-    private final Class[] columnClass = new Class[] {
-            Date.class, String.class, String.class, Double.class, String.class, String.class, String.class, Boolean.class, String.class
-    };
-
-    public TreatmentTableModel(TreatmentController treatmentController, HashMap<Integer, Treatment> treatments, boolean canEdit)
+    private final String[] columnNames;
+    private final Class[] columnClass;
+    public TreatmentTableModel(TreatmentController treatmentController, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean isClient)
     {
         this.treatmentController = treatmentController;
         this.treatments = treatments;
         this.canEdit = canEdit;
+        this.isClient = isClient;
+
+        if (isClient) {
+            columnNames = new String[] {
+                    "Date", "Category", "Type", "Price", "Client", "Beautician", "Status", "Cancelled", "Cancellation reason", "Refundable amount"
+            };
+            columnClass = new Class[] {
+                    Date.class, String.class, String.class, Double.class, String.class, String.class, String.class, Boolean.class, String.class, Double.class
+            };
+        } else {
+            columnNames = new String[] {
+                    "Date", "Category", "Type", "Price", "Client", "Beautician", "Status", "Cancelled", "Cancellation reason"
+            };
+            columnClass = new Class[] {
+                    Date.class, String.class, String.class, Double.class, String.class, String.class, String.class, Boolean.class, String.class
+            };
+        }
     }
 
     @Override
@@ -91,8 +103,15 @@ public class TreatmentTableModel extends AbstractTableModel {
                 return treatment.isCancelled();
             }
 
-            case 8-> {
+            case 8 -> {
                 return treatment.getCancellationReason();
+            }
+
+            case 9 -> {
+                if (isClient) {
+                    return treatment.getPrice() * 0.9;
+                }
+                return null;
             }
 
             default -> {
