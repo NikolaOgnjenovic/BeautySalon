@@ -58,7 +58,6 @@ public class ReceptionistFrame extends JFrame {
         });
 
         viewTreatments.addActionListener(e -> {
-            this.dispose();
             HashMap<Integer, Treatment> treatments = treatmentController.getTreatments();
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), false);
         });
@@ -67,13 +66,11 @@ public class ReceptionistFrame extends JFrame {
             if (!userController.getUsers().containsKey(clientUsernameField.getText())) {
                 registerUser();
             } else {
-                this.dispose();
                 BookTreatmentFrame bookFrame = new BookTreatmentFrame(treatmentController, userController, beautySalon, clientUsernameField.getText());
             }
         });
 
         editTreatment.addActionListener(e -> {
-            this.dispose();
             HashMap<Integer, Treatment> clientTreatments = treatmentController.getTreatments();
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, true, true, false, this, beautySalon.getLoyaltyThreshold(), false);
         });

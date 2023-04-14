@@ -31,9 +31,9 @@ public class LoginFrame extends JFrame {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setResizable(true);
         this.setSize(800, 800);
+        this.setLayout(null);
         this.setVisible(true);
         this.getContentPane().setBackground(new Color(235, 235, 235));
-        this.setLayout(new FlowLayout());
 
         username = new JTextField();
         username.setToolTipText("Username");

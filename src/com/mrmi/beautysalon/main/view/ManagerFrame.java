@@ -82,7 +82,6 @@ public class ManagerFrame extends JFrame {
 
     private void initialiseListeners() {
         editUsers.addActionListener(e -> {
-            this.dispose();
             HashMap<String, User> users = userController.getUsers();
             UsersFrame usersFrame = new UsersFrame(userController, users, true, true);
         });
@@ -90,17 +89,14 @@ public class ManagerFrame extends JFrame {
         loyaltyThreshold.addActionListener(e -> beautySalon.setLoyaltyThreshold(Double.parseDouble(loyaltyThreshold.getText())));
 
         editTreatmentTypeCategories.addActionListener(e -> {
-            this.dispose();
             TreatmentTypeCategoriesFrame treatmentTypeCategoriesFrame = new TreatmentTypeCategoriesFrame(treatmentController, treatmentController.getTreatmentTypeCategories(), true, true);
         });
 
         editTreatmentTypes.addActionListener(e -> {
-            this.dispose();
             TreatmentTypesFrame treatmentTypesFrame = new TreatmentTypesFrame(treatmentController, treatmentController.getTreatmentTypes(), true, true);
         });
 
         editTreatments.addActionListener(e -> {
-            this.dispose();
             HashMap<Integer, Treatment> treatments = treatmentController.getTreatments();
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, true, true, true, this, beautySalon.getLoyaltyThreshold(), false);
         });
@@ -143,12 +139,10 @@ public class ManagerFrame extends JFrame {
         });
 
         cancellationReport.addActionListener(e -> {
-            this.dispose();
             CancellationReportFrame cancellationReportFrame = new CancellationReportFrame(treatmentController);
         });
 
         beauticianReport.addActionListener(e -> {
-            this.dispose();
             BeauticianProfitFrame beauticianProfitFrame = new BeauticianProfitFrame(treatmentController);
         });
     }

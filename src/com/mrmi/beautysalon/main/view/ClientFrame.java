@@ -76,25 +76,21 @@ public class ClientFrame extends JFrame {
         });
 
         viewDueTreatments.addActionListener(e -> {
-            this.dispose();
             HashMap<Integer, Treatment> dueTreatments = userController.getClientDueTreatments(clientUsername);
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, dueTreatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), true);
         });
 
         viewPastTreatments.addActionListener(e -> {
-            this.dispose();
             HashMap<Integer, Treatment> pastTreatments = userController.getClientPastTreatments(clientUsername);
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, pastTreatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), true);
         });
 
         cancelTreatment.addActionListener(e -> {
-            this.dispose();
             HashMap<Integer, Treatment> clientTreatments = userController.getClientTreatments(clientUsername);
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, false, true, false, this, beautySalon.getLoyaltyThreshold(), true);
         });
 
         bookTreatment.addActionListener(e -> {
-            this.dispose();
             BookTreatmentFrame bookFrame = new BookTreatmentFrame(treatmentController, userController, beautySalon, clientUsername);
         });
     }

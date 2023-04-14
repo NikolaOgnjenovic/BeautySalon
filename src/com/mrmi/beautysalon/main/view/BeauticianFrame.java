@@ -56,13 +56,11 @@ public class BeauticianFrame extends JFrame {
         });
 
         viewDueTreatments.addActionListener(e -> {
-            this.dispose();
             HashMap<Integer, Treatment> dueTreatments = userController.getBeauticianDueTreatments(username);
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, dueTreatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), false);
         });
 
         viewPastTreatments.addActionListener(e -> {
-            this.dispose();
             HashMap<Integer, Treatment> pastTreatments = userController.getBeauticianPastTreatments(username);
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, pastTreatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), false);
         });

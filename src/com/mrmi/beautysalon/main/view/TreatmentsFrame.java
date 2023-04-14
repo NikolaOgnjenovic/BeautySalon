@@ -73,6 +73,7 @@ public class TreatmentsFrame extends JFrame {
             this.dispose();
             previousFrame.setVisible(true);
         });
+        this.add(back);
 
         Double totalCost = treatmentController.getTotalCost(treatments);
         JLabel total = new JLabel("Total cost: " + totalCost);
