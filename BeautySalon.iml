@@ -33,5 +33,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="miglayout-core-11.1-sources" level="project" />
   </component>
 </module>
