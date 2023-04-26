@@ -7,6 +7,7 @@ import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.table.TreatmentTableModel;
 
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -53,15 +54,22 @@ public class TreatmentsFrame extends JFrame {
             this.add(cancel);
         }
 
-        // Svinjarija
         if (canDelete) {
             JButton delete = new JButton("Delete treatment");
             delete.addActionListener(e -> {
                 treatmentController.deleteTreatment(new ArrayList<>(treatments.keySet()).get(table.getSelectedRow()));
-                //treatmentController.deleteTreatment(treatments.keySet().stream().toList().get(table.getSelectedRow()));
                 tableModel.fireTableDataChanged();
             });
             this.add(delete);
+        }
+
+        if (canEdit) {
+            TableColumn statusColumn = table.getColumnModel().getColumn(6);
+            JComboBox<String> comboBox = new JComboBox<>();
+            for (Treatment.Status status : Treatment.Status.values()) {
+                comboBox.addItem(String.valueOf(status));
+            }
+            statusColumn.setCellEditor(new DefaultCellEditor(comboBox));
         }
 
         JButton back = new JButton("Back");
@@ -82,9 +90,8 @@ public class TreatmentsFrame extends JFrame {
 
     private void filter(String text) {
         RowFilter<TableModel, Object> rf;
-        //If current expression doesn't parse, don't update.
         try {
-            rf = RowFilter.regexFilter(text, 0, 1, 2);
+            rf = RowFilter.regexFilter(text); // (text, 0,1,2) to search columns 0,1,2
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
         }

@@ -174,9 +174,9 @@ public class TreatmentController {
     public void deleteTreatment(int id) {
         database.deleteTreatment(id);
     }
-    public HashMap<String, Integer> getStatusCountMap() {
+    public HashMap<Treatment.Status, Integer> getStatusCountMap() {
         HashMap<Integer, Treatment> treatments = database.getTreatments();
-        HashMap<String, Integer> statusCountMap = new HashMap<>();
+        HashMap<Treatment.Status, Integer> statusCountMap = new HashMap<>();
         long currentTime = new Date().getTime();
         currentTime -= 30L * 24 * 3600 * 1000;
         for (Treatment t : treatments.values()) {
@@ -223,10 +223,10 @@ public class TreatmentController {
         if (clientCancelled) {
             salonController.changeProfit(refundedPrice * 0.1);
             refundedPrice *= 0.9;
-            t.setStatus("Cancelled by client");
+            t.setStatus(Treatment.Status.CANCELLED_BY_CLIENT);
         } else {
             salonController.changeProfit(refundedPrice);
-            t.setStatus("Cancelled by salon");
+            t.setStatus(Treatment.Status.CANCELLED_BY_SALON);
         }
 
         updateTreatment(t, treatmentId);

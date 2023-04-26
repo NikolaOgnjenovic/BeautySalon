@@ -101,12 +101,12 @@ public class ManagerFrame extends JFrame {
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, true, true, true, this, beautySalon.getLoyaltyThreshold(), false);
         });
 
-        HashMap<String, Integer> statusCount = treatmentController.getStatusCountMap();
+        HashMap<Treatment.Status, Integer> statusCount = treatmentController.getStatusCountMap();
         treatmentStatusGraphButton.addActionListener(e -> {
             PieChart chart = new PieChartBuilder().width(800).height(600).title("Treatments by cancellation reason").build();
             chart.getStyler().setSeriesColors(getChartColors(statusCount.size()));
-            for (Map.Entry<String, Integer> entry : statusCount.entrySet()) {
-                chart.addSeries(entry.getKey(), entry.getValue());
+            for (Map.Entry<Treatment.Status, Integer> entry : statusCount.entrySet()) {
+                chart.addSeries(String.valueOf(entry.getKey()), entry.getValue());
             }
             Thread t = new Thread(() -> new SwingWrapper<>(chart).displayChart().setDefaultCloseOperation(DISPOSE_ON_CLOSE));
             t.start();

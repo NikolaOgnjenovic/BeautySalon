@@ -1,4 +1,4 @@
 B,b,b,b,b,F,123,ad,7,3,10.0,1000.0,10,9;8;
 M,manager,manager,Manager,McGee,F,1234,dagdag,7,3,0.0,100000.0,
-C,Mrmi,pass,Mrmki,Mrmic,M,123,adre,false,14850.0
-B,b1,b1,b1,b1,F,123,ad,7,3,10.0,1000.0,6,6;7;
+C,Mrmi,pass,Mrmki,Mrmic,M,123,adre,true,28080.0
+B,b1,b1,b1,b1,F,123,ad,7,3,10.0,1000.0,11,6;7;

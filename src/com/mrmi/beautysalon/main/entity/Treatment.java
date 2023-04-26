@@ -13,7 +13,15 @@ public class Treatment {
     private int treatmentTypeId;
 
     private Double price; // Although treatmentType holds price, this price can be affected by a loyalty discount
-    private String status;
+    private Status status;
+
+    public enum Status {
+        SCHEDULED,
+        FINISHED,
+        CANCELLED_BY_CLIENT,
+        CANCELLED_BY_SALON,
+        DID_NOT_ARRIVE
+    }
 
     private String cancellationReason;
 
@@ -24,11 +32,11 @@ public class Treatment {
         this.beauticianUsername = beauticianUsername;
         this.treatmentTypeId = treatmentTypeId;
         this.price = price;
-        this.status = "SCHEDULED";
+        this.status = Status.SCHEDULED;
         this.cancellationReason = "-";
     }
 
-    public Treatment(Date scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price, String status, String cancellationReason) {
+    public Treatment(Date scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price, Status status, String cancellationReason) {
         this.scheduledDate = scheduledDate;
         this.cancelled = cancelled;
         this.clientUsername = clientUsername;
@@ -87,11 +95,11 @@ public class Treatment {
         this.price = price;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

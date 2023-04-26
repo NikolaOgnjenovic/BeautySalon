@@ -36,7 +36,7 @@ public class TreatmentTableModel extends AbstractTableModel {
                     "Date", "Category", "Type", "Price", "Client", "Beautician", "Status", "Cancelled", "Cancellation reason"
             };
             columnClass = new Class[] {
-                    Date.class, String.class, String.class, Double.class, String.class, String.class, String.class, Boolean.class, String.class
+                    Date.class, String.class, String.class, Double.class, String.class, String.class, Treatment.Status.class, Boolean.class, String.class
             };
         }
     }
@@ -69,7 +69,6 @@ public class TreatmentTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex)
     {
         Treatment treatment = new ArrayList<>(treatments.values()).get(rowIndex);
-        //Treatment treatment = treatments.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
             case 0:
                 return treatment.getScheduledDate();
@@ -128,18 +127,17 @@ public class TreatmentTableModel extends AbstractTableModel {
                 treatment.setBeauticianUsername((String) aValue);
                 break;
             case 6:
-                treatment.setStatus((String) aValue);
+                treatment.setStatus(Treatment.Status.valueOf((String) aValue));
                 break;
-            case 7:
-                treatment.setCancelled((Boolean) aValue);
-                break;
+//            case 7:
+//                treatment.setCancelled((Boolean) aValue);
+//                break;
             case 8:
                 treatment.setCancellationReason((String) aValue);
                 break;
         }
 
         treatmentController.updateTreatment(treatment, new ArrayList<>(treatments.keySet()).get(rowIndex));
-        //treatmentController.updateTreatment(treatment, treatments.keySet().stream().toList().get(rowIndex));
     }
 
     @Override

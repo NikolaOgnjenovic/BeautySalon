@@ -363,7 +363,7 @@ public class Database {
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
             while ((line = in.readLine()) != null) {
                 String[] data = line.split(",");
-                treatments.put(Integer.parseInt(data[0]), new Treatment(sdf.parse(data[1]), Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Double.parseDouble(data[6]), data[7], data[8]));
+                treatments.put(Integer.parseInt(data[0]), new Treatment(sdf.parse(data[1]), Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Double.parseDouble(data[6]), Treatment.Status.valueOf(data[7]), data[8]));
             }
             in.close();
         } catch (Exception e) {
