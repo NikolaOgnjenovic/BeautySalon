@@ -1,5 +1,6 @@
 package com.mrmi.beautysalon.main.view.table;
 
+import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.controller.UserController;
 import com.mrmi.beautysalon.main.entity.*;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
@@ -10,8 +11,9 @@ import java.util.*;
 public class UserTableModel extends AbstractTableModel {
     private final HashMap<String, User> users;
     private final UserController userController;
+    private final TreatmentController treatmentController;
     private final boolean canEdit;
-
+    private final HashMap<Integer, TreatmentType> treatmentTypes;
     private final String[] columnNames = new String[]{
             "Username", "Password", "Name", "Surname", "Gender", "Phone number", "Address", "Qualification level",
             "Years of experience", "Monthly salary", "Bonus", "Known treatment types", "Has loyalty card"
@@ -21,10 +23,12 @@ public class UserTableModel extends AbstractTableModel {
             Byte.class, Double.class, Double.class, String.class, Boolean.class
     };
 
-    public UserTableModel(UserController userController, HashMap<String, User> users, boolean canEdit) {
+    public UserTableModel(UserController userController, TreatmentController treatmentController, HashMap<String, User> users, boolean canEdit) {
         this.userController = userController;
+        this.treatmentController = treatmentController;
         this.users = users;
         this.canEdit = canEdit;
+        this.treatmentTypes = treatmentController.getTreatmentTypes();
     }
 
     @Override
@@ -50,11 +54,9 @@ public class UserTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         User user = new ArrayList<>(users.values()).get(rowIndex);
-        //User user = users.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
             case 0:
                 return new ArrayList<>(users.keySet()).get(rowIndex);
-            //return users.keySet().stream().toList().get(rowIndex);
             case 1:
                 return user.getPassword();
             case 2:
@@ -94,7 +96,12 @@ public class UserTableModel extends AbstractTableModel {
             case 11:
                 if (user.getClass().equals(Beautician.class)) {
                     Beautician b = (Beautician) user;
-                    return b.getTreatmentTypeIDs().toString();
+                    StringBuilder types = new StringBuilder();
+                    for (int id : b.getTreatmentTypeIDs()) {
+                        types.append(treatmentTypes.get(id).getName());
+                        types.append(", ");
+                    }
+                    return types.toString();
                 }
                 break;
             case 12:
@@ -115,7 +122,6 @@ public class UserTableModel extends AbstractTableModel {
             return;
         }
         User user = new ArrayList<>(users.values()).get(rowIndex);
-        //User user = users.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
             case 1:
                 user.setPassword(aValue.toString());
@@ -159,21 +165,9 @@ public class UserTableModel extends AbstractTableModel {
                     e.setBonus(Double.parseDouble(aValue.toString()));
                 }
                 break;
-            case 11:
-                if (user.getClass().equals(Beautician.class)) {
-                    Beautician b = (Beautician) user;
-                    List<Byte> treatmentTypeIDs = new ArrayList<>();
-                    String[] values = aValue.toString().substring(1, aValue.toString().length() - 1).split(", ");
-                    for (String v : values) {
-                        treatmentTypeIDs.add(Byte.parseByte(v));
-                    }
-                    b.setTreatmentTypeIDs(treatmentTypeIDs);
-                }
-                break;
         }
         try {
             userController.updateUser(new ArrayList<>(users.keySet()).get(rowIndex), user);
-            //userController.updateUser(users.keySet().stream().toList().get(rowIndex), user);
         } catch (UserNotFoundException e) {
             throw new RuntimeException(e);
         }

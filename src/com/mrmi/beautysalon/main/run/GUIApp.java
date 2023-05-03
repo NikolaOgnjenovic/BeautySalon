@@ -1,11 +1,16 @@
 package com.mrmi.beautysalon.main.run;
 
 import com.mrmi.beautysalon.main.view.MainFrame;
-import com.mrmi.beautysalon.main.view.modern.Welcome;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class GUIApp {
     public void run() {
-//        MainFrame mainFrame = new MainFrame();
-        Welcome welcome = new Welcome();
+        UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+        if (defaults.get("Table.alternateRowColor") == null)
+            defaults.put("Table.alternateRowColor", new Color(199, 199, 199));
+
+        MainFrame mainFrame = new MainFrame();
     }
 }

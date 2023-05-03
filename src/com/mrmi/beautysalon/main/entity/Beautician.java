@@ -26,6 +26,13 @@ public class Beautician extends Employee {
         this.treatmentTypeIDs = treatmentTypeIDs;
     }
 
+    public void addTreatmentTypeID(byte treatmentTypeId) {
+        if (!treatmentTypeIDs.contains(treatmentTypeId)) {
+            treatmentTypeIDs.add(treatmentTypeId);
+        }
+        //this.treatmentTypeIDs.add(treatmentTypeId);
+    }
+
     @Override
     public String getFileString(String username) {
         StringBuilder sb = new StringBuilder();

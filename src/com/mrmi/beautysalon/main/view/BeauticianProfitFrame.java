@@ -4,6 +4,7 @@ import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.table.BeauticianProfitTableModel;
 import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
+import net.miginfocom.swing.MigLayout;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -23,6 +24,7 @@ public class BeauticianProfitFrame extends JFrame {
     private JDatePickerImpl fromDatePicker;
     private JDatePickerImpl toDatePicker;
     private JTable beauticianTable;
+    private JButton backButton;
     private Date fromDate;
     private Date toDate;
     private ArrayList<String> beauticianUsernames;
@@ -40,25 +42,18 @@ public class BeauticianProfitFrame extends JFrame {
     }
 
     private void initialiseViews() {
-        this.setTitle("Beautician profit");
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setResizable(true);
+        this.setLayout(new MigLayout("wrap 2", "[center, grow]", "[center, grow]"));
+        this.setTitle("Beauty salon - Beautician profit graph");
         this.setSize(800, 800);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
-        this.getContentPane().setBackground(new Color(235, 235, 235));
-        this.setLayout(new FlowLayout());
-
-        BeauticianProfitTableModel beauticianProfitTableModel = new BeauticianProfitTableModel(beauticianUsernames, finishedTreatments, profits);
-        beauticianTable = new JTable(beauticianProfitTableModel);
-        displayTable(beauticianTable);
 
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
         p.put("text.today", "Today");
         p.put("text.month", "Month");
         p.put("text.year", "Year");
-        JDatePanelImpl fromDatePanel = new JDatePanelImpl(model, p);
-        JDatePanelImpl toDatePanel = new JDatePanelImpl(model, p);
+
         JFormattedTextField.AbstractFormatter textField = new JFormattedTextField.AbstractFormatter() {
             @Override
             public Object stringToValue(String text) {
@@ -71,29 +66,52 @@ public class BeauticianProfitFrame extends JFrame {
             }
         };
 
-        fromDatePicker = new JDatePickerImpl(fromDatePanel, textField);
-        this.add(fromDatePicker);
+        JLabel fromLabel = new JLabel("From");
+        Utility.setFont(fromLabel, 24);
+        this.add(fromLabel, "align right");
 
-        this.add(new JLabel("TO:"));
+        JDatePanelImpl fromDatePanel = new JDatePanelImpl(model, p);
+        fromDatePicker = new JDatePickerImpl(fromDatePanel, textField);
+        Utility.setFont(fromDatePicker, 24);
+        this.add(fromDatePicker, "align left");
+
+        JLabel toLabel = new JLabel("To");
+        Utility.setFont(toLabel, 24);
+        this.add(toLabel, "align right");
+
+        JDatePanelImpl toDatePanel = new JDatePanelImpl(model, p);
         toDatePicker = new JDatePickerImpl(toDatePanel, textField);
-        this.add(toDatePicker);
+        Utility.setFont(toDatePicker, 24);
+        this.add(toDatePicker, "align left");
+
+        BeauticianProfitTableModel beauticianProfitTableModel = new BeauticianProfitTableModel(beauticianUsernames, finishedTreatments, profits);
+        beauticianTable = new JTable(beauticianProfitTableModel);
+        Utility.setFont(beauticianTable, 24);
+        displayTable(beauticianTable);
+
+        backButton = new JButton("Back");
+        Utility.setFont(backButton, 24);
+        this.add(backButton, "span");
     }
 
     private void initialiseListeners() {
         fromDatePicker.addActionListener(e -> {
             fromDate = (Date) fromDatePicker.getModel().getValue();
-            this.add(new JLabel("From: " + fromDate));
             refreshTable();
         });
+
         toDatePicker.addActionListener(e -> {
             toDate = (Date) toDatePicker.getModel().getValue();
-            this.add(new JLabel("To: " + toDate));
             refreshTable();
         });
+
+        backButton.addActionListener(e -> this.dispose());
     }
 
     private void displayTable(JTable table) {
-        this.add(new JScrollPane(table));
+        Utility.setFont(table, 20);
+        table.setRowHeight(22);
+        this.add(new JScrollPane(table), "span");
         table.setAutoCreateRowSorter(true);
         table.setSelectionModel(new SingleListSelectionModel());
         TableRowSorter<TableModel> tableSorter = new TableRowSorter<>(table.getModel());

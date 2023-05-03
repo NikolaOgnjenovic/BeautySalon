@@ -155,9 +155,9 @@ public class Database {
     private void readUsersFile() {
         users = new HashMap<>();
         String fileName = filePathPrefix + "data" + separator + "users.txt";
-        fileCheck(fileName);
         try {
-            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            File file = fileCheck(fileName);
+            BufferedReader in = new BufferedReader(new FileReader(file));
             String line;
             while ((line = in.readLine()) != null) {
                 line = line.trim();
@@ -231,7 +231,8 @@ public class Database {
     private void writeUser(User user, String username) {
         String fileName = filePathPrefix + "data" + separator + "users.txt";
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
             out.write(user.getFileString(username));
             out.write("\n");
             out.close();
@@ -243,7 +244,8 @@ public class Database {
     private void overwriteUsersFile() {
         String fileName = filePathPrefix + "data" + separator + "users.txt";
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
             for (Map.Entry<String, User> u : users.entrySet()) {
                 out.write(u.getValue().getFileString(u.getKey()));
                 out.write("\n");
@@ -259,9 +261,9 @@ public class Database {
     private void readTreatmentTypeCategoriesFile() {
         treatmentTypeCategories = new HashMap<>();
         String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
-        fileCheck(fileName);
         try {
-            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            File file = fileCheck(fileName);
+            BufferedReader in = new BufferedReader(new FileReader(file));
             String line;
             while ((line = in.readLine()) != null) {
                 line = line.trim();
@@ -282,7 +284,8 @@ public class Database {
     private void writeTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory, int id) {
         String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
             out.write(treatmentTypeCategory.getFileString(id));
             out.write("\n");
             out.close();
@@ -294,7 +297,8 @@ public class Database {
     private void overwriteTreatmentTypeCategoriesFile() {
         String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
             for (Map.Entry<Integer, TreatmentTypeCategory> t : treatmentTypeCategories.entrySet()) {
                 out.write(t.getValue().getFileString(t.getKey()));
                 out.write("\n");
@@ -310,9 +314,9 @@ public class Database {
     private void readTreatmentTypesFile() {
         treatmentTypes = new HashMap<>();
         String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
-        fileCheck(fileName);
         try {
-            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            File file = fileCheck(fileName);
+            BufferedReader in = new BufferedReader(new FileReader(file));
             String line;
             while ((line = in.readLine()) != null) {
                 line = line.trim();
@@ -328,7 +332,8 @@ public class Database {
     private void writeTreatmentType(TreatmentType treatmentType, int id) {
         String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
             out.write(treatmentType.getFileString(id));
             out.write("\n");
             out.close();
@@ -340,7 +345,8 @@ public class Database {
     private void overwriteTreatmentTypesFile() {
         String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
             for (Map.Entry<Integer, TreatmentType> t : treatmentTypes.entrySet()) {
                 out.write(t.getValue().getFileString(t.getKey()));
                 out.write("\n");
@@ -356,9 +362,9 @@ public class Database {
     private void readTreatmentsFile() {
         treatments = new HashMap<>();
         String fileName = filePathPrefix + "data" + separator + "treatments.txt";
-        fileCheck(fileName);
         try {
-            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            File file = fileCheck(fileName);
+            BufferedReader in = new BufferedReader(new FileReader(file));
             String line;
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
             while ((line = in.readLine()) != null) {
@@ -374,7 +380,8 @@ public class Database {
     private void overwriteTreatmentsFile() {
         String fileName = filePathPrefix + "data" + separator + "treatments.txt";
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
             for (Map.Entry<Integer, Treatment> t : treatments.entrySet()) {
                 out.write(t.getValue().getFileString(t.getKey()));
                 out.write("\n");
@@ -388,7 +395,8 @@ public class Database {
     private void writeTreatment(Treatment treatment, int id) {
         String fileName = filePathPrefix + "data" + separator + "treatments.txt";
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
             out.write(treatment.getFileString(id));
             out.write("\n");
             out.close();
@@ -401,9 +409,9 @@ public class Database {
     //region Variables IO
     private void readVariablesFile() {
         String fileName = filePathPrefix + "data" + separator + "variables.txt";
-        fileCheck(fileName);
         try {
-            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            File file = fileCheck(fileName);
+            BufferedReader in = new BufferedReader(new FileReader(file));
             try {
                 treatmentTypeId = Integer.parseInt(in.readLine());
                 treatmentId = Integer.parseInt(in.readLine());
@@ -422,7 +430,8 @@ public class Database {
     private void overwriteVariablesFile() {
         String fileName = filePathPrefix + "data" + separator + "variables.txt";
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
             out.write(treatmentTypeId + "\n");
             out.write(treatmentId + "\n");
             out.write(treatmentTypeCategoryId + "\n");
@@ -437,10 +446,9 @@ public class Database {
         new File(filePathPrefix + "data").mkdir();
     }
 
-    private void fileCheck(String fileName) {
-        try {
-            new File(fileName).createNewFile();
-        } catch (IOException ignored) {
-        }
+    private File fileCheck(String fileName) throws IOException {
+        File file = new File(fileName);
+        file.createNewFile();
+        return file;
     }
 }

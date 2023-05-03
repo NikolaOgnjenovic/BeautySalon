@@ -36,33 +36,33 @@ public class LoginFrame extends JFrame {
         this.setVisible(true);
 
         JLabel title = new JLabel("Login to your account");
-        setFont(title, 30);
+        Utility.setFont(title, 30);
         this.add(title, "span, align center");
 
         JLabel usernameLabel = new JLabel("Username:");
-        setFont(usernameLabel, 24);
+        Utility.setFont(usernameLabel, 24);
         this.add(usernameLabel, "align right");
 
         username = new JTextField(18);
-        setFont(username, 24);
+        Utility.setFont(username, 24);
         username.setPreferredSize(new Dimension(250, 40));
         this.add(username, "align left");
 
         JLabel passwordLabel = new JLabel("Password:");
-        setFont(passwordLabel, 24);
+        Utility.setFont(passwordLabel, 24);
         this.add(passwordLabel, "align right");
 
         password = new JPasswordField(18);
         password.setPreferredSize(new Dimension(250, 40));
-        setFont(password, 24);
+        Utility.setFont(password, 24);
         this.add(password, "align left");
 
         login = new JButton("Login");
-        setFont(login, 24);
+        Utility.setFont(login, 24);
         this.add(login, "span, align center");
 
         failedLoginLabel = new JLabel(" ");
-        setFont(failedLoginLabel, 20);
+        Utility.setFont(failedLoginLabel, 20);
         failedLoginLabel.setForeground(Color.RED);
         this.add(failedLoginLabel, "span, align center");
     }
@@ -83,13 +83,9 @@ public class LoginFrame extends JFrame {
                     ReceptionistFrame receptionistFrame = new ReceptionistFrame(treatmentController, userController, beautySalon);
                 } else if (authController.getCurrentUser().getClass().equals(Manager.class)) {
                     this.dispose();
-                    ManagerFrame managerFrame = new ManagerFrame(treatmentController, userController, beautySalon);
+                    ManagerFrame managerFrame = new ManagerFrame(treatmentController, userController, beautySalon, authController);
                 }
             }
         });
-    }
-
-    private void setFont(JComponent component, float size) {
-        component.setFont(component.getFont().deriveFont(size));
     }
 }

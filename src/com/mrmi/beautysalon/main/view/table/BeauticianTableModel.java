@@ -1,6 +1,9 @@
 package com.mrmi.beautysalon.main.view.table;
 
+import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.entity.Beautician;
+import com.mrmi.beautysalon.main.entity.TreatmentType;
+import com.mrmi.beautysalon.main.entity.User;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -8,6 +11,8 @@ import java.util.HashMap;
 
 public class BeauticianTableModel extends AbstractTableModel {
     private final HashMap<String, Beautician> beauticians;
+    private final TreatmentController treatmentController;
+    private HashMap<Integer, TreatmentType> treatmentTypes;
     private final String[] columnNames = new String[]{
             "Username", "Name", "Surname", "Gender", "Qualification level",
             "Years of experience", "Known treatment types"
@@ -17,8 +22,10 @@ public class BeauticianTableModel extends AbstractTableModel {
             Byte.class, String.class
     };
 
-    public BeauticianTableModel(HashMap<String, Beautician> beauticians) {
+    public BeauticianTableModel(TreatmentController treatmentController, HashMap<String, Beautician> beauticians) {
+        this.treatmentController = treatmentController;
         this.beauticians = beauticians;
+        this.treatmentTypes = treatmentController.getTreatmentTypes();
     }
 
     @Override
@@ -64,7 +71,13 @@ public class BeauticianTableModel extends AbstractTableModel {
             case 5:
                 return beautician.getYearsOfExperience();
             case 6:
-                return beautician.getTreatmentTypeIDs().toString();
+                Beautician b = new ArrayList<>(beauticians.values()).get(rowIndex);
+                StringBuilder types = new StringBuilder();
+                for (int id : b.getTreatmentTypeIDs()) {
+                    types.append(treatmentTypes.get(id).getName());
+                    types.append(", ");
+                }
+                return types.toString();
             default:
                 return null;
         }

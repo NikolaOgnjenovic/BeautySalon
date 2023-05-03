@@ -6,6 +6,7 @@ import com.mrmi.beautysalon.main.controller.UserController;
 import com.mrmi.beautysalon.main.entity.BeautySalon;
 import com.mrmi.beautysalon.main.entity.Client;
 import com.mrmi.beautysalon.main.entity.Treatment;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,36 +37,43 @@ public class ClientFrame extends JFrame {
     }
 
     private void initialiseViews() {
-        this.setTitle("Client");
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setResizable(true);
+        this.setLayout(new MigLayout("wrap", "[center, grow]", "[center, grow]40"));
+        this.setTitle("Beauty salon - Client");
         this.setSize(800, 800);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-        this.getContentPane().setBackground(new Color(235, 235, 235));
-        this.setLayout(new FlowLayout());
 
-        logout = new JButton("Logout");
-        this.add(logout);
-
-        viewDueTreatments = new JButton("View due treatments");
-        this.add(viewDueTreatments);
-
-        viewPastTreatments = new JButton("View past treatments");
-        this.add(viewPastTreatments);
-
-        cancelTreatment = new JButton("Cancel a treatment");
-        this.add(cancelTreatment);
-
-        bookTreatment = new JButton("Book treatment");
-        this.add(bookTreatment);
+        JLabel title = new JLabel("Welcome back, " + clientUsername);
+        Utility.setFont(title, 30);
+        this.add(title);
 
         String loyaltyMessage = "You have a loyalty card which grants you a 10% discount on all treatments!";
         if (!client.hasLoyaltyCard()) {
             loyaltyMessage = "You need to spend " + (beautySalon.getLoyaltyThreshold() - client.getMoneySpent()) + " more money in order to get a loyalty card.";
         }
-
         JLabel loyaltyStatus = new JLabel(loyaltyMessage);
+        Utility.setFont(loyaltyStatus, 24);
         this.add(loyaltyStatus);
+
+        viewDueTreatments = new JButton("View due treatments");
+        Utility.setFont(viewDueTreatments, 24);
+        this.add(viewDueTreatments);
+
+        viewPastTreatments = new JButton("View past treatments");
+        Utility.setFont(viewPastTreatments, 24);
+        this.add(viewPastTreatments);
+
+        cancelTreatment = new JButton("Cancel a treatment");
+        Utility.setFont(cancelTreatment, 24);
+        this.add(cancelTreatment);
+
+        bookTreatment = new JButton("Book treatment");
+        Utility.setFont(bookTreatment, 24);
+        this.add(bookTreatment);
+
+        logout = new JButton("Logout");
+        Utility.setFont(logout, 24);
+        this.add(logout);
     }
 
     private void initialiseListeners() {

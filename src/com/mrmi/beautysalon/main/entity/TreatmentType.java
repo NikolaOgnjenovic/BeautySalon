@@ -5,7 +5,7 @@ public class TreatmentType {
     private double price;
     private int timesBooked;
     private double profit;
-    private final int categoryId;
+    private int categoryId;
     private byte duration;
     public TreatmentType(String name, double price, int categoryId, byte duration) {
         this.name = name;
@@ -66,6 +66,10 @@ public class TreatmentType {
 
     public int getCategoryId() {
         return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getFileString(int id) {

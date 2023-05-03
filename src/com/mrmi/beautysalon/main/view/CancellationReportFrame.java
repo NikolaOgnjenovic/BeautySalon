@@ -2,12 +2,19 @@ package com.mrmi.beautysalon.main.view;
 
 import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.entity.Treatment;
+import com.mrmi.beautysalon.main.view.table.BeauticianProfitTableModel;
+import com.mrmi.beautysalon.main.view.table.CancellationReportTableModel;
+import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
+import net.miginfocom.swing.MigLayout;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -18,28 +25,32 @@ public class CancellationReportFrame extends JFrame {
     private JDatePickerImpl toDatePicker;
     private Date fromDate;
     private Date toDate;
+    private ArrayList<String> reasons;
+    private ArrayList<Integer> amounts;
+    private JTable cancellationTable;
+    private JButton backButton;
 
     public CancellationReportFrame(TreatmentController treatmentController) {
         this.treatmentController = treatmentController;
-
+        reasons = new ArrayList<>();
+        amounts = new ArrayList<>();
         initialiseViews();
         initialiseListeners();
     }
 
     private void initialiseViews() {
-        this.setTitle("Cancellation report");
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setResizable(true);
+        this.setLayout(new MigLayout("wrap 2", "[center, grow]", "[center, grow]"));
+        this.setTitle("Beauty salon - Treatment cancellation report");
         this.setSize(800, 800);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
-        this.getContentPane().setBackground(new Color(235, 235, 235));
-        this.setLayout(new FlowLayout());
 
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
         p.put("text.today", "Today");
         p.put("text.month", "Month");
         p.put("text.year", "Year");
+
         JDatePanelImpl fromDatePanel = new JDatePanelImpl(model, p);
         JDatePanelImpl toDatePanel = new JDatePanelImpl(model, p);
         JFormattedTextField.AbstractFormatter textField = new JFormattedTextField.AbstractFormatter() {
@@ -54,12 +65,39 @@ public class CancellationReportFrame extends JFrame {
             }
         };
 
-        fromDatePicker = new JDatePickerImpl(fromDatePanel, textField);
-        this.add(fromDatePicker);
+        JLabel fromLabel = new JLabel("From");
+        Utility.setFont(fromLabel, 24);
+        this.add(fromLabel, "align right");
 
-        this.add(new JLabel("TO:"));
+        fromDatePicker = new JDatePickerImpl(fromDatePanel, textField);
+        Utility.setFont(fromDatePicker, 24);
+        this.add(fromDatePicker, "align left");
+
+        JLabel toLabel = new JLabel("To");
+        Utility.setFont(toLabel, 24);
+        this.add(toLabel, "align right");
+
         toDatePicker = new JDatePickerImpl(toDatePanel, textField);
-        this.add(toDatePicker);
+        Utility.setFont(toDatePicker, 24);
+        this.add(toDatePicker, "align left");
+
+        CancellationReportTableModel cancellationReportTableModel = new CancellationReportTableModel(reasons, amounts);
+        cancellationTable = new JTable(cancellationReportTableModel);
+        displayTable(cancellationTable);
+
+        backButton = new JButton("Back");
+        Utility.setFont(backButton, 24);
+        this.add(backButton, "span");
+    }
+
+    private void displayTable(JTable table) {
+        Utility.setFont(table, 20);
+        table.setRowHeight(22);
+        this.add(new JScrollPane(table), "span");
+        table.setAutoCreateRowSorter(true);
+        table.setSelectionModel(new SingleListSelectionModel());
+        TableRowSorter<TableModel> tableSorter = new TableRowSorter<>(table.getModel());
+        table.setRowSorter(tableSorter);
     }
 
     private void initialiseListeners() {
@@ -71,9 +109,10 @@ public class CancellationReportFrame extends JFrame {
             toDate = (Date) toDatePicker.getModel().getValue();
             refreshData();
         });
+
+        backButton.addActionListener(e -> this.dispose());
     }
 
-    // TODO: table / enumerator.size * jlabel instead of temp for loop
     private void refreshData() {
         if (fromDate == null || toDate == null) {
             return;
@@ -83,18 +122,23 @@ public class CancellationReportFrame extends JFrame {
         if (treatments.size() < 1) {
             return;
         }
+
+        reasons = new ArrayList<>();
+        amounts = new ArrayList<>();
+
         String currentReason = treatments.get(0).getCancellationReason();
         int count = 0;
-        // Temporary solution : add new JLabels for everything
         for (Treatment t : treatments) {
             if (t.getScheduledDate().before(fromDate) || t.getScheduledDate().after(toDate)) {
                 continue;
             }
             if (!t.getCancellationReason().equals(currentReason)) {
                 if (!currentReason.equals("-")) {
-                    this.add(new JLabel(count + " treatments have been cancelled with the following reason: " + currentReason));
+                    reasons.add(currentReason);
+                    amounts.add(count);
                 } else {
-                    this.add(new JLabel(count + " treatments have been finished."));
+                    reasons.add("Finished");
+                    amounts.add(count);
                 }
                 currentReason = t.getCancellationReason();
             } else {
@@ -103,9 +147,14 @@ public class CancellationReportFrame extends JFrame {
         }
 
         if (!currentReason.equals("-")) {
-            this.add(new JLabel(count + " treatments have been cancelled with the following reason: " + currentReason));
+            reasons.add(currentReason);
+            amounts.add(count);
         } else {
-            this.add(new JLabel(count + " treatments have been finished."));
+            reasons.add("Finished");
+            amounts.add(count);
         }
+
+        // Temporary solution
+        cancellationTable.setModel(new CancellationReportTableModel(reasons, amounts));
     }
 }

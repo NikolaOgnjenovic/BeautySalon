@@ -1,8 +1,10 @@
 package com.mrmi.beautysalon.main.view;
 
+import com.mrmi.beautysalon.main.controller.AuthController;
 import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.controller.UserController;
 import com.mrmi.beautysalon.main.entity.*;
+import net.miginfocom.swing.MigLayout;
 import org.knowm.xchart.*;
 import org.knowm.xchart.style.Styler;
 
@@ -14,6 +16,7 @@ public class ManagerFrame extends JFrame {
     private final TreatmentController treatmentController;
     private final UserController userController;
     private final BeautySalon beautySalon;
+    private final AuthController authController;
     private JButton editUsers;
     private JTextField loyaltyThreshold;
     private JButton editTreatmentTypeCategories;
@@ -25,65 +28,82 @@ public class ManagerFrame extends JFrame {
 
     private JButton cancellationReport;
     private JButton beauticianReport;
+    private JButton logout;
 
-    public ManagerFrame(TreatmentController treatmentController, UserController userController, BeautySalon beautySalon) {
+    public ManagerFrame(TreatmentController treatmentController, UserController userController, BeautySalon beautySalon, AuthController authController) {
         this.treatmentController = treatmentController;
         this.userController = userController;
         this.beautySalon = beautySalon;
+        this.authController = authController;
 
         initialiseViews();
         initialiseListeners();
     }
 
     private void initialiseViews() {
-        this.setTitle("Manager");
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setResizable(true);
+        this.setLayout(new MigLayout("wrap 2, debug", "[center, grow]40", "[center, grow]40"));
+        this.setTitle("Beauty salon - Manager");
         this.setSize(800, 800);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-        this.getContentPane().setBackground(new Color(235, 235, 235));
-        this.setLayout(new FlowLayout());
 
         editUsers = new JButton("Edit users");
-        this.add(editUsers);
+        Utility.setFont(editUsers, 24);
+        this.add(editUsers, "span");
 
         JLabel loyaltyThresholdLabel = new JLabel("Loyalty threshold");
-        this.add(loyaltyThresholdLabel);
+        Utility.setFont(loyaltyThresholdLabel, 24);
+        this.add(loyaltyThresholdLabel, "align right");
+
         loyaltyThreshold = new JTextField(String.valueOf(beautySalon.getLoyaltyThreshold()));
-        this.add(loyaltyThreshold);
+        Utility.setFont(loyaltyThreshold, 24);
+        this.add(loyaltyThreshold, "align left");
 
         editTreatmentTypeCategories = new JButton("Edit treatment type categories");
+        Utility.setFont(editTreatmentTypeCategories, 24);
         this.add(editTreatmentTypeCategories);
 
         editTreatmentTypes = new JButton("Edit treatment types");
+        Utility.setFont(editTreatmentTypes, 24);
         this.add(editTreatmentTypes);
 
         editTreatments = new JButton("Edit all treatments");
+        Utility.setFont(editTreatments, 24);
         this.add(editTreatments);
 
         treatmentStatusGraphButton = new JButton("View treatment status graph");
+        Utility.setFont(treatmentStatusGraphButton, 24);
         this.add(treatmentStatusGraphButton);
 
         beauticianStatsButton = new JButton("View beautician finished treatments graph");
+        Utility.setFont(beauticianStatsButton, 24);
         this.add(beauticianStatsButton);
 
+        beauticianReport = new JButton("Beautician profit report");
+        Utility.setFont(beauticianReport, 24);
+        this.add(beauticianReport);
+
         treatmentCategoryProfitButton = new JButton("View profit by treatment category graph");
+        Utility.setFont(treatmentCategoryProfitButton, 24);
         this.add(treatmentCategoryProfitButton);
 
         cancellationReport = new JButton("View cancellation report");
+        Utility.setFont(cancellationReport, 24);
         this.add(cancellationReport);
 
-        beauticianReport = new JButton("Beautician profit report");
-        this.add(beauticianReport);
         // TODO:
         //  salon profit & loss in a date interval
         //  registerEmployee();
+
+        logout = new JButton("Logout");
+        Utility.setFont(logout, 24);
+        this.add(logout, "span");
     }
 
     private void initialiseListeners() {
         editUsers.addActionListener(e -> {
             HashMap<String, User> users = userController.getUsers();
-            UsersFrame usersFrame = new UsersFrame(userController, users, true, true);
+            UsersFrame usersFrame = new UsersFrame(userController, treatmentController, users, true, true);
         });
 
         loyaltyThreshold.addActionListener(e -> beautySalon.setLoyaltyThreshold(Double.parseDouble(loyaltyThreshold.getText())));
@@ -144,6 +164,12 @@ public class ManagerFrame extends JFrame {
 
         beauticianReport.addActionListener(e -> {
             BeauticianProfitFrame beauticianProfitFrame = new BeauticianProfitFrame(treatmentController);
+        });
+
+        logout.addActionListener(e -> {
+            authController.logout();
+            this.dispose();
+            MainFrame mainFrame = new MainFrame();
         });
     }
     private Color[] getChartColors(int size) {

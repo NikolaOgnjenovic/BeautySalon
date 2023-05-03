@@ -176,6 +176,14 @@ public class UserController {
         return beauticians;
     }
 
+    public void teachTreatment(String username, byte treatmentTypeId) {
+        Beautician b = (Beautician) users.get(username);
+        b.addTreatmentTypeID(treatmentTypeId);
+        try {
+            database.updateUser(username, b);
+        } catch (UserNotFoundException ignored) {
+        }
+    }
     // TODO
     public String getSchedule(String username) {
 //        List<Treatment> treatments = database.getBeauticianTreatments(username).values().stream().sorted(Comparator.comparing(Treatment::getScheduledDate)).toList();

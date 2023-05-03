@@ -12,17 +12,11 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
     private final TreatmentController treatmentController;
     private final boolean canEdit;
 
-    /*
-     "name='" + name + '\'' +
-                ", price=" + price +
-                ", timesBooked=" + timesBooked +
-                ", profit=" + profit +
-     */
     private final String[] columnNames = new String[]{
-            "Category name", "Name", "Price", "Times booked", "Profit", "Duration", "Id"
+            "Category name", "Name", "Price", "Times booked", "Profit", "Duration"
     };
     private final Class[] columnClass = new Class[]{
-            String.class, String.class, Double.class, Integer.class, Double.class, Byte.class, Integer.class
+            String.class, String.class, Double.class, Integer.class, Double.class, Byte.class
     };
 
     public TreatmentTypeTableModel(TreatmentController treatmentController, HashMap<Integer, TreatmentType> treatmentTypes, boolean canEdit) {
@@ -54,7 +48,6 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         TreatmentType treatmentType = new ArrayList<>(treatmentTypes.values()).get(rowIndex);
-        //TreatmentType treatmentType = treatmentTypes.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
             case 0:
                 return treatmentController.getTreatmentTypeCategoryName(treatmentType.getCategoryId());
@@ -68,9 +61,6 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
                 return treatmentType.getProfit();
             case 5:
                 return treatmentType.getDuration();
-            case 6:
-                return new ArrayList<>(treatmentTypes.keySet()).get(rowIndex);
-            //return treatmentTypes.keySet().stream().toList().get(rowIndex);
             default:
                 return null;
         }
@@ -82,10 +72,9 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
             return;
         }
         TreatmentType treatmentType = new ArrayList<>(treatmentTypes.values()).get(rowIndex);
-        //TreatmentType treatmentType = treatmentTypes.values().stream().toList().get(rowIndex);
         switch (columnIndex) {
-            // TODO: combo box category picker
-            //case 0 -> treatmentType.setCategoryName(aValue.toString());
+            case 0:
+                treatmentType.setCategoryId(treatmentController.getTreatmentTypeCategoryIdByName(aValue.toString()));
             case 1:
                 treatmentType.setName(aValue.toString());
                 break;
@@ -103,8 +92,6 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
                 break;
         }
         treatmentController.updateTreatmentType(new ArrayList<>(treatmentTypes.keySet()).get(rowIndex), treatmentType);
-
-        //treatmentController.updateTreatmentType(treatmentTypes.keySet().stream().toList().get(rowIndex), treatmentType);
     }
 
     @Override

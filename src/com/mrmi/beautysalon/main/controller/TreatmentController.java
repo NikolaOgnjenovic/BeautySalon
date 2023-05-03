@@ -51,6 +51,15 @@ public class TreatmentController {
 
         return profit;
     }
+
+    public int getTreatmentTypeCategoryIdByName(String name) {
+        for (Map.Entry<Integer, TreatmentTypeCategory> entry : getTreatmentTypeCategories().entrySet()) {
+            if (entry.getValue().getName().equals(name)) {
+                return entry.getKey();
+            }
+        }
+        return -1;
+    }
     //endregion
 
     //region Treatment type
@@ -81,14 +90,12 @@ public class TreatmentController {
         List<Treatment> list = new ArrayList<>(database.getTreatments().values());
         list.sort(Comparator.comparing(Treatment::getBeauticianUsername));
         return list;
-        //return database.getTreatments().values().stream().sorted(Comparator.comparing(Treatment::getBeauticianUsername)).toList();
     }
 
     public List<Treatment> getTreatmentsSortedByCancellationReason() {
         List<Treatment> list = new ArrayList<>(database.getTreatments().values());
         list.sort(Comparator.comparing(Treatment::getCancellationReason));
         return list;
-        //return database.getTreatments().values().stream().sorted().toList();
     }
     public HashMap<Integer, TreatmentType> getTreatmentTypesByCategoryList(List<Integer> treatmentTypeCategoryIDs) {
         HashMap<Integer, TreatmentType> treatmentTypes = new HashMap<>();
@@ -96,6 +103,15 @@ public class TreatmentController {
             treatmentTypes.put(i, treatmentTypes.get(i));
         }
         return treatmentTypes;
+    }
+
+    public int getTreatmentTypeIdByName(String name) {
+        for (Map.Entry<Integer, TreatmentType> entry : getTreatmentTypes().entrySet()) {
+            if (entry.getValue().getName().equals(name)) {
+                return entry.getKey();
+            }
+        }
+        return -1;
     }
 
     public Vector<String> getTreatmentTimeWindows(Date date, int treatmentTypeId, BeautySalon beautySalon) {
@@ -111,11 +127,6 @@ public class TreatmentController {
         List<Treatment> sortedTreatments = new ArrayList<>(treatments.values());
         sortedTreatments.sort(Comparator.comparing(Treatment::getScheduledDate));
         sortedTreatments = sortedTreatments.stream().filter(t -> t.getScheduledDate().getDate() == date.getDate()).collect(Collectors.toList());
-//        List<Treatment> sortedTreatments = treatments.values()
-//                .stream()
-//                .sorted(Comparator.comparing(Treatment::getScheduledDate))
-//                .filter(t -> t.getScheduledDate().getDate() == date.getDate())
-//                .toList();
         if (sortedTreatments.size() > 0) {
             for (Treatment treatment : sortedTreatments) {
                 if (previousTreatment != null ) {
