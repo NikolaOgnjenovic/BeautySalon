@@ -24,10 +24,6 @@ public class Client extends User {
         this.moneySpent = moneySpent;
     }
 
-    public void changeMoneySpent(double moneySpent) {
-        this.moneySpent += moneySpent;
-    }
-
     public boolean hasLoyaltyCard() {
         return hasLoyaltyCard;
     }

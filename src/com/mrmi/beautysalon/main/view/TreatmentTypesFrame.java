@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.view;
 
 import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.entity.TreatmentType;
 import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
 import com.mrmi.beautysalon.main.view.table.TreatmentTypeTableModel;
@@ -9,7 +8,6 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.table.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

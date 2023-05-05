@@ -11,7 +11,6 @@ import java.util.*;
 public class UserTableModel extends AbstractTableModel {
     private final HashMap<String, User> users;
     private final UserController userController;
-    private final TreatmentController treatmentController;
     private final boolean canEdit;
     private final HashMap<Integer, TreatmentType> treatmentTypes;
     private final String[] columnNames = new String[]{
@@ -25,7 +24,6 @@ public class UserTableModel extends AbstractTableModel {
 
     public UserTableModel(UserController userController, TreatmentController treatmentController, HashMap<String, User> users, boolean canEdit) {
         this.userController = userController;
-        this.treatmentController = treatmentController;
         this.users = users;
         this.canEdit = canEdit;
         this.treatmentTypes = treatmentController.getTreatmentTypes();

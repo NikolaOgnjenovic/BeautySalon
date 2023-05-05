@@ -103,7 +103,7 @@ public class ManagerFrame extends JFrame {
     private void initialiseListeners() {
         editUsers.addActionListener(e -> {
             HashMap<String, User> users = userController.getUsers();
-            UsersFrame usersFrame = new UsersFrame(userController, treatmentController, users, true, true);
+            UsersFrame usersFrame = new UsersFrame(userController, treatmentController, authController, beautySalon, users, true, true);
         });
 
         loyaltyThreshold.addActionListener(e -> beautySalon.setLoyaltyThreshold(Double.parseDouble(loyaltyThreshold.getText())));
@@ -118,7 +118,7 @@ public class ManagerFrame extends JFrame {
 
         editTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> treatments = treatmentController.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, true, true, true, this, beautySalon.getLoyaltyThreshold(), false);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, true, true, true, beautySalon.getLoyaltyThreshold(), false);
         });
 
         HashMap<Treatment.Status, Integer> statusCount = treatmentController.getStatusCountMap();

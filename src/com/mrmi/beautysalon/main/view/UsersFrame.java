@@ -1,8 +1,10 @@
 package com.mrmi.beautysalon.main.view;
 
+import com.mrmi.beautysalon.main.controller.AuthController;
+import com.mrmi.beautysalon.main.controller.SalonController;
 import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.controller.UserController;
-import com.mrmi.beautysalon.main.entity.Treatment;
+import com.mrmi.beautysalon.main.entity.BeautySalon;
 import com.mrmi.beautysalon.main.entity.TreatmentType;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.entity.User;
@@ -23,7 +25,7 @@ public class UsersFrame extends JFrame {
 
     private final TableRowSorter<TableModel> tableSorter;
     private final JTextField filterText;
-    public UsersFrame(UserController userController, TreatmentController treatmentController, HashMap<String, User> users, boolean canEdit, boolean canDelete) {
+    public UsersFrame(UserController userController, TreatmentController treatmentController, AuthController authController, BeautySalon beautySalon, HashMap<String, User> users, boolean canEdit, boolean canDelete) {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Users");
         this.setSize(800, 800);
@@ -87,6 +89,14 @@ public class UsersFrame extends JFrame {
                 userController.teachTreatment(new ArrayList<>(users.keySet()).get(table.getSelectedRow()), Byte.parseByte(Objects.requireNonNull(comboBox.getSelectedItem()).toString().split(", id: ")[1]));
             });
         }
+
+        JButton register = new JButton("Register");
+        Utility.setFont(register, 24);
+        register.addActionListener(e -> {
+            this.dispose();
+            RegisterFrame registerFrame = new RegisterFrame(treatmentController, userController, beautySalon, authController, true);
+        });
+        this.add(register);
 
         JButton back = new JButton("Back");
         back.addActionListener(e -> this.dispose());

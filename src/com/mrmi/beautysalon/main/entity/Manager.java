@@ -12,13 +12,6 @@ public class Manager extends Employee {
         super(password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
     }
 
-    //ishodi i rashodi za period
-    // TODO: uradi kako treba
-    public String getIncome(Date lowerBound, Date upperBound){
-        //return String.valueOf(Database.salonIncome);
-        return "";
-    }
-
     @Override
     public String getFileString(String username) {
         return "M" + super.getFileString(username);

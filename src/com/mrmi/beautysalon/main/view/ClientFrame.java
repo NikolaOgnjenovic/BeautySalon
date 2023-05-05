@@ -9,7 +9,6 @@ import com.mrmi.beautysalon.main.entity.Treatment;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.HashMap;
 
 public class ClientFrame extends JFrame {
@@ -85,17 +84,17 @@ public class ClientFrame extends JFrame {
 
         viewDueTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> dueTreatments = userController.getClientDueTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, dueTreatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), true);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, dueTreatments, false, false, false,  beautySalon.getLoyaltyThreshold(), true);
         });
 
         viewPastTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> pastTreatments = userController.getClientPastTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, pastTreatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), true);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, pastTreatments, false, false, false, beautySalon.getLoyaltyThreshold(), true);
         });
 
         cancelTreatment.addActionListener(e -> {
             HashMap<Integer, Treatment> clientTreatments = userController.getClientTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, false, true, false, this, beautySalon.getLoyaltyThreshold(), true);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, false, true, false, beautySalon.getLoyaltyThreshold(), true);
         });
 
         bookTreatment.addActionListener(e -> {

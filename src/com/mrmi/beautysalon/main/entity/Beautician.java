@@ -1,5 +1,6 @@
 package com.mrmi.beautysalon.main.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Beautician extends Employee {
@@ -18,12 +19,14 @@ public class Beautician extends Employee {
         this.finishedTreatments = finishedTreatments;
     }
 
-    public List<Byte> getTreatmentTypeIDs() {
-        return treatmentTypeIDs;
+    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
+        this.treatmentTypeIDs = new ArrayList<>();
+        this.finishedTreatments = 0;
     }
 
-    public void setTreatmentTypeIDs(List<Byte> treatmentTypeIDs) {
-        this.treatmentTypeIDs = treatmentTypeIDs;
+    public List<Byte> getTreatmentTypeIDs() {
+        return treatmentTypeIDs;
     }
 
     public void addTreatmentTypeID(byte treatmentTypeId) {

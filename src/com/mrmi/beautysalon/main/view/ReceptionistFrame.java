@@ -59,7 +59,7 @@ public class ReceptionistFrame extends JFrame {
 
         viewTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> treatments = treatmentController.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, false, false, false, this, beautySalon.getLoyaltyThreshold(), false);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, false, false, false, beautySalon.getLoyaltyThreshold(), false);
         });
 
         bookTreatment.addActionListener(e -> {
@@ -72,7 +72,7 @@ public class ReceptionistFrame extends JFrame {
 
         editTreatment.addActionListener(e -> {
             HashMap<Integer, Treatment> clientTreatments = treatmentController.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, true, true, false, this, beautySalon.getLoyaltyThreshold(), false);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, true, true, false, beautySalon.getLoyaltyThreshold(), false);
         });
     }
 

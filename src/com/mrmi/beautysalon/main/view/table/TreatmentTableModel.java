@@ -127,9 +127,6 @@ public class TreatmentTableModel extends AbstractTableModel {
             case 6:
                 treatment.setStatus(Treatment.Status.valueOf((String) aValue));
                 break;
-//            case 7:
-//                treatment.setCancelled((Boolean) aValue);
-//                break;
             case 8:
                 treatment.setCancellationReason((String) aValue);
                 break;

@@ -18,7 +18,7 @@ public class TreatmentsFrame extends JFrame {
     private final JTextField filterText;
     private final TreatmentTableModel tableModel;
 
-    public TreatmentsFrame(TreatmentController treatmentController, UserController userController, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean canCancel, boolean canDelete, JFrame previousFrame, Double loyaltyThreshold, boolean isClient) {
+    public TreatmentsFrame(TreatmentController treatmentController, UserController userController, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean canCancel, boolean canDelete, Double loyaltyThreshold, boolean isClient) {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Treatments");
         this.setSize(800, 800);

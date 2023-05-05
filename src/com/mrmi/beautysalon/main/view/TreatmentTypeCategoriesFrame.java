@@ -8,7 +8,6 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -63,9 +62,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
         }
 
         JButton back = new JButton("Back");
-        back.addActionListener(e -> {
-            this.dispose();
-        });
+        back.addActionListener(e -> this.dispose());
         Utility.setFont(back, 24);
         this.add(back);
     }

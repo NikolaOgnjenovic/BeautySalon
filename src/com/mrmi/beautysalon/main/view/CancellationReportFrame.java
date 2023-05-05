@@ -2,7 +2,6 @@ package com.mrmi.beautysalon.main.view;
 
 import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.entity.Treatment;
-import com.mrmi.beautysalon.main.view.table.BeauticianProfitTableModel;
 import com.mrmi.beautysalon.main.view.table.CancellationReportTableModel;
 import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
 import net.miginfocom.swing.MigLayout;
@@ -13,7 +12,6 @@ import org.jdatepicker.impl.UtilDateModel;
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

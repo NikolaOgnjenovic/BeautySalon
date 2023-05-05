@@ -9,7 +9,6 @@ import com.mrmi.beautysalon.main.entity.Database;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class MainFrame extends JFrame {
     private final BeautySalon beautySalon;
@@ -69,7 +68,7 @@ public class MainFrame extends JFrame {
 
         register.addActionListener(e -> {
             this.dispose();
-            RegisterFrame registerFrame = new RegisterFrame();
+            RegisterFrame registerFrame = new RegisterFrame(treatmentController, userController, beautySalon, authController, false);
         });
     }
 }

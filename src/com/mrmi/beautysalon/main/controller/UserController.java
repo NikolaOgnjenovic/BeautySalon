@@ -36,10 +36,6 @@ public class UserController {
     public void deleteUser(String username) throws UserNotFoundException {
         database.deleteUser(username);
     }
-
-    public boolean userExists(String username) {
-        return users.containsKey(username);
-    }
     //endregion
 
     //region Client
