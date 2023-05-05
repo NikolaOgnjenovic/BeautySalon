@@ -1,10 +1,10 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.AuthController;
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
-import com.mrmi.beautysalon.main.entity.BeautySalon;
-import com.mrmi.beautysalon.main.entity.TreatmentType;
+import com.mrmi.beautysalon.main.manager.AuthManager;
+import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
+import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.entity.User;
 import com.mrmi.beautysalon.main.view.table.UserTableModel;
@@ -24,14 +24,14 @@ public class UsersFrame extends JFrame {
 
     private final TableRowSorter<TableModel> tableSorter;
     private final JTextField filterText;
-    public UsersFrame(UserController userController, TreatmentController treatmentController, AuthController authController, BeautySalon beautySalon, HashMap<String, User> users, boolean canEdit, boolean canDelete) {
+    public UsersFrame(UserManager userManager, TreatmentManager treatmentManager, AuthManager authManager, SalonManager salonManager, HashMap<String, User> users, boolean canEdit, boolean canDelete) {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Users");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
 
-        UserTableModel tableModel = new UserTableModel(userController, treatmentController, users, canEdit);
+        UserTableModel tableModel = new UserTableModel(userManager, treatmentManager, users, canEdit);
         JTable table = new JTable(tableModel){
             final DefaultTableCellRenderer renderLeft = new DefaultTableCellRenderer();
 
@@ -44,6 +44,7 @@ public class UsersFrame extends JFrame {
                 return renderLeft;
             }
         };
+        table.getTableHeader().setReorderingAllowed(false);
         Utility.setFont(table, 20);
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span, growx");
@@ -61,7 +62,7 @@ public class UsersFrame extends JFrame {
             Utility.setFont(delete, 24);
             delete.addActionListener(e -> {
                 try {
-                    userController.deleteUser(new ArrayList<>(users.keySet()).get(table.getSelectedRow()));
+                    userManager.deleteUser(new ArrayList<>(users.keySet()).get(table.getSelectedRow()));
                 } catch (UserNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -76,7 +77,7 @@ public class UsersFrame extends JFrame {
             this.add(learnButton);
 
             JComboBox<String> comboBox = new JComboBox<>();
-            for (Map.Entry<Integer, TreatmentType> entry : treatmentController.getTreatmentTypes().entrySet()) {
+            for (Map.Entry<Integer, TreatmentTypeCategory> entry : treatmentManager.getAvailableTreatmentTypeCategories().entrySet()) {
                 comboBox.addItem(entry.getValue().getName() + ", id: " + entry.getKey());
             }
             Utility.setFont(comboBox, 24);
@@ -85,7 +86,7 @@ public class UsersFrame extends JFrame {
 
             learnButton.addActionListener(e -> {
                 comboBox.setVisible(true);
-                userController.teachTreatment(new ArrayList<>(users.keySet()).get(table.getSelectedRow()), Byte.parseByte(Objects.requireNonNull(comboBox.getSelectedItem()).toString().split(", id: ")[1]));
+                userManager.teachTreatment(new ArrayList<>(users.keySet()).get(table.getSelectedRow()), Byte.parseByte(Objects.requireNonNull(comboBox.getSelectedItem()).toString().split(", id: ")[1]));
             });
         }
 
@@ -93,7 +94,7 @@ public class UsersFrame extends JFrame {
         Utility.setFont(register, 24);
         register.addActionListener(e -> {
             this.dispose();
-            RegisterFrame registerFrame = new RegisterFrame(treatmentController, userController, beautySalon, authController, true);
+            RegisterFrame registerFrame = new RegisterFrame(treatmentManager, userManager, salonManager, authManager, true);
         });
         this.add(register);
 

@@ -1,9 +1,9 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.AuthController;
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
-import com.mrmi.beautysalon.main.entity.BeautySalon;
+import com.mrmi.beautysalon.main.manager.AuthManager;
+import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Client;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import net.miginfocom.swing.MigLayout;
@@ -12,10 +12,10 @@ import javax.swing.*;
 import java.util.HashMap;
 
 public class ClientFrame extends JFrame {
-    private final TreatmentController treatmentController;
-    private final UserController userController;
-    private final BeautySalon beautySalon;
-    private final AuthController authController;
+    private final TreatmentManager treatmentManager;
+    private final UserManager userManager;
+    private final SalonManager salonManager;
+    private final AuthManager authManager;
     private final String clientUsername;
     private final Client client;
     private JButton logout;
@@ -24,13 +24,13 @@ public class ClientFrame extends JFrame {
     private JButton cancelTreatment;
     private JButton bookTreatment;
 
-    public ClientFrame(Client client, String clientUsername, TreatmentController treatmentController, UserController userController, BeautySalon beautySalon, AuthController authController) {
+    public ClientFrame(Client client, String clientUsername, TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager, AuthManager authManager) {
         this.client = client;
         this.clientUsername = clientUsername;
-        this.treatmentController = treatmentController;
-        this.userController = userController;
-        this.beautySalon = beautySalon;
-        this.authController = authController;
+        this.treatmentManager = treatmentManager;
+        this.userManager = userManager;
+        this.salonManager = salonManager;
+        this.authManager = authManager;
         initialiseViews();
         initialiseListeners();
     }
@@ -38,7 +38,7 @@ public class ClientFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap", "[center, grow]", "[center, grow]40"));
         this.setTitle("Beauty salon - Client");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
 
@@ -48,7 +48,7 @@ public class ClientFrame extends JFrame {
 
         String loyaltyMessage = "You have a loyalty card which grants you a 10% discount on all treatments!";
         if (!client.hasLoyaltyCard()) {
-            loyaltyMessage = "You need to spend " + (beautySalon.getLoyaltyThreshold() - client.getMoneySpent()) + " more money in order to get a loyalty card.";
+            loyaltyMessage = "You need to spend " + (salonManager.getLoyaltyThreshold() - client.getMoneySpent()) + " more money in order to get a loyalty card.";
         }
         JLabel loyaltyStatus = new JLabel(loyaltyMessage);
         Utility.setFont(loyaltyStatus, 24);
@@ -77,28 +77,28 @@ public class ClientFrame extends JFrame {
 
     private void initialiseListeners() {
         logout.addActionListener(e -> {
-            authController.logout();
+            authManager.logout();
             this.dispose();
             MainFrame mainFrame = new MainFrame();
         });
 
         viewDueTreatments.addActionListener(e -> {
-            HashMap<Integer, Treatment> dueTreatments = userController.getClientDueTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, dueTreatments, false, false, false,  beautySalon.getLoyaltyThreshold(), true);
+            HashMap<Integer, Treatment> dueTreatments = userManager.getClientDueTreatments(clientUsername);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, dueTreatments, false, false, false, salonManager.getLoyaltyThreshold(), true);
         });
 
         viewPastTreatments.addActionListener(e -> {
-            HashMap<Integer, Treatment> pastTreatments = userController.getClientPastTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, pastTreatments, false, false, false, beautySalon.getLoyaltyThreshold(), true);
+            HashMap<Integer, Treatment> pastTreatments = userManager.getClientPastTreatments(clientUsername);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, pastTreatments, false, false, false, salonManager.getLoyaltyThreshold(), true);
         });
 
         cancelTreatment.addActionListener(e -> {
-            HashMap<Integer, Treatment> clientTreatments = userController.getClientTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, false, true, false, beautySalon.getLoyaltyThreshold(), true);
+            HashMap<Integer, Treatment> clientTreatments = userManager.getClientTreatments(clientUsername);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, clientTreatments, false, true, false, salonManager.getLoyaltyThreshold(), true);
         });
 
         bookTreatment.addActionListener(e -> {
-            BookTreatmentFrame bookFrame = new BookTreatmentFrame(treatmentController, userController, beautySalon, clientUsername);
+            BookTreatmentFrame bookFrame = new BookTreatmentFrame(treatmentManager, userManager, salonManager, clientUsername);
         });
     }
 }

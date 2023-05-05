@@ -1,6 +1,7 @@
 package com.mrmi.beautysalon.main.view.table;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
+import com.mrmi.beautysalon.main.entity.TreatmentType;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
 import com.mrmi.beautysalon.main.entity.Treatment;
 
@@ -11,15 +12,15 @@ import java.util.HashMap;
 
 public class TreatmentTableModel extends AbstractTableModel {
     private final HashMap<Integer, Treatment> treatments;
-    private final TreatmentController treatmentController;
+    private final TreatmentManager treatmentManager;
     private final boolean canEdit;
     private final boolean isClient;
 
     private final String[] columnNames;
     private final Class[] columnClass;
-    public TreatmentTableModel(TreatmentController treatmentController, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean isClient)
+    public TreatmentTableModel(TreatmentManager treatmentManager, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean isClient)
     {
-        this.treatmentController = treatmentController;
+        this.treatmentManager = treatmentManager;
         this.treatments = treatments;
         this.canEdit = canEdit;
         this.isClient = isClient;
@@ -74,13 +75,13 @@ public class TreatmentTableModel extends AbstractTableModel {
                 return treatment.getScheduledDate();
             case 1:
                 try {
-                    return treatmentController.getTreatmentTypeCategoryName(treatmentController.getTreatmentTypeById(treatment.getTreatmentTypeId()).getCategoryId());
+                    return treatmentManager.getTreatmentTypeCategoryName(treatmentManager.getTreatmentTypeById(treatment.getTreatmentTypeId()).getCategoryId());
                 } catch (TreatmentTypeNotFoundException e) {
                     return "Deleted treatment category";
                 }
             case 2:
                 try {
-                    return treatmentController.getTreatmentTypeById(treatment.getTreatmentTypeId()).getName();
+                    return treatmentManager.getTreatmentTypeById(treatment.getTreatmentTypeId()).getName();
                 } catch (TreatmentTypeNotFoundException e) {
                     return "Deleted treatment type";
                 }
@@ -117,6 +118,9 @@ public class TreatmentTableModel extends AbstractTableModel {
             case 0:
                 treatment.setScheduledDate((Date) aValue);
                 break;
+            case 2:
+                treatment.setTreatmentTypeId(treatmentManager.getTreatmentTypeIdByName(aValue.toString()));
+                break;
             case 3:
                 treatment.setPrice((Double) aValue);
                 break;
@@ -134,7 +138,7 @@ public class TreatmentTableModel extends AbstractTableModel {
                 break;
         }
 
-        treatmentController.updateTreatment(treatment, new ArrayList<>(treatments.keySet()).get(rowIndex));
+        treatmentManager.updateTreatment(treatment, new ArrayList<>(treatments.keySet()).get(rowIndex));
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.AuthController;
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
+import com.mrmi.beautysalon.main.manager.AuthManager;
+import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.*;
 import net.miginfocom.swing.MigLayout;
 
@@ -10,19 +11,19 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LoginFrame extends JFrame {
-    private final TreatmentController treatmentController;
-    private final UserController userController;
-    private final BeautySalon beautySalon;
-    private final AuthController authController;
+    private final TreatmentManager treatmentManager;
+    private final UserManager userManager;
+    private final SalonManager salonManager;
+    private final AuthManager authManager;
     private JTextField username;
     private JPasswordField password;
     private JLabel failedLoginLabel;
     private JButton login;
-    public LoginFrame(TreatmentController treatmentController, UserController userController, BeautySalon beautySalon, AuthController authController) {
-        this.treatmentController = treatmentController;
-        this.userController = userController;
-        this.beautySalon = beautySalon;
-        this.authController = authController;
+    public LoginFrame(TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager, AuthManager authManager) {
+        this.treatmentManager = treatmentManager;
+        this.userManager = userManager;
+        this.salonManager = salonManager;
+        this.authManager = authManager;
 
         initialiseViews();
         initialiseListeners();
@@ -31,7 +32,7 @@ public class LoginFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 2", "[grow][grow]", "[grow]40[grow]40[grow]10[grow]"));
         this.setTitle("Beauty salon - Login");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
 
@@ -69,21 +70,21 @@ public class LoginFrame extends JFrame {
 
     private void initialiseListeners() {
         login.addActionListener(e -> {
-            if (!authController.login(username.getText(), String.valueOf(password.getPassword()))) {
+            if (!authManager.login(username.getText(), String.valueOf(password.getPassword()))) {
                 failedLoginLabel.setText("Invalid credentials. Please try again!");
             } else {
-                if (authController.getCurrentUser().getClass().equals(Client.class)) {
+                if (authManager.getCurrentUser().getClass().equals(Client.class)) {
                     this.dispose();
-                    ClientFrame clientFrame = new ClientFrame((Client) authController.getCurrentUser(), authController.getCurrentUsername(), treatmentController, userController, beautySalon, authController);
-                } else if (authController.getCurrentUser().getClass().equals(Beautician.class)) {
+                    ClientFrame clientFrame = new ClientFrame((Client) authManager.getCurrentUser(), authManager.getCurrentUsername(), treatmentManager, userManager, salonManager, authManager);
+                } else if (authManager.getCurrentUser().getClass().equals(Beautician.class)) {
                     this.dispose();
-                    BeauticianFrame beauticianFrame = new BeauticianFrame(authController.getCurrentUsername(), treatmentController, userController, beautySalon);
-                } else if (authController.getCurrentUser().getClass().equals(Receptionist.class)) {
+                    BeauticianFrame beauticianFrame = new BeauticianFrame(authManager.getCurrentUsername(), treatmentManager, userManager, salonManager);
+                } else if (authManager.getCurrentUser().getClass().equals(Receptionist.class)) {
                     this.dispose();
-                    ReceptionistFrame receptionistFrame = new ReceptionistFrame(treatmentController, userController, beautySalon);
-                } else if (authController.getCurrentUser().getClass().equals(Manager.class)) {
+                    ReceptionistFrame receptionistFrame = new ReceptionistFrame(treatmentManager, userManager, salonManager);
+                } else if (authManager.getCurrentUser().getClass().equals(Manager.class)) {
                     this.dispose();
-                    ManagerFrame managerFrame = new ManagerFrame(treatmentController, userController, beautySalon, authController);
+                    ManagerFrame managerFrame = new ManagerFrame(treatmentManager, userManager, salonManager, authManager);
                 }
             }
         });

@@ -1,8 +1,8 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
-import com.mrmi.beautysalon.main.entity.BeautySalon;
+import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Treatment;
 
 import javax.swing.*;
@@ -10,19 +10,19 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class ReceptionistFrame extends JFrame {
-    private final TreatmentController treatmentController;
-    private final UserController userController;
-    private final BeautySalon beautySalon;
+    private final TreatmentManager treatmentManager;
+    private final UserManager userManager;
+    private final SalonManager salonManager;
     private JButton logout;
     private JButton viewTreatments;
     private JTextField clientUsernameField;
     private JButton bookTreatment;
     private JButton editTreatment;
 
-    public ReceptionistFrame(TreatmentController treatmentController, UserController userController, BeautySalon beautySalon) {
-        this.treatmentController = treatmentController;
-        this.userController = userController;
-        this.beautySalon = beautySalon;
+    public ReceptionistFrame(TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager) {
+        this.treatmentManager = treatmentManager;
+        this.userManager = userManager;
+        this.salonManager = salonManager;
 
         initialiseViews();
         initialiseListeners();
@@ -31,7 +31,7 @@ public class ReceptionistFrame extends JFrame {
         this.setTitle("Receptionist");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setResizable(true);
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setVisible(true);
         this.getContentPane().setBackground(new Color(235, 235, 235));
         this.setLayout(new FlowLayout());
@@ -58,21 +58,21 @@ public class ReceptionistFrame extends JFrame {
         });
 
         viewTreatments.addActionListener(e -> {
-            HashMap<Integer, Treatment> treatments = treatmentController.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, false, false, false, beautySalon.getLoyaltyThreshold(), false);
+            HashMap<Integer, Treatment> treatments = treatmentManager.getTreatments();
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, treatments, false, false, false, salonManager.getLoyaltyThreshold(), false);
         });
 
         bookTreatment.addActionListener(e -> {
-            if (!userController.getUsers().containsKey(clientUsernameField.getText())) {
+            if (!userManager.getUsers().containsKey(clientUsernameField.getText())) {
                 registerUser();
             } else {
-                BookTreatmentFrame bookFrame = new BookTreatmentFrame(treatmentController, userController, beautySalon, clientUsernameField.getText());
+                BookTreatmentFrame bookFrame = new BookTreatmentFrame(treatmentManager, userManager, salonManager, clientUsernameField.getText());
             }
         });
 
         editTreatment.addActionListener(e -> {
-            HashMap<Integer, Treatment> clientTreatments = treatmentController.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, clientTreatments, true, true, false, beautySalon.getLoyaltyThreshold(), false);
+            HashMap<Integer, Treatment> clientTreatments = treatmentManager.getTreatments();
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, clientTreatments, true, true, false, salonManager.getLoyaltyThreshold(), false);
         });
     }
 

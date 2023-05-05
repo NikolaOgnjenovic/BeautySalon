@@ -1,6 +1,6 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.table.CancellationReportTableModel;
 import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class CancellationReportFrame extends JFrame {
-    private final TreatmentController treatmentController;
+    private final TreatmentManager treatmentManager;
     private JDatePickerImpl fromDatePicker;
     private JDatePickerImpl toDatePicker;
     private Date fromDate;
@@ -28,8 +28,8 @@ public class CancellationReportFrame extends JFrame {
     private JTable cancellationTable;
     private JButton backButton;
 
-    public CancellationReportFrame(TreatmentController treatmentController) {
-        this.treatmentController = treatmentController;
+    public CancellationReportFrame(TreatmentManager treatmentManager) {
+        this.treatmentManager = treatmentManager;
         reasons = new ArrayList<>();
         amounts = new ArrayList<>();
         initialiseViews();
@@ -39,7 +39,7 @@ public class CancellationReportFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 2", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Treatment cancellation report");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
 
@@ -81,6 +81,7 @@ public class CancellationReportFrame extends JFrame {
 
         CancellationReportTableModel cancellationReportTableModel = new CancellationReportTableModel(reasons, amounts);
         cancellationTable = new JTable(cancellationReportTableModel);
+        cancellationTable.getTableHeader().setReorderingAllowed(false);
         displayTable(cancellationTable);
 
         backButton = new JButton("Back");
@@ -116,7 +117,7 @@ public class CancellationReportFrame extends JFrame {
             return;
         }
 
-        List<Treatment> treatments = treatmentController.getTreatmentsSortedByCancellationReason();
+        List<Treatment> treatments = treatmentManager.getTreatmentsSortedByCancellationReason();
         if (treatments.size() < 1) {
             return;
         }

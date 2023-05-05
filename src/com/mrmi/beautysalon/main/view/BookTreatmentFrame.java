@@ -1,9 +1,9 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
+import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Beautician;
-import com.mrmi.beautysalon.main.entity.BeautySalon;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.table.BeauticianTableModel;
 import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
@@ -19,11 +19,12 @@ import javax.swing.table.TableRowSorter;
 import java.util.*;
 
 public class BookTreatmentFrame extends JFrame {
-    private final TreatmentController treatmentController;
-    private final UserController userController;
-    private final BeautySalon beautySalon;
+    private final TreatmentManager treatmentManager;
+    private final UserManager userManager;
+    private final SalonManager salonManager;
     private final String clientUsername;
     private byte treatmentTypeId;
+    private byte treatmentTypeCategoryId;
     private double treatmentPrice;
     private String beauticianUsername;
     private BeauticianTableModel beauticianTableModel;
@@ -38,10 +39,10 @@ public class BookTreatmentFrame extends JFrame {
     private JButton bookButton;
     private JButton backButton;
 
-    public BookTreatmentFrame(TreatmentController treatmentController, UserController userController, BeautySalon beautySalon, String clientUsername) {
-        this.treatmentController = treatmentController;
-        this.userController = userController;
-        this.beautySalon = beautySalon;
+    public BookTreatmentFrame(TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager, String clientUsername) {
+        this.treatmentManager = treatmentManager;
+        this.userManager = userManager;
+        this.salonManager = salonManager;
         this.clientUsername = clientUsername;
         initialiseViews();
         initialiseListeners();
@@ -49,17 +50,19 @@ public class BookTreatmentFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Book treatment");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
 
-        TreatmentTypeTableModel treatmentTableModel = new TreatmentTypeTableModel(treatmentController, treatmentController.getTreatmentTypes(), false);
+        TreatmentTypeTableModel treatmentTableModel = new TreatmentTypeTableModel(treatmentManager, treatmentManager.getTreatmentTypes(), false);
         treatmentTypeTable = new JTable(treatmentTableModel);
+        treatmentTypeTable.getTableHeader().setReorderingAllowed(false);
         displayTable(treatmentTypeTable);
 
         beauticians = new HashMap<>();
-        beauticianTableModel = new BeauticianTableModel(treatmentController, beauticians);
+        beauticianTableModel = new BeauticianTableModel(treatmentManager, beauticians);
         beauticianTable = new JTable(beauticianTableModel);
+        beauticianTable.getTableHeader().setReorderingAllowed(false);
         displayTable(beauticianTable);
 
         UtilDateModel model = new UtilDateModel();
@@ -118,9 +121,11 @@ public class BookTreatmentFrame extends JFrame {
     private void initialiseListeners() {
         treatmentTypeTable.getSelectionModel().addListSelectionListener(e -> {
             if (treatmentTypeTable.getSelectedRow() != -1) {
-                treatmentTypeId = (byte) treatmentController.getTreatmentTypeIdByName(treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 1).toString());
+                treatmentTypeCategoryId = (byte) treatmentManager.getTreatmentTypeCategoryIdByName(treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 0).toString());
+                treatmentTypeId = (byte) treatmentManager.getTreatmentTypeIdByName(treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 1).toString());
                 treatmentPrice = Double.parseDouble(treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 2).toString());
-                displayAvailableBeauticians(treatmentTypeId);
+                //displayAvailableBeauticians(treatmentTypeId);
+                displayAvailableBeauticians(treatmentTypeCategoryId);
             } else {
                 bookButton.setVisible(false);
                 treatmentTimeWindows.setVisible(false);
@@ -152,7 +157,7 @@ public class BookTreatmentFrame extends JFrame {
             selectedDate.setHours(Integer.parseInt(selectedTime.substring(0, 2)));
             selectedDate.setMinutes(0);
             selectedDate.setSeconds(0);
-            userController.bookTreatment(new Treatment(selectedDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), beautySalon.getLoyaltyThreshold());
+            userManager.bookTreatment(new Treatment(selectedDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), salonManager.getLoyaltyThreshold());
         });
 
         backButton.addActionListener(e -> {
@@ -161,12 +166,12 @@ public class BookTreatmentFrame extends JFrame {
         });
     }
 
-    private void displayAvailableBeauticians(byte treatmentTypeId) {
-        beauticians = userController.getBeauticiansByTreatmentType(treatmentTypeId);
+    private void displayAvailableBeauticians(byte treatmentTypeCategoryId) {
+        beauticians = userManager.getBeauticiansByTreatmentTypeCategory(treatmentTypeCategoryId);
         if (beauticians.size() < 1) {
             return;
         }
-        beauticianTableModel = new BeauticianTableModel(treatmentController, beauticians);
+        beauticianTableModel = new BeauticianTableModel(treatmentManager, beauticians);
         beauticianTable.setModel(beauticianTableModel);
     }
 
@@ -182,7 +187,7 @@ public class BookTreatmentFrame extends JFrame {
     }
 
     private void refreshTimeComboBox() {
-        timeWindows = treatmentController.getTreatmentTimeWindows(selectedDate, treatmentTypeId, beautySalon);
+        timeWindows = treatmentManager.getTreatmentTimeWindows(selectedDate, treatmentTypeId, salonManager);
         treatmentTimeWindows.removeAllItems();
         treatmentTimeWindows.setModel(new DefaultComboBoxModel<>(timeWindows));
         treatmentTimeWindows.setVisible(true);

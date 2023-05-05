@@ -1,6 +1,6 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
 import com.mrmi.beautysalon.main.view.table.TreatmentTypeCategoryTableModel;
 import net.miginfocom.swing.MigLayout;
@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TreatmentTypeCategoriesFrame extends JFrame {
-    public TreatmentTypeCategoriesFrame(TreatmentController treatmentController, HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories, boolean canEdit, boolean canDelete) {
+    public TreatmentTypeCategoriesFrame(TreatmentManager treatmentManager, HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories, boolean canEdit, boolean canDelete) {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Treatment type categories");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
 
-        TreatmentTypeCategoryTableModel tableModel = new TreatmentTypeCategoryTableModel(treatmentController, treatmentTypeCategories, canEdit);
+        TreatmentTypeCategoryTableModel tableModel = new TreatmentTypeCategoryTableModel(treatmentManager, treatmentTypeCategories, canEdit);
         JTable table = new JTable(tableModel){
             final DefaultTableCellRenderer renderLeft = new DefaultTableCellRenderer();
 
@@ -32,6 +32,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
                 return renderLeft;
             }
         };
+        table.getTableHeader().setReorderingAllowed(false);
         Utility.setFont(table, 20);
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span, growx");
@@ -45,7 +46,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
 
         JButton addButton = new JButton("Add");
         addButton.addActionListener(e -> {
-            treatmentController.addTreatmentTypeCategory(new TreatmentTypeCategory(nameField.getText(), new ArrayList<>(), 0d));
+            treatmentManager.addTreatmentTypeCategory(new TreatmentTypeCategory(nameField.getText(), new ArrayList<>(), 0d, false));
             tableModel.fireTableDataChanged();
         });
         Utility.setFont(addButton, 24);
@@ -54,7 +55,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
         if (canDelete) {
             JButton deleteButton = new JButton("Delete");
             deleteButton.addActionListener(e -> {
-                treatmentController.deleteTreatmentTypeCategory(new ArrayList<>(treatmentTypeCategories.keySet()).get(table.getSelectedRow()));
+                treatmentManager.deleteTreatmentTypeCategory(new ArrayList<>(treatmentTypeCategories.keySet()).get(table.getSelectedRow()));
                 tableModel.fireTableDataChanged();
             });
             Utility.setFont(deleteButton, 24);

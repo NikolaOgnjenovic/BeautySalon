@@ -1,6 +1,6 @@
 package com.mrmi.beautysalon.main.view.table;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
 
 import javax.swing.table.AbstractTableModel;
@@ -9,19 +9,19 @@ import java.util.HashMap;
 
 public class TreatmentTypeCategoryTableModel extends AbstractTableModel {
     private final HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories;
-    private final TreatmentController treatmentController;
+    private final TreatmentManager treatmentManager;
     private final boolean canEdit;
 
     private final String[] columnNames = new String[] {
-            "Name"
+            "Name", "Is deleted"
     };
     private final Class[] columnClass = new Class[] {
-            String.class
+            String.class, Boolean.class
     };
 
-    public TreatmentTypeCategoryTableModel(TreatmentController treatmentController, HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories, boolean canEdit)
+    public TreatmentTypeCategoryTableModel(TreatmentManager treatmentManager, HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories, boolean canEdit)
     {
-        this.treatmentController = treatmentController;
+        this.treatmentManager = treatmentManager;
         this.treatmentTypeCategories = treatmentTypeCategories;
         this.canEdit = canEdit;
     }
@@ -54,9 +54,11 @@ public class TreatmentTypeCategoryTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex)
     {
         TreatmentTypeCategory treatmentTypeCategory = new ArrayList<>(treatmentTypeCategories.values()).get(rowIndex);
-        //TreatmentTypeCategory treatmentTypeCategory = treatmentTypeCategories.values().stream().toList().get(rowIndex);
         if (columnIndex == 0) {
             return treatmentTypeCategory.getName();
+        }
+        if (columnIndex == 1) {
+            return treatmentTypeCategory.isDeleted();
         }
         return null;
     }
@@ -68,13 +70,11 @@ public class TreatmentTypeCategoryTableModel extends AbstractTableModel {
             return;
         }
         TreatmentTypeCategory treatmentTypeCategory = new ArrayList<>(treatmentTypeCategories.values()).get(rowIndex);
-        //TreatmentTypeCategory treatmentTypeCategory = treatmentTypeCategories.values().stream().toList().get(rowIndex);
         if (columnIndex == 0) {
             treatmentTypeCategory.setName(aValue.toString());
         }
 
-        treatmentController.updateTreatmentTypeCategory(new ArrayList<>(treatmentTypeCategories.keySet()).get(rowIndex), treatmentTypeCategory);
-        //treatmentController.updateTreatmentTypeCategory(treatmentTypeCategories.keySet().stream().toList().get(rowIndex), treatmentTypeCategory);
+        treatmentManager.updateTreatmentTypeCategory(new ArrayList<>(treatmentTypeCategories.keySet()).get(rowIndex), treatmentTypeCategory);
     }
 
     @Override

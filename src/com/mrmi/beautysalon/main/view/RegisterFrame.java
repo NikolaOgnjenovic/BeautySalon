@@ -1,18 +1,19 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.AuthController;
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
+import com.mrmi.beautysalon.main.manager.AuthManager;
+import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.*;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 
 public class RegisterFrame extends JFrame {
-    private final TreatmentController treatmentController;
-    private final UserController userController;
-    private final BeautySalon beautySalon;
-    private final AuthController authController;
+    private final TreatmentManager treatmentManager;
+    private final UserManager userManager;
+    private final SalonManager salonManager;
+    private final AuthManager authManager;
     private JButton registerButton;
     private JButton backButton;
     private JTextField usernameField, passwordField, nameField, surnameField, genderField, phoneField, addressField;
@@ -20,20 +21,20 @@ public class RegisterFrame extends JFrame {
     private JComboBox<String> userTypeComboBox;
     private JLabel bonusLabel, salaryLabel, qualificationLabel, experienceLabel;
     private JTextField bonusField, salaryField, qualificationField, experienceField;
-    public RegisterFrame(TreatmentController treatmentController, UserController userController, BeautySalon beautySalon, AuthController authController, boolean canPickUserType) {
-        this.treatmentController = treatmentController;
-        this.userController = userController;
-        this.beautySalon = beautySalon;
-        this.authController = authController;
+    public RegisterFrame(TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager, AuthManager authManager, boolean canPickUserType) {
+        this.treatmentManager = treatmentManager;
+        this.userManager = userManager;
+        this.salonManager = salonManager;
+        this.authManager = authManager;
         this.canPickUserType = canPickUserType;
 
         initialiseViews();
         initialiseListeners();
     }
     private void initialiseViews() {
-        this.setLayout(new MigLayout("wrap 2, debug", "[center, grow]", "[center, grow]"));
+        this.setLayout(new MigLayout("wrap 2", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Registration");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
 
@@ -181,21 +182,21 @@ public class RegisterFrame extends JFrame {
             switch (userTypeComboBox.getSelectedIndex()) {
                 case 0:
                     Client client = new Client(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText());
-                    ClientFrame clientFrame = new ClientFrame(client, usernameField.getText(), treatmentController, userController, beautySalon, authController);
+                    ClientFrame clientFrame = new ClientFrame(client, usernameField.getText(), treatmentManager, userManager, salonManager, authManager);
                     break;
                 case 1:
                     Beautician beautician = new Beautician(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText(), Byte.parseByte(qualificationField.getText()), Byte.parseByte(experienceField.getText()), Float.parseFloat(bonusField.getText()), Float.parseFloat(salaryField.getText()));
-                    userController.addUser(usernameField.getText(), beautician);
+                    userManager.addUser(usernameField.getText(), beautician);
                     this.dispose();
                     break;
                 case 2:
                     Receptionist receptionist = new Receptionist(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText(), Byte.parseByte(qualificationField.getText()), Byte.parseByte(experienceField.getText()), Float.parseFloat(bonusField.getText()), Float.parseFloat(salaryField.getText()));
-                    userController.addUser(usernameField.getText(), receptionist);
+                    userManager.addUser(usernameField.getText(), receptionist);
                     this.dispose();
                     break;
                 case 3:
                     Manager manager = new Manager(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText(), Byte.parseByte(qualificationField.getText()), Byte.parseByte(experienceField.getText()), Float.parseFloat(bonusField.getText()), Float.parseFloat(salaryField.getText()));
-                    userController.addUser(usernameField.getText(), manager);
+                    userManager.addUser(usernameField.getText(), manager);
                     this.dispose();
                     break;
             }

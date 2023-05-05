@@ -1,6 +1,6 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.table.BeauticianProfitTableModel;
 import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class BeauticianProfitFrame extends JFrame {
-    private final TreatmentController treatmentController;
+    private final TreatmentManager treatmentManager;
 
     private JDatePickerImpl fromDatePicker;
     private JDatePickerImpl toDatePicker;
@@ -30,8 +30,8 @@ public class BeauticianProfitFrame extends JFrame {
     private ArrayList<Integer> finishedTreatments;
     private ArrayList<Double> profits;
 
-    public BeauticianProfitFrame(TreatmentController treatmentController) {
-        this.treatmentController = treatmentController;
+    public BeauticianProfitFrame(TreatmentManager treatmentManager) {
+        this.treatmentManager = treatmentManager;
         beauticianUsernames = new ArrayList<>();
         finishedTreatments = new ArrayList<>();
         profits = new ArrayList<>();
@@ -43,7 +43,7 @@ public class BeauticianProfitFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 2", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Beautician profit graph");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
 
@@ -85,6 +85,7 @@ public class BeauticianProfitFrame extends JFrame {
 
         BeauticianProfitTableModel beauticianProfitTableModel = new BeauticianProfitTableModel(beauticianUsernames, finishedTreatments, profits);
         beauticianTable = new JTable(beauticianProfitTableModel);
+        beauticianTable.getTableHeader().setReorderingAllowed(false);
         Utility.setFont(beauticianTable, 24);
         displayTable(beauticianTable);
 
@@ -122,7 +123,7 @@ public class BeauticianProfitFrame extends JFrame {
             return;
         }
 
-        List<Treatment> treatments = treatmentController.getTreatmentsSortedByBeauticians();
+        List<Treatment> treatments = treatmentManager.getTreatmentsSortedByBeauticians();
         if (treatments.size() < 1) {
             return;
         }

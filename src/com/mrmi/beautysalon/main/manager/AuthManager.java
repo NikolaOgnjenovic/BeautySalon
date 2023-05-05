@@ -1,16 +1,16 @@
-package com.mrmi.beautysalon.main.controller;
+package com.mrmi.beautysalon.main.manager;
 
 import com.mrmi.beautysalon.main.entity.User;
 
 import java.util.HashMap;
 
-public class AuthController {
-    private final UserController userController;
+public class AuthManager {
+    private final UserManager userManager;
     private User currentUser;
     private String currentUsername;
 
-    public AuthController(UserController userController) {
-        this.userController = userController;
+    public AuthManager(UserManager userManager) {
+        this.userManager = userManager;
     }
 
     public User getCurrentUser() {
@@ -22,7 +22,7 @@ public class AuthController {
     }
 
     public boolean login(String username, String password) {
-        HashMap<String, User> users = userController.getUsers();
+        HashMap<String, User> users = userManager.getUsers();
         if (!users.containsKey(username)) {
             currentUser = null;
             currentUsername = "";

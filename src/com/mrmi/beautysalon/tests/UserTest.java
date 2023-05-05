@@ -1,8 +1,8 @@
 package com.mrmi.beautysalon.tests;
 
-import com.mrmi.beautysalon.main.controller.SalonController;
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
+import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Client;
 import com.mrmi.beautysalon.main.entity.Database;
 import com.mrmi.beautysalon.main.entity.Manager;
@@ -16,7 +16,7 @@ import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserTest {
-    private UserController userController;
+    private UserManager userManager;
 
     // TODO: introduce a test suite to run all test files together
 
@@ -24,9 +24,9 @@ public class UserTest {
     public void setup() {
         Database database = new Database("test");
 
-        SalonController salonController = new SalonController("");
-        TreatmentController treatmentController = new TreatmentController(database, salonController);
-        userController = new UserController(database, treatmentController, salonController);
+        SalonManager salonManager = new SalonManager("");
+        TreatmentManager treatmentManager = new TreatmentManager(database, salonManager);
+        userManager = new UserManager(database, treatmentManager, salonManager);
     }
 
     private boolean deleteFile(File file) {
@@ -47,14 +47,14 @@ public class UserTest {
 
     @Test
     public void testAddUser() {
-        userController.addUser("Client", new Client("password", "name", "username", "M", "123456", "Address 3"));
-        userController.addUser("Manager", new Manager("password", "name", "username", "M", "123456", "Address 3", (byte) 6, (byte) 5, 10000, 90000));
-        assertEquals(userController.getUsers().size(), 2);
+        userManager.addUser("Client", new Client("password", "name", "username", "M", "123456", "Address 3"));
+        userManager.addUser("Manager", new Manager("password", "name", "username", "M", "123456", "Address 3", (byte) 6, (byte) 5, 10000, 90000));
+        assertEquals(userManager.getUsers().size(), 2);
     }
 
     @Test
     public void testRemoveUser() {
-        assertThrows(UserNotFoundException.class, () -> userController.deleteUser("Client"));
-        assertEquals(userController.getUsers().size(), 0);
+        assertThrows(UserNotFoundException.class, () -> userManager.deleteUser("Client"));
+        assertEquals(userManager.getUsers().size(), 0);
     }
 }

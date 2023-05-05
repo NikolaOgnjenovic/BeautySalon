@@ -5,12 +5,22 @@ public class BeautySalon {
     private byte salonClosingHour;
     private double loyaltyThreshold;
     private double salonIncome;
+    private String name;
 
-    public BeautySalon(byte salonOpeningHour, byte salonClosingHour, double loyaltyThreshold, double salonIncome) {
+    public BeautySalon(byte salonOpeningHour, byte salonClosingHour, double loyaltyThreshold, double salonIncome, String name) {
         this.salonOpeningHour = salonOpeningHour;
         this.salonClosingHour = salonClosingHour;
         this.loyaltyThreshold = loyaltyThreshold;
         this.salonIncome = salonIncome;
+        this.name = name;
+    }
+
+    public BeautySalon() {
+        this.salonOpeningHour = 8;
+        this.salonClosingHour = 20;
+        this.loyaltyThreshold = 15000;
+        this.salonIncome = 0;
+        this.name = "Salon";
     }
 
     public byte getSalonOpeningHour() {
@@ -43,5 +53,13 @@ public class BeautySalon {
 
     public void setSalonIncome(double salonIncome) {
         this.salonIncome = salonIncome;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -1,23 +1,23 @@
-package com.mrmi.beautysalon.main.controller;
+package com.mrmi.beautysalon.main.manager;
 
 import com.mrmi.beautysalon.main.entity.*;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 
 import java.util.*;
 
-public class UserController {
+public class UserManager {
     private final Database database;
     private final HashMap<String, User> users;
     private final HashMap<Integer, Treatment> treatments;
-    private final TreatmentController treatmentController;
-    private final SalonController salonController;
+    private final TreatmentManager treatmentManager;
+    private final SalonManager salonManager;
 
-    public UserController(Database database, TreatmentController treatmentController, SalonController salonController) {
+    public UserManager(Database database, TreatmentManager treatmentManager, SalonManager salonManager) {
         this.database = database;
         this.treatments = database.getTreatments();
         this.users = database.getUsers();
-        this.treatmentController = treatmentController;
-        this.salonController = salonController;
+        this.treatmentManager = treatmentManager;
+        this.salonManager = salonManager;
     }
 
     //region User
@@ -101,7 +101,7 @@ public class UserController {
             treatment.setPrice(price);
         }
 
-        treatmentController.bookTreatment(treatment, beautician, salonController);
+        treatmentManager.bookTreatment(treatment, beautician, salonManager);
         changeMoneySpent(treatment.getClientUsername(), client, price, loyaltyThreshold);
     }
     //endregion
@@ -165,6 +165,18 @@ public class UserController {
         for (Map.Entry<String, User> u : users.entrySet()) {
             if (u.getValue().getClass().equals(Beautician.class)) {
                 if (((Beautician) u.getValue()).getTreatmentTypeIDs().contains(treatmentTypeId)) {
+                    beauticians.put(u.getKey(), (Beautician) u.getValue());
+                }
+            }
+        }
+        return beauticians;
+    }
+
+    public HashMap<String, Beautician> getBeauticiansByTreatmentTypeCategory(byte treatmentTypeCategoryId) {
+        HashMap<String, Beautician> beauticians = new HashMap<>();
+        for (Map.Entry<String, User> u : users.entrySet()) {
+            if (u.getValue().getClass().equals(Beautician.class)) {
+                if (((Beautician) u.getValue()).getTreatmentTypeIDs().contains(treatmentTypeCategoryId)) {
                     beauticians.put(u.getKey(), (Beautician) u.getValue());
                 }
             }

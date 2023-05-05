@@ -1,6 +1,6 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.entity.TreatmentType;
 import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
 import com.mrmi.beautysalon.main.view.table.TreatmentTypeTableModel;
@@ -15,14 +15,14 @@ import java.util.Map;
 public class TreatmentTypesFrame extends JFrame {
     private final TableRowSorter<TableModel> tableSorter;
     private final JTextField filterText;
-    public TreatmentTypesFrame(TreatmentController treatmentController, HashMap<Integer, TreatmentType> treatmentTypes, boolean canEdit, boolean canDelete) {
+    public TreatmentTypesFrame(TreatmentManager treatmentManager, HashMap<Integer, TreatmentType> treatmentTypes, boolean canEdit, boolean canDelete) {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Treatment types");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
 
-        TreatmentTypeTableModel tableModel = new TreatmentTypeTableModel(treatmentController, treatmentTypes, canEdit);
+        TreatmentTypeTableModel tableModel = new TreatmentTypeTableModel(treatmentManager, treatmentTypes, canEdit);
         JTable table = new JTable(tableModel){
             final DefaultTableCellRenderer renderLeft = new DefaultTableCellRenderer();
 
@@ -35,6 +35,7 @@ public class TreatmentTypesFrame extends JFrame {
                 return renderLeft;
             }
         };
+        table.getTableHeader().setReorderingAllowed(false);
         Utility.setFont(table, 20);
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span, growx");
@@ -71,11 +72,12 @@ public class TreatmentTypesFrame extends JFrame {
         this.add(categoryLabel, "split 2");
         JComboBox<String> categoryComboBox = new JComboBox<>();
         JComboBox<String> editCategoryComboBox = new JComboBox<>();
-        for (Map.Entry<Integer, TreatmentTypeCategory> category: treatmentController.getTreatmentTypeCategories().entrySet()) {
+        for (Map.Entry<Integer, TreatmentTypeCategory> category: treatmentManager.getAvailableTreatmentTypeCategories().entrySet()) {
             categoryComboBox.addItem(category.getValue().getName());
             editCategoryComboBox.addItem(category.getValue().getName());
         }
         Utility.setFont(categoryComboBox, 20);
+        Utility.setFont(editCategoryComboBox, 20);
         this.add(categoryComboBox);
 
         if (canEdit) {
@@ -83,7 +85,7 @@ public class TreatmentTypesFrame extends JFrame {
             categoryColumn.setCellEditor(new DefaultCellEditor(editCategoryComboBox));
         }
 
-        JLabel durationLabel = new JLabel("Duration (hours)");
+        JLabel durationLabel = new JLabel("Duration (minutes)");
         Utility.setFont(durationLabel, 24);
         this.add(durationLabel, "split 2");
         JTextField durationField = new JTextField(4);
@@ -92,7 +94,7 @@ public class TreatmentTypesFrame extends JFrame {
 
         JButton addButton = new JButton("Add");
         addButton.addActionListener(e -> {
-            treatmentController.addTreatmentType(new TreatmentType(nameField.getText(), Double.parseDouble(priceField.getText()), treatmentController.getTreatmentTypeCategoryIdByName(categoryComboBox.getSelectedItem().toString()), Byte.parseByte(durationField.getText())));
+            treatmentManager.addTreatmentType(new TreatmentType(nameField.getText(), Double.parseDouble(priceField.getText()), treatmentManager.getTreatmentTypeCategoryIdByName(categoryComboBox.getSelectedItem().toString()), Byte.parseByte(durationField.getText())));
             tableModel.fireTableDataChanged();
         });
         Utility.setFont(addButton, 24);
@@ -101,8 +103,10 @@ public class TreatmentTypesFrame extends JFrame {
         if (canDelete) {
             JButton delete = new JButton("Delete");
             delete.addActionListener(e -> {
-                treatmentController.deleteTreatmentType(new ArrayList<>(treatmentTypes.keySet()).get(table.getSelectedRow()));
-                tableModel.fireTableDataChanged();
+                if (table.getSelectedRow() != -1) {
+                    treatmentManager.deleteTreatmentType(new ArrayList<>(treatmentTypes.keySet()).get(table.getSelectedRow()));
+                    tableModel.fireTableDataChanged();
+                }
             });
             Utility.setFont(delete, 24);
             this.add(delete);

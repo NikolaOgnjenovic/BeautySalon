@@ -7,6 +7,7 @@ public class TreatmentType {
     private double profit;
     private int categoryId;
     private byte duration;
+    private boolean isDeleted;
     public TreatmentType(String name, double price, int categoryId, byte duration) {
         this.name = name;
         this.price = price;
@@ -14,14 +15,16 @@ public class TreatmentType {
         this.profit = 0;
         this.categoryId = categoryId;
         this.duration = duration;
+        this.isDeleted = false;
     }
-    public TreatmentType(String name, double price, int timesBooked, double profit, int categoryId, byte duration) {
+    public TreatmentType(String name, double price, int timesBooked, double profit, int categoryId, byte duration, boolean isDeleted) {
         this.name = name;
         this.price = price;
         this.timesBooked = timesBooked;
         this.profit = profit;
         this.categoryId = categoryId;
         this.duration = duration;
+        this.isDeleted = isDeleted;
     }
 
     public double getPrice() {
@@ -73,7 +76,7 @@ public class TreatmentType {
     }
 
     public String getFileString(int id) {
-        return id + "," + name + "," + price + "," + timesBooked + "," + profit + "," + categoryId + "," + duration;
+        return id + "," + name + "," + price + "," + timesBooked + "," + profit + "," + categoryId + "," + duration + "," + isDeleted;
     }
 
     public byte getDuration() {
@@ -82,5 +85,13 @@ public class TreatmentType {
 
     public void setDuration(byte duration) {
         this.duration = duration;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

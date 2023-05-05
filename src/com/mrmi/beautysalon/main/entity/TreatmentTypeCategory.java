@@ -6,11 +6,13 @@ public class TreatmentTypeCategory {
     private String name;
     private final List<Integer> treatmentTypeIds;
     private double profit;
+    private boolean isDeleted;
 
-    public TreatmentTypeCategory(String name, List<Integer> treatmentTypeIds, Double profit) {
+    public TreatmentTypeCategory(String name, List<Integer> treatmentTypeIds, Double profit, boolean isDeleted) {
         this.name = name;
         this.treatmentTypeIds = treatmentTypeIds;
         this.profit = profit;
+        this.isDeleted = isDeleted;
     }
 
     public String getName() {
@@ -37,11 +39,25 @@ public class TreatmentTypeCategory {
         sb.append(",");
         sb.append(profit);
         sb.append(",");
+        sb.append(isDeleted);
+        sb.append(",");
         sb.append(";");
         for (int i : treatmentTypeIds) {
             sb.append(i);
             sb.append(";");
         }
         return sb.toString();
+    }
+
+    public List<Integer> getTreatmentTypeIds() {
+        return treatmentTypeIds;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

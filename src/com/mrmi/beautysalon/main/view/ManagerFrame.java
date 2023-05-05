@@ -1,8 +1,9 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.AuthController;
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
+import com.mrmi.beautysalon.main.manager.AuthManager;
+import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.*;
 import net.miginfocom.swing.MigLayout;
 import org.knowm.xchart.*;
@@ -13,10 +14,10 @@ import java.awt.*;
 import java.util.*;
 
 public class ManagerFrame extends JFrame {
-    private final TreatmentController treatmentController;
-    private final UserController userController;
-    private final BeautySalon beautySalon;
-    private final AuthController authController;
+    private final TreatmentManager treatmentManager;
+    private final UserManager userManager;
+    private final SalonManager salonManager;
+    private final AuthManager authManager;
     private JButton editUsers;
     private JTextField loyaltyThreshold;
     private JButton editTreatmentTypeCategories;
@@ -29,21 +30,24 @@ public class ManagerFrame extends JFrame {
     private JButton cancellationReport;
     private JButton beauticianReport;
     private JButton logout;
+    private JTextField salonNameField;
+    private JTextField salonOpeningHourField;
+    private JTextField salonClosingHourField;
 
-    public ManagerFrame(TreatmentController treatmentController, UserController userController, BeautySalon beautySalon, AuthController authController) {
-        this.treatmentController = treatmentController;
-        this.userController = userController;
-        this.beautySalon = beautySalon;
-        this.authController = authController;
+    public ManagerFrame(TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager, AuthManager authManager) {
+        this.treatmentManager = treatmentManager;
+        this.userManager = userManager;
+        this.salonManager = salonManager;
+        this.authManager = authManager;
 
         initialiseViews();
         initialiseListeners();
     }
 
     private void initialiseViews() {
-        this.setLayout(new MigLayout("wrap 2, debug", "[center, grow]40", "[center, grow]40"));
+        this.setLayout(new MigLayout("wrap 2", "[center, grow]40", "[center, grow]40"));
         this.setTitle("Beauty salon - Manager");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
 
@@ -55,9 +59,33 @@ public class ManagerFrame extends JFrame {
         Utility.setFont(loyaltyThresholdLabel, 24);
         this.add(loyaltyThresholdLabel, "align right");
 
-        loyaltyThreshold = new JTextField(String.valueOf(beautySalon.getLoyaltyThreshold()));
+        loyaltyThreshold = new JTextField(String.valueOf(salonManager.getLoyaltyThreshold()), 7);
         Utility.setFont(loyaltyThreshold, 24);
         this.add(loyaltyThreshold, "align left");
+
+        JLabel salonNameLabel = new JLabel("Salon name");
+        Utility.setFont(salonNameLabel, 24);
+        this.add(salonNameLabel, "align right");
+
+        salonNameField = new JTextField(salonManager.getName(), 10);
+        Utility.setFont(salonNameField, 24);
+        this.add(salonNameField, "align left");
+
+        JLabel salonOpeningHourLabel = new JLabel("Opening hour");
+        Utility.setFont(salonOpeningHourLabel, 24);
+        this.add(salonOpeningHourLabel, "align right");
+
+        salonOpeningHourField = new JTextField(String.valueOf(salonManager.getOpeningHour()), 2);
+        Utility.setFont(salonOpeningHourField, 24);
+        this.add(salonOpeningHourField, "align left");
+
+        JLabel salonClosingHourLabel = new JLabel("Closing hour");
+        Utility.setFont(salonClosingHourLabel, 24);
+        this.add(salonClosingHourLabel, "align right");
+
+        salonClosingHourField = new JTextField(String.valueOf(salonManager.getClosingHour()), 2);
+        Utility.setFont(salonClosingHourField, 24);
+        this.add(salonClosingHourField, "align left");
 
         editTreatmentTypeCategories = new JButton("Edit treatment type categories");
         Utility.setFont(editTreatmentTypeCategories, 24);
@@ -93,7 +121,6 @@ public class ManagerFrame extends JFrame {
 
         // TODO:
         //  salon profit & loss in a date interval
-        //  registerEmployee();
 
         logout = new JButton("Logout");
         Utility.setFont(logout, 24);
@@ -102,26 +129,30 @@ public class ManagerFrame extends JFrame {
 
     private void initialiseListeners() {
         editUsers.addActionListener(e -> {
-            HashMap<String, User> users = userController.getUsers();
-            UsersFrame usersFrame = new UsersFrame(userController, treatmentController, authController, beautySalon, users, true, true);
+            HashMap<String, User> users = userManager.getUsers();
+            UsersFrame usersFrame = new UsersFrame(userManager, treatmentManager, authManager, salonManager, users, true, true);
         });
 
-        loyaltyThreshold.addActionListener(e -> beautySalon.setLoyaltyThreshold(Double.parseDouble(loyaltyThreshold.getText())));
+        loyaltyThreshold.addActionListener(e -> salonManager.setLoyaltyThreshold(Double.parseDouble(loyaltyThreshold.getText())));
+
+        salonNameField.addActionListener(e -> salonManager.setName(salonNameField.getText()));
+        salonOpeningHourField.addActionListener(e -> salonManager.setOpeningHour(Byte.parseByte(salonOpeningHourField.getText())));
+        salonClosingHourField.addActionListener(e -> salonManager.setClosingHour(Byte.parseByte(salonClosingHourField.getText())));
 
         editTreatmentTypeCategories.addActionListener(e -> {
-            TreatmentTypeCategoriesFrame treatmentTypeCategoriesFrame = new TreatmentTypeCategoriesFrame(treatmentController, treatmentController.getTreatmentTypeCategories(), true, true);
+            TreatmentTypeCategoriesFrame treatmentTypeCategoriesFrame = new TreatmentTypeCategoriesFrame(treatmentManager, treatmentManager.getTreatmentTypeCategories(), true, true);
         });
 
         editTreatmentTypes.addActionListener(e -> {
-            TreatmentTypesFrame treatmentTypesFrame = new TreatmentTypesFrame(treatmentController, treatmentController.getTreatmentTypes(), true, true);
+            TreatmentTypesFrame treatmentTypesFrame = new TreatmentTypesFrame(treatmentManager, treatmentManager.getTreatmentTypes(), true, true);
         });
 
         editTreatments.addActionListener(e -> {
-            HashMap<Integer, Treatment> treatments = treatmentController.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentController, userController, treatments, true, true, true, beautySalon.getLoyaltyThreshold(), false);
+            HashMap<Integer, Treatment> treatments = treatmentManager.getTreatments();
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, treatments, true, true, true, salonManager.getLoyaltyThreshold(), false);
         });
 
-        HashMap<Treatment.Status, Integer> statusCount = treatmentController.getStatusCountMap();
+        HashMap<Treatment.Status, Integer> statusCount = treatmentManager.getStatusCountMap();
         treatmentStatusGraphButton.addActionListener(e -> {
             PieChart chart = new PieChartBuilder().width(800).height(600).title("Treatments by cancellation reason").build();
             chart.getStyler().setSeriesColors(getChartColors(statusCount.size()));
@@ -132,7 +163,7 @@ public class ManagerFrame extends JFrame {
             t.start();
         });
 
-        Collection<Beautician> beauticians = userController.getBeauticians().values();
+        Collection<Beautician> beauticians = userManager.getBeauticians().values();
         beauticianStatsButton.addActionListener(e -> {
             PieChart chart = new PieChartBuilder().width(800).height(600).title("Beauticians by number of finished treatments").build();
             chart.getStyler().setSeriesColors(getChartColors(beauticians.size()));
@@ -143,7 +174,7 @@ public class ManagerFrame extends JFrame {
             t.start();
         });
 
-        HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories = treatmentController.getTreatmentTypeCategories();
+        HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories = treatmentManager.getTreatmentTypeCategories();
         treatmentCategoryProfitButton.addActionListener(e -> {
             XYChart chart = new XYChartBuilder().width(800).height(600).xAxisTitle("Profit").yAxisTitle("Time").build();
             chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNE);
@@ -152,22 +183,22 @@ public class ManagerFrame extends JFrame {
             chart.setYAxisTitle("Profit");
             chart.setTitle("Profit by treatment type category per month");
             for (Map.Entry<Integer, TreatmentTypeCategory> category : treatmentTypeCategories.entrySet()) {
-                chart.addSeries(category.getValue().getName(), treatmentController.getCategoryProfitByMonths(category.getKey()));
+                chart.addSeries(category.getValue().getName(), treatmentManager.getCategoryProfitByMonths(category.getKey()));
             }
             Thread t = new Thread(() -> new SwingWrapper<>(chart).displayChart().setDefaultCloseOperation(DISPOSE_ON_CLOSE));
             t.start();
         });
 
         cancellationReport.addActionListener(e -> {
-            CancellationReportFrame cancellationReportFrame = new CancellationReportFrame(treatmentController);
+            CancellationReportFrame cancellationReportFrame = new CancellationReportFrame(treatmentManager);
         });
 
         beauticianReport.addActionListener(e -> {
-            BeauticianProfitFrame beauticianProfitFrame = new BeauticianProfitFrame(treatmentController);
+            BeauticianProfitFrame beauticianProfitFrame = new BeauticianProfitFrame(treatmentManager);
         });
 
         logout.addActionListener(e -> {
-            authController.logout();
+            authManager.logout();
             this.dispose();
             MainFrame mainFrame = new MainFrame();
         });

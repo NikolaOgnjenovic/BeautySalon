@@ -76,7 +76,9 @@ public class Database {
     }
 
     public int getNextTreatmentTypeCategoryId() {
-        return treatmentTypeCategoryId++;
+        treatmentTypeCategoryId++;
+        overwriteVariablesFile();
+        return treatmentTypeCategoryId;
     }
 
     public void updateTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
@@ -103,7 +105,9 @@ public class Database {
     }
 
     public int getNextTreatmentTypeId() {
-        return treatmentTypeId++;
+        treatmentTypeId++;
+        overwriteVariablesFile();
+        return treatmentTypeId;
     }
 
     public void updateTreatmentType(int id, TreatmentType treatmentType) {
@@ -138,7 +142,9 @@ public class Database {
     }
 
     public int getNextTreatmentId() {
-        return treatmentId++;
+        treatmentId++;
+        overwriteVariablesFile();
+        return treatmentId;
     }
 
     public HashMap<Integer, Treatment> getTreatments() {
@@ -178,7 +184,9 @@ public class Database {
                         List<Byte> treatmentTypeIDs = new ArrayList<>();
                         String[] treatmentTypes = userData[13].split(";");
                         for (String s : treatmentTypes) {
-                            treatmentTypeIDs.add(Byte.parseByte(s));
+                            if (!s.equals("")) {
+                                treatmentTypeIDs.add(Byte.parseByte(s));
+                            }
                         }
                         users.put(userData[1], new Beautician(
                                 userData[2],
@@ -268,12 +276,14 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                String[] treatmentTypeArr = data[3].split(";");
+                String[] treatmentTypeArr = data[4].split(";");
                 ArrayList<Integer> treatmentTypeIDs = new ArrayList<>();
                 for (String s : treatmentTypeArr) {
-                    treatmentTypeIDs.add(Integer.parseInt(s));
+                    if (!s.equals("")) {
+                        treatmentTypeIDs.add(Integer.parseInt(s));
+                    }
                 }
-                treatmentTypeCategories.put(Integer.parseInt(data[0]), new TreatmentTypeCategory(data[1], treatmentTypeIDs, Double.parseDouble(data[2])));
+                treatmentTypeCategories.put(Integer.parseInt(data[0]), new TreatmentTypeCategory(data[1], treatmentTypeIDs, Double.parseDouble(data[2]), Boolean.parseBoolean(data[3])));
             }
             in.close();
         } catch (Exception e) {
@@ -321,7 +331,7 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4]), Integer.parseInt(data[5]), Byte.parseByte(data[6])));
+                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Double.parseDouble(data[4]), Integer.parseInt(data[5]), Byte.parseByte(data[6]), Boolean.parseBoolean(data[7])));
             }
             in.close();
         } catch (Exception e) {

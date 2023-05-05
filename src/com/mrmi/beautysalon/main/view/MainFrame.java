@@ -1,38 +1,35 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.controller.AuthController;
-import com.mrmi.beautysalon.main.controller.SalonController;
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
-import com.mrmi.beautysalon.main.entity.BeautySalon;
+import com.mrmi.beautysalon.main.manager.AuthManager;
+import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Database;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 
 public class MainFrame extends JFrame {
-    private final BeautySalon beautySalon;
-
-    private final TreatmentController treatmentController;
-    private final UserController userController;
-    private final AuthController authController;
+    private final SalonManager salonManager;
+    private final TreatmentManager treatmentManager;
+    private final UserManager userManager;
+    private final AuthManager authManager;
     private JPanel mainPanel;
     private JButton login;
     private JButton register;
 
     public MainFrame() {
         Database database = new Database("");
-        SalonController salonController = new SalonController("");
-        beautySalon = salonController.getBeautySalon();
-        treatmentController = new TreatmentController(database, salonController);
-        userController = new UserController(database, treatmentController, salonController);
-        authController = new AuthController(userController);
+        salonManager = new SalonManager("");
+        treatmentManager = new TreatmentManager(database, salonManager);
+        userManager = new UserManager(database, treatmentManager, salonManager);
+        authManager = new AuthManager(userManager);
 
         initialiseViews();
         initialiseListeners();
 
         this.setTitle("Beauty salon");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(mainPanel);
         this.setVisible(true);
@@ -63,12 +60,12 @@ public class MainFrame extends JFrame {
     private void initialiseListeners() {
         login.addActionListener(e -> {
             this.dispose();
-            LoginFrame loginFrame = new LoginFrame(treatmentController, userController, beautySalon, authController);
+            LoginFrame loginFrame = new LoginFrame(treatmentManager, userManager, salonManager, authManager);
         });
 
         register.addActionListener(e -> {
             this.dispose();
-            RegisterFrame registerFrame = new RegisterFrame(treatmentController, userController, beautySalon, authController, false);
+            RegisterFrame registerFrame = new RegisterFrame(treatmentManager, userManager, salonManager, authManager, false);
         });
     }
 }

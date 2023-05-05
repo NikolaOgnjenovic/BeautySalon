@@ -1,8 +1,10 @@
 package com.mrmi.beautysalon.main.view;
 
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
+import com.mrmi.beautysalon.main.entity.TreatmentType;
+import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.table.TreatmentTableModel;
 import net.miginfocom.swing.MigLayout;
@@ -12,20 +14,21 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class TreatmentsFrame extends JFrame {
     private final TableRowSorter<TableModel> tableSorter;
     private final JTextField filterText;
     private final TreatmentTableModel tableModel;
 
-    public TreatmentsFrame(TreatmentController treatmentController, UserController userController, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean canCancel, boolean canDelete, Double loyaltyThreshold, boolean isClient) {
+    public TreatmentsFrame(TreatmentManager treatmentManager, UserManager userManager, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean canCancel, boolean canDelete, Double loyaltyThreshold, boolean isClient) {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Treatments");
-        this.setSize(800, 800);
+        this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
 
-        tableModel = new TreatmentTableModel(treatmentController, treatments, canEdit, isClient);
+        tableModel = new TreatmentTableModel(treatmentManager, treatments, canEdit, isClient);
         JTable table = new JTable(tableModel) {
             final DefaultTableCellRenderer renderLeft = new DefaultTableCellRenderer();
             {
@@ -37,6 +40,7 @@ public class TreatmentsFrame extends JFrame {
                 return renderLeft;
             }
         };
+        table.getTableHeader().setReorderingAllowed(false);
         Utility.setFont(table, 20);
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span, growx");
@@ -53,7 +57,7 @@ public class TreatmentsFrame extends JFrame {
         Utility.setFont(filterText, 24);
         this.add(filterText);
 
-        Double totalCost = treatmentController.getTotalCost(treatments);
+        Double totalCost = treatmentManager.getTotalCost(treatments);
         JLabel total = new JLabel("Total cost: " + totalCost);
         Utility.setFont(total, 24);
         this.add(total);
@@ -83,7 +87,7 @@ public class TreatmentsFrame extends JFrame {
                     // todo: warning popup
                     cancellationReason.setText("Enter a reason!");
                 } else {
-                    treatmentController.cancelTreatment(table.getSelectedRow(), isClient, cancellationReason.getText(), userController, loyaltyThreshold);
+                    treatmentManager.cancelTreatment(table.getSelectedRow(), isClient, cancellationReason.getText(), userManager, loyaltyThreshold);
                     tableModel.fireTableDataChanged();
                 }
             });
@@ -94,7 +98,7 @@ public class TreatmentsFrame extends JFrame {
         if (canDelete) {
             JButton delete = new JButton("Delete");
             delete.addActionListener(e -> {
-                treatmentController.deleteTreatment(new ArrayList<>(treatments.keySet()).get(table.getSelectedRow()));
+                treatmentManager.deleteTreatment(new ArrayList<>(treatments.keySet()).get(table.getSelectedRow()));
                 tableModel.fireTableDataChanged();
             });
             Utility.setFont(delete, 24);
@@ -108,6 +112,15 @@ public class TreatmentsFrame extends JFrame {
                 comboBox.addItem(String.valueOf(status));
             }
             statusColumn.setCellEditor(new DefaultCellEditor(comboBox));
+
+            JComboBox<String> typeComboBox = new JComboBox<>();
+            for (Map.Entry<Integer, TreatmentType> type: treatmentManager.getAvailableTreatmentTypes().entrySet()) {
+                typeComboBox.addItem(type.getValue().getName());
+            }
+            Utility.setFont(typeComboBox, 20);
+
+            TableColumn typeColumn = table.getColumnModel().getColumn(2);
+            typeColumn.setCellEditor(new DefaultCellEditor(typeComboBox));
         }
 
         JButton back = new JButton("Back");

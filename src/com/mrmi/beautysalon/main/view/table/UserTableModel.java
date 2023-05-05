@@ -1,7 +1,7 @@
 package com.mrmi.beautysalon.main.view.table;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
-import com.mrmi.beautysalon.main.controller.UserController;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.*;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 
@@ -10,9 +10,9 @@ import java.util.*;
 
 public class UserTableModel extends AbstractTableModel {
     private final HashMap<String, User> users;
-    private final UserController userController;
+    private final UserManager userManager;
     private final boolean canEdit;
-    private final HashMap<Integer, TreatmentType> treatmentTypes;
+    private final HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories;
     private final String[] columnNames = new String[]{
             "Username", "Password", "Name", "Surname", "Gender", "Phone number", "Address", "Qualification level",
             "Years of experience", "Monthly salary", "Bonus", "Known treatment types", "Has loyalty card"
@@ -22,11 +22,11 @@ public class UserTableModel extends AbstractTableModel {
             Byte.class, Double.class, Double.class, String.class, Boolean.class
     };
 
-    public UserTableModel(UserController userController, TreatmentController treatmentController, HashMap<String, User> users, boolean canEdit) {
-        this.userController = userController;
+    public UserTableModel(UserManager userManager, TreatmentManager treatmentManager, HashMap<String, User> users, boolean canEdit) {
+        this.userManager = userManager;
         this.users = users;
         this.canEdit = canEdit;
-        this.treatmentTypes = treatmentController.getTreatmentTypes();
+        this.treatmentTypeCategories = treatmentManager.getTreatmentTypeCategories();
     }
 
     @Override
@@ -96,8 +96,11 @@ public class UserTableModel extends AbstractTableModel {
                     Beautician b = (Beautician) user;
                     StringBuilder types = new StringBuilder();
                     for (int id : b.getTreatmentTypeIDs()) {
-                        types.append(treatmentTypes.get(id).getName());
-                        types.append(", ");
+                        TreatmentTypeCategory type = treatmentTypeCategories.get(id);
+                        if (type != null) {
+                            types.append(type.getName());
+                            types.append(", ");
+                        }
                     }
                     return types.toString();
                 }
@@ -165,7 +168,7 @@ public class UserTableModel extends AbstractTableModel {
                 break;
         }
         try {
-            userController.updateUser(new ArrayList<>(users.keySet()).get(rowIndex), user);
+            userManager.updateUser(new ArrayList<>(users.keySet()).get(rowIndex), user);
         } catch (UserNotFoundException e) {
             throw new RuntimeException(e);
         }

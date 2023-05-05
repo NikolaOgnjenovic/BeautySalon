@@ -1,6 +1,6 @@
 package com.mrmi.beautysalon.main.view.table;
 
-import com.mrmi.beautysalon.main.controller.TreatmentController;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.entity.TreatmentType;
 
 import javax.swing.table.AbstractTableModel;
@@ -9,18 +9,18 @@ import java.util.HashMap;
 
 public class TreatmentTypeTableModel extends AbstractTableModel {
     private final HashMap<Integer, TreatmentType> treatmentTypes;
-    private final TreatmentController treatmentController;
+    private final TreatmentManager treatmentManager;
     private final boolean canEdit;
 
     private final String[] columnNames = new String[]{
-            "Category name", "Name", "Price", "Times booked", "Profit", "Duration"
+            "Category name", "Name", "Price", "Times booked", "Profit", "Duration", "Is deleted"
     };
     private final Class[] columnClass = new Class[]{
-            String.class, String.class, Double.class, Integer.class, Double.class, Byte.class
+            String.class, String.class, Double.class, Integer.class, Double.class, Byte.class, Boolean.class
     };
 
-    public TreatmentTypeTableModel(TreatmentController treatmentController, HashMap<Integer, TreatmentType> treatmentTypes, boolean canEdit) {
-        this.treatmentController = treatmentController;
+    public TreatmentTypeTableModel(TreatmentManager treatmentManager, HashMap<Integer, TreatmentType> treatmentTypes, boolean canEdit) {
+        this.treatmentManager = treatmentManager;
         this.treatmentTypes = treatmentTypes;
         this.canEdit = canEdit;
     }
@@ -50,7 +50,7 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
         TreatmentType treatmentType = new ArrayList<>(treatmentTypes.values()).get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return treatmentController.getTreatmentTypeCategoryName(treatmentType.getCategoryId());
+                return treatmentManager.getTreatmentTypeCategoryName(treatmentType.getCategoryId());
             case 1:
                 return treatmentType.getName();
             case 2:
@@ -61,6 +61,8 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
                 return treatmentType.getProfit();
             case 5:
                 return treatmentType.getDuration();
+            case 6:
+                return treatmentType.isDeleted();
             default:
                 return null;
         }
@@ -74,7 +76,7 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
         TreatmentType treatmentType = new ArrayList<>(treatmentTypes.values()).get(rowIndex);
         switch (columnIndex) {
             case 0:
-                treatmentType.setCategoryId(treatmentController.getTreatmentTypeCategoryIdByName(aValue.toString()));
+                treatmentType.setCategoryId(treatmentManager.getTreatmentTypeCategoryIdByName(aValue.toString()));
             case 1:
                 treatmentType.setName(aValue.toString());
                 break;
@@ -91,7 +93,7 @@ public class TreatmentTypeTableModel extends AbstractTableModel {
                 treatmentType.setDuration(Byte.parseByte(aValue.toString()));
                 break;
         }
-        treatmentController.updateTreatmentType(new ArrayList<>(treatmentTypes.keySet()).get(rowIndex), treatmentType);
+        treatmentManager.updateTreatmentType(new ArrayList<>(treatmentTypes.keySet()).get(rowIndex), treatmentType);
     }
 
     @Override

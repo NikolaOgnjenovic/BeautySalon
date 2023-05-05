@@ -1,4 +1,4 @@
-package com.mrmi.beautysalon.main.controller;
+package com.mrmi.beautysalon.main.manager;
 
 import com.mrmi.beautysalon.main.exceptions.TreatmentNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
@@ -8,12 +8,12 @@ import com.mrmi.beautysalon.main.entity.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TreatmentController {
+public class TreatmentManager {
     private final Database database;
-    private final SalonController salonController;
-    public TreatmentController (Database database, SalonController salonController) {
+    private final SalonManager salonManager;
+    public TreatmentManager(Database database, SalonManager salonManager) {
         this.database = database;
-        this.salonController = salonController;
+        this.salonManager = salonManager;
     }
 
     //region Treatment type category
@@ -23,6 +23,13 @@ public class TreatmentController {
 
     public HashMap<Integer, TreatmentTypeCategory> getTreatmentTypeCategories() {
         return database.getTreatmentTypeCategories();
+    }
+
+    public HashMap<Integer, TreatmentTypeCategory> getAvailableTreatmentTypeCategories() {
+        return (HashMap<Integer, TreatmentTypeCategory>) database.getTreatmentTypeCategories().entrySet()
+                .stream()
+                .filter(category -> !category.getValue().isDeleted())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
     public String getTreatmentTypeCategoryName(int treatmentTypeCategoryId) {
         TreatmentTypeCategory category = database.getTreatmentTypeCategories().get(treatmentTypeCategoryId);
@@ -35,7 +42,16 @@ public class TreatmentController {
         database.updateTreatmentTypeCategory(id, treatmentTypeCategory);
     }
     public void deleteTreatmentTypeCategory(int id) {
-        database.deleteTreatmentTypeCategory(id);
+        TreatmentTypeCategory category = database.getTreatmentTypeCategories().get(id);
+        category.setDeleted(true);
+        updateTreatmentTypeCategory(id, category);
+
+        for (Map.Entry<Integer, TreatmentType> entry : database.getTreatmentTypes().entrySet()) {
+            if (entry.getValue().getCategoryId() == id) {
+                entry.getValue().setDeleted(true);
+                updateTreatmentType(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     public int[] getCategoryProfitByMonths(int treatmentTypeCategoryId) {
@@ -74,6 +90,13 @@ public class TreatmentController {
         return database.getTreatmentTypes();
     }
 
+    public HashMap<Integer, TreatmentType> getAvailableTreatmentTypes() {
+        return (HashMap<Integer, TreatmentType>) database.getTreatmentTypes().entrySet()
+                .stream()
+                .filter(type -> !type.getValue().isDeleted())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
     public TreatmentType getTreatmentTypeById(int id) throws TreatmentTypeNotFoundException {
         HashMap<Integer, TreatmentType> treatmentTypes = database.getTreatmentTypes();
         if (!treatmentTypes.containsKey(id)) {
@@ -88,7 +111,9 @@ public class TreatmentController {
     }
 
     public void deleteTreatmentType(int id) {
-        database.deleteTreatmentType(id);
+        TreatmentType type = database.getTreatmentTypes().get(id);
+        type.setDeleted(true);
+        updateTreatmentType(id, type);
     }
     public List<Treatment> getTreatmentsSortedByBeauticians() {
         List<Treatment> list = new ArrayList<>(database.getTreatments().values());
@@ -118,7 +143,7 @@ public class TreatmentController {
         return -1;
     }
 
-    public Vector<String> getTreatmentTimeWindows(Date date, int treatmentTypeId, BeautySalon beautySalon) {
+    public Vector<String> getTreatmentTimeWindows(Date date, int treatmentTypeId, SalonManager salonManager) {
         HashMap<Integer, TreatmentType> treatmentTypes = database.getTreatmentTypes();
         HashMap<Integer, Treatment> treatments = database.getTreatments();
 
@@ -139,7 +164,7 @@ public class TreatmentController {
                     int previousHour = previousTreatment.getScheduledDate().getHours();
                     int currentHour = treatment.getScheduledDate().getHours();
                     if (currentHour - previousHour >= roundedDuration) {
-                        for (int i = previousHour; duration + i <= currentHour && duration + i <= beautySalon.getSalonClosingHour(); i++) {
+                        for (int i = previousHour; duration + i <= currentHour && duration + i <= salonManager.getClosingHour(); i++) {
                             timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration / 60) + ":" + hourToString(duration % 60));
                         }
                     }
@@ -147,7 +172,7 @@ public class TreatmentController {
                 previousTreatment = treatment;
             }
         } else {
-            for (int i = beautySalon.getSalonOpeningHour(); roundedDuration + i <= beautySalon.getSalonClosingHour(); i++) {
+            for (int i = salonManager.getOpeningHour(); roundedDuration + i <= salonManager.getClosingHour(); i++) {
                 timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration / 60) + ":" + hourToString(duration % 60));
             }
         }
@@ -216,7 +241,7 @@ public class TreatmentController {
         return cost;
     }
 
-    public void cancelTreatment(int treatmentId, boolean clientCancelled, String cancellationReason, UserController userController, Double loyaltyThreshold) {
+    public void cancelTreatment(int treatmentId, boolean clientCancelled, String cancellationReason, UserManager userManager, Double loyaltyThreshold) {
         Treatment t;
         try {
             t = getTreatment(treatmentId);
@@ -229,7 +254,7 @@ public class TreatmentController {
 
         Client client;
         try {
-            client = userController.getClientByUsername(t.getClientUsername());
+            client = userManager.getClientByUsername(t.getClientUsername());
         } catch (UserNotFoundException e) {
             e.printStackTrace();
             return;
@@ -237,16 +262,16 @@ public class TreatmentController {
 
         double refundedPrice = t.getPrice();
         if (clientCancelled) {
-            salonController.changeProfit(refundedPrice * 0.1);
+            salonManager.changeProfit(refundedPrice * 0.1);
             refundedPrice *= 0.9;
             t.setStatus(Treatment.Status.CANCELLED_BY_CLIENT);
         } else {
-            salonController.changeProfit(refundedPrice);
+            salonManager.changeProfit(refundedPrice);
             t.setStatus(Treatment.Status.CANCELLED_BY_SALON);
         }
 
         updateTreatment(t, treatmentId);
-        userController.changeMoneySpent(t.getClientUsername(), client, refundedPrice, loyaltyThreshold);
+        userManager.changeMoneySpent(t.getClientUsername(), client, refundedPrice, loyaltyThreshold);
         try {
             TreatmentType treatmentType = getTreatmentTypeById(t.getTreatmentTypeId());
             treatmentType.changeTimesBooked(-1);
@@ -257,7 +282,7 @@ public class TreatmentController {
         }
     }
 
-    public void bookTreatment(Treatment treatment, Beautician beautician, SalonController salonController) {
+    public void bookTreatment(Treatment treatment, Beautician beautician, SalonManager salonManager) {
         HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories = database.getTreatmentTypeCategories();
         try {
             TreatmentType treatmentType = getTreatmentTypeById(treatment.getTreatmentTypeId());
@@ -273,8 +298,7 @@ public class TreatmentController {
         }
 
         database.addTreatment(treatment);
-        addTreatment(treatment);
-        salonController.changeProfit(treatment.getPrice());
+        salonManager.changeProfit(treatment.getPrice());
     }
     //endregion
 }
