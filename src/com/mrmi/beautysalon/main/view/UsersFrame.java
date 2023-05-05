@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.view;
 
 import com.mrmi.beautysalon.main.controller.AuthController;
-import com.mrmi.beautysalon.main.controller.SalonController;
 import com.mrmi.beautysalon.main.controller.TreatmentController;
 import com.mrmi.beautysalon.main.controller.UserController;
 import com.mrmi.beautysalon.main.entity.BeautySalon;

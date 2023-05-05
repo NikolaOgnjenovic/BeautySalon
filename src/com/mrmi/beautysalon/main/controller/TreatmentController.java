@@ -25,7 +25,11 @@ public class TreatmentController {
         return database.getTreatmentTypeCategories();
     }
     public String getTreatmentTypeCategoryName(int treatmentTypeCategoryId) {
-        return database.getTreatmentTypeCategories().get(treatmentTypeCategoryId).getName();
+        TreatmentTypeCategory category = database.getTreatmentTypeCategories().get(treatmentTypeCategoryId);
+        if (category == null) {
+            return "Deleted treatment category";
+        }
+        return category.getName();
     }
     public void updateTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
         database.updateTreatmentTypeCategory(id, treatmentTypeCategory);
@@ -122,6 +126,8 @@ public class TreatmentController {
             return new Vector<>();
         }
         byte duration = treatmentTypes.get(treatmentTypeId).getDuration();
+        int roundedDuration = (duration / 60 + 1);
+        //int roundedDuration = (duration + (duration / 60 + 1) * 60 - duration) / 60; // 45 minutes -> 60 minutes (45 + (0 + 1) * 60 - 45)
         Vector<String> timeWindows = new Vector<>();
         Treatment previousTreatment = null;
         List<Treatment> sortedTreatments = new ArrayList<>(treatments.values());
@@ -129,23 +135,22 @@ public class TreatmentController {
         sortedTreatments = sortedTreatments.stream().filter(t -> t.getScheduledDate().getDate() == date.getDate()).collect(Collectors.toList());
         if (sortedTreatments.size() > 0) {
             for (Treatment treatment : sortedTreatments) {
-                if (previousTreatment != null ) {
+                if (previousTreatment != null) {
                     int previousHour = previousTreatment.getScheduledDate().getHours();
                     int currentHour = treatment.getScheduledDate().getHours();
-                    if (currentHour - previousHour >= duration) {
+                    if (currentHour - previousHour >= roundedDuration) {
                         for (int i = previousHour; duration + i <= currentHour && duration + i <= beautySalon.getSalonClosingHour(); i++) {
-                            timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration) + ":00");
+                            timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration / 60) + ":" + hourToString(duration % 60));
                         }
                     }
                 }
                 previousTreatment = treatment;
             }
         } else {
-            for (int i = beautySalon.getSalonOpeningHour(); duration + i <= beautySalon.getSalonClosingHour(); i++) {
-                timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration) + ":00");
+            for (int i = beautySalon.getSalonOpeningHour(); roundedDuration + i <= beautySalon.getSalonClosingHour(); i++) {
+                timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration / 60) + ":" + hourToString(duration % 60));
             }
         }
-
 
         return timeWindows;
     }

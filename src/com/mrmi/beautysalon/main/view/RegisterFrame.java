@@ -7,9 +7,6 @@ import com.mrmi.beautysalon.main.entity.*;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Map;
 
 public class RegisterFrame extends JFrame {
     private final TreatmentController treatmentController;
@@ -19,7 +16,7 @@ public class RegisterFrame extends JFrame {
     private JButton registerButton;
     private JButton backButton;
     private JTextField usernameField, passwordField, nameField, surnameField, genderField, phoneField, addressField;
-    private boolean canPickUserType;
+    private final boolean canPickUserType;
     private JComboBox<String> userTypeComboBox;
     private JLabel bonusLabel, salaryLabel, qualificationLabel, experienceLabel;
     private JTextField bonusField, salaryField, qualificationField, experienceField;

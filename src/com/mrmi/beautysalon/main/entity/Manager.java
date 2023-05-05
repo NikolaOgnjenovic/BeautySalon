@@ -1,7 +1,5 @@
 package com.mrmi.beautysalon.main.entity;
 
-import java.util.Date;
-
 public class Manager extends Employee {
 
     public Manager(String password, String name, String surname, String gender, String phoneNumber, String address) {

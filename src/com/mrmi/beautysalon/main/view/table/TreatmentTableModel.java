@@ -75,12 +75,14 @@ public class TreatmentTableModel extends AbstractTableModel {
             case 1:
                 try {
                     return treatmentController.getTreatmentTypeCategoryName(treatmentController.getTreatmentTypeById(treatment.getTreatmentTypeId()).getCategoryId());
-                } catch (TreatmentTypeNotFoundException ignored) {
+                } catch (TreatmentTypeNotFoundException e) {
+                    return "Deleted treatment category";
                 }
             case 2:
                 try {
                     return treatmentController.getTreatmentTypeById(treatment.getTreatmentTypeId()).getName();
-                } catch (TreatmentTypeNotFoundException ignored) {
+                } catch (TreatmentTypeNotFoundException e) {
+                    return "Deleted treatment type";
                 }
             case 3:
                 return treatment.getPrice();

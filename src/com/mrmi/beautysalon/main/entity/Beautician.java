@@ -43,6 +43,7 @@ public class Beautician extends Employee {
         sb.append(super.getFileString(username));
         sb.append(finishedTreatments);
         sb.append(",");
+        sb.append(";");
         for (Byte type : treatmentTypeIDs) {
             sb.append(type);
             sb.append(";");
