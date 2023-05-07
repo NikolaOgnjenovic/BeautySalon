@@ -29,7 +29,7 @@ public class UsersFrame extends JFrame {
         this.setTitle("Beauty salon - Users");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setVisible(true);
+        
 
         UserTableModel tableModel = new UserTableModel(userManager, treatmentManager, users, canEdit);
         JTable table = new JTable(tableModel){
@@ -45,7 +45,6 @@ public class UsersFrame extends JFrame {
             }
         };
         table.getTableHeader().setReorderingAllowed(false);
-        Utility.setFont(table, 20);
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span, growx");
         table.setAutoCreateRowSorter(true);
@@ -54,12 +53,10 @@ public class UsersFrame extends JFrame {
 
         filterText = new JTextField("Search", 20);
         filterText.addActionListener(e -> filter(filterText.getText()));
-        Utility.setFont(filterText, 24);
         this.add(filterText);
 
         if (canDelete) {
             JButton delete = new JButton("Delete user");
-            Utility.setFont(delete, 24);
             delete.addActionListener(e -> {
                 try {
                     userManager.deleteUser(new ArrayList<>(users.keySet()).get(table.getSelectedRow()));
@@ -73,14 +70,12 @@ public class UsersFrame extends JFrame {
 
         if (canEdit) {
             JButton learnButton = new JButton("Teach a beautician a new skill");
-            Utility.setFont(learnButton, 24);
             this.add(learnButton);
 
             JComboBox<String> comboBox = new JComboBox<>();
             for (Map.Entry<Integer, TreatmentTypeCategory> entry : treatmentManager.getAvailableTreatmentTypeCategories().entrySet()) {
                 comboBox.addItem(entry.getValue().getName() + ", id: " + entry.getKey());
             }
-            Utility.setFont(comboBox, 24);
             this.add(comboBox);
             comboBox.setVisible(false);
 
@@ -91,7 +86,6 @@ public class UsersFrame extends JFrame {
         }
 
         JButton register = new JButton("Register");
-        Utility.setFont(register, 24);
         register.addActionListener(e -> {
             this.dispose();
             RegisterFrame registerFrame = new RegisterFrame(treatmentManager, userManager, salonManager, authManager, true);
@@ -100,7 +94,6 @@ public class UsersFrame extends JFrame {
 
         JButton back = new JButton("Back");
         back.addActionListener(e -> this.dispose());
-        Utility.setFont(back, 24);
         this.add(back);
     }
 

@@ -17,7 +17,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
         this.setTitle("Beauty salon - Treatment type categories");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setVisible(true);
+        
 
         TreatmentTypeCategoryTableModel tableModel = new TreatmentTypeCategoryTableModel(treatmentManager, treatmentTypeCategories, canEdit);
         JTable table = new JTable(tableModel){
@@ -33,15 +33,12 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
             }
         };
         table.getTableHeader().setReorderingAllowed(false);
-        Utility.setFont(table, 20);
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span, growx");
 
         JLabel nameLabel = new JLabel("Category name");
-        Utility.setFont(nameLabel, 24);
         this.add(nameLabel, "split 3");
         JTextField nameField = new JTextField(20);
-        Utility.setFont(nameField, 24);
         this.add(nameField);
 
         JButton addButton = new JButton("Add");
@@ -49,7 +46,6 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
             treatmentManager.addTreatmentTypeCategory(new TreatmentTypeCategory(nameField.getText(), new ArrayList<>(), 0d, false));
             tableModel.fireTableDataChanged();
         });
-        Utility.setFont(addButton, 24);
         this.add(addButton);
 
         if (canDelete) {
@@ -58,13 +54,11 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
                 treatmentManager.deleteTreatmentTypeCategory(new ArrayList<>(treatmentTypeCategories.keySet()).get(table.getSelectedRow()));
                 tableModel.fireTableDataChanged();
             });
-            Utility.setFont(deleteButton, 24);
             this.add(deleteButton);
         }
 
         JButton back = new JButton("Back");
         back.addActionListener(e -> this.dispose());
-        Utility.setFont(back, 24);
         this.add(back);
     }
 }

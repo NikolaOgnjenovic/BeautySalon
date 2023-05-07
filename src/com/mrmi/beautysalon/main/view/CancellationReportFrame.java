@@ -41,7 +41,7 @@ public class CancellationReportFrame extends JFrame {
         this.setTitle("Beauty salon - Treatment cancellation report");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setVisible(true);
+        
 
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
@@ -64,19 +64,19 @@ public class CancellationReportFrame extends JFrame {
         };
 
         JLabel fromLabel = new JLabel("From");
-        Utility.setFont(fromLabel, 24);
+        
         this.add(fromLabel, "align right");
 
         fromDatePicker = new JDatePickerImpl(fromDatePanel, textField);
-        Utility.setFont(fromDatePicker, 24);
+        
         this.add(fromDatePicker, "align left");
 
         JLabel toLabel = new JLabel("To");
-        Utility.setFont(toLabel, 24);
+        
         this.add(toLabel, "align right");
 
         toDatePicker = new JDatePickerImpl(toDatePanel, textField);
-        Utility.setFont(toDatePicker, 24);
+        
         this.add(toDatePicker, "align left");
 
         CancellationReportTableModel cancellationReportTableModel = new CancellationReportTableModel(reasons, amounts);
@@ -85,12 +85,12 @@ public class CancellationReportFrame extends JFrame {
         displayTable(cancellationTable);
 
         backButton = new JButton("Back");
-        Utility.setFont(backButton, 24);
+        
         this.add(backButton, "span");
     }
 
     private void displayTable(JTable table) {
-        Utility.setFont(table, 20);
+        
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span");
         table.setAutoCreateRowSorter(true);

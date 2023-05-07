@@ -20,7 +20,7 @@ public class TreatmentTypesFrame extends JFrame {
         this.setTitle("Beauty salon - Treatment types");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setVisible(true);
+        
 
         TreatmentTypeTableModel tableModel = new TreatmentTypeTableModel(treatmentManager, treatmentTypes, canEdit);
         JTable table = new JTable(tableModel){
@@ -36,7 +36,6 @@ public class TreatmentTypesFrame extends JFrame {
             }
         };
         table.getTableHeader().setReorderingAllowed(false);
-        Utility.setFont(table, 20);
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span, growx");
 
@@ -45,30 +44,23 @@ public class TreatmentTypesFrame extends JFrame {
         table.setRowSorter(tableSorter);
 
         JLabel searchLabel = new JLabel("Search");
-        Utility.setFont(searchLabel, 24);
         this.add(searchLabel, "split 2");
 
         filterText = new JTextField("Search", 20);
         filterText.addActionListener(e -> filter(filterText.getText()));
-        Utility.setFont(filterText, 24);
         this.add(filterText);
 
         JLabel nameLabel = new JLabel("Name");
-        Utility.setFont(nameLabel, 24);
         this.add(nameLabel, "split 2");
         JTextField nameField = new JTextField(20);
-        Utility.setFont(nameField, 24);
         this.add(nameField);
 
         JLabel priceLabel = new JLabel("Price");
-        Utility.setFont(priceLabel, 24);
         this.add(priceLabel, "split 2");
         JTextField priceField = new JTextField(20);
-        Utility.setFont(priceField, 24);
         this.add(priceField);
 
         JLabel categoryLabel = new JLabel("Category");
-        Utility.setFont(categoryLabel, 24);
         this.add(categoryLabel, "split 2");
         JComboBox<String> categoryComboBox = new JComboBox<>();
         JComboBox<String> editCategoryComboBox = new JComboBox<>();
@@ -76,8 +68,6 @@ public class TreatmentTypesFrame extends JFrame {
             categoryComboBox.addItem(category.getValue().getName());
             editCategoryComboBox.addItem(category.getValue().getName());
         }
-        Utility.setFont(categoryComboBox, 20);
-        Utility.setFont(editCategoryComboBox, 20);
         this.add(categoryComboBox);
 
         if (canEdit) {
@@ -86,10 +76,8 @@ public class TreatmentTypesFrame extends JFrame {
         }
 
         JLabel durationLabel = new JLabel("Duration (minutes)");
-        Utility.setFont(durationLabel, 24);
         this.add(durationLabel, "split 2");
         JTextField durationField = new JTextField(4);
-        Utility.setFont(durationField, 24);
         this.add(durationField);
 
         JButton addButton = new JButton("Add");
@@ -97,7 +85,6 @@ public class TreatmentTypesFrame extends JFrame {
             treatmentManager.addTreatmentType(new TreatmentType(nameField.getText(), Double.parseDouble(priceField.getText()), treatmentManager.getTreatmentTypeCategoryIdByName(categoryComboBox.getSelectedItem().toString()), Byte.parseByte(durationField.getText())));
             tableModel.fireTableDataChanged();
         });
-        Utility.setFont(addButton, 24);
         this.add(addButton);
 
         if (canDelete) {
@@ -108,7 +95,6 @@ public class TreatmentTypesFrame extends JFrame {
                     tableModel.fireTableDataChanged();
                 }
             });
-            Utility.setFont(delete, 24);
             this.add(delete);
         }
     }

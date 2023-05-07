@@ -26,7 +26,7 @@ public class TreatmentsFrame extends JFrame {
         this.setTitle("Beauty salon - Treatments");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setVisible(true);
+        
 
         tableModel = new TreatmentTableModel(treatmentManager, treatments, canEdit, isClient);
         JTable table = new JTable(tableModel) {
@@ -41,7 +41,6 @@ public class TreatmentsFrame extends JFrame {
             }
         };
         table.getTableHeader().setReorderingAllowed(false);
-        Utility.setFont(table, 20);
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span, growx");
         table.setAutoCreateRowSorter(true);
@@ -49,36 +48,29 @@ public class TreatmentsFrame extends JFrame {
         table.setRowSorter(tableSorter);
 
         JLabel searchLabel = new JLabel("Search");
-        Utility.setFont(searchLabel, 24);
         this.add(searchLabel, "split 2");
 
         filterText = new JTextField("", 20);
         filterText.addActionListener(e -> filter(filterText.getText()));
-        Utility.setFont(filterText, 24);
         this.add(filterText);
 
         Double totalCost = treatmentManager.getTotalCost(treatments);
         JLabel total = new JLabel("Total cost: " + totalCost);
-        Utility.setFont(total, 24);
         this.add(total);
 
         JLabel totalRefund = new JLabel(totalCost + " will be refunded if the salon cancels the treatments");
-        Utility.setFont(totalRefund, 24);
         this.add(totalRefund);
 
         JLabel clientRefund = new JLabel(0.9*totalCost + " will be refunded if the client cancels the treatments");
-        Utility.setFont(clientRefund, 24);
         this.add(clientRefund);
 
         if (canCancel) {
             JLabel cancellationLabel = new JLabel("Why are you cancelling the treatment?");
-            Utility.setFont(cancellationLabel, 24);
             this.add(cancellationLabel, "split 3");
 
             JTextField cancellationReason = new JTextField();
             cancellationReason.setToolTipText("Cancellation reason");
             cancellationReason.setPreferredSize(new Dimension(250, 40));
-            Utility.setFont(cancellationReason, 24);
             this.add(cancellationReason);
 
             JButton cancel = new JButton("Cancel");
@@ -91,7 +83,6 @@ public class TreatmentsFrame extends JFrame {
                     tableModel.fireTableDataChanged();
                 }
             });
-            Utility.setFont(cancel, 24);
             this.add(cancel);
         }
 
@@ -101,7 +92,6 @@ public class TreatmentsFrame extends JFrame {
                 treatmentManager.deleteTreatment(new ArrayList<>(treatments.keySet()).get(table.getSelectedRow()));
                 tableModel.fireTableDataChanged();
             });
-            Utility.setFont(delete, 24);
             this.add(delete);
         }
 
@@ -117,7 +107,6 @@ public class TreatmentsFrame extends JFrame {
             for (Map.Entry<Integer, TreatmentType> type: treatmentManager.getAvailableTreatmentTypes().entrySet()) {
                 typeComboBox.addItem(type.getValue().getName());
             }
-            Utility.setFont(typeComboBox, 20);
 
             TableColumn typeColumn = table.getColumnModel().getColumn(2);
             typeColumn.setCellEditor(new DefaultCellEditor(typeComboBox));
@@ -128,7 +117,6 @@ public class TreatmentsFrame extends JFrame {
             this.dispose();
             //previousFrame.setVisible(true);
         });
-        Utility.setFont(back, 24);
         this.add(back);
     }
 

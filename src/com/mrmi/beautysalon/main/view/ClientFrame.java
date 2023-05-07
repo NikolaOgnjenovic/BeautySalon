@@ -40,10 +40,10 @@ public class ClientFrame extends JFrame {
         this.setTitle("Beauty salon - Client");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setVisible(true);
+        
 
         JLabel title = new JLabel("Welcome back, " + clientUsername);
-        Utility.setFont(title, 30);
+        
         this.add(title);
 
         String loyaltyMessage = "You have a loyalty card which grants you a 10% discount on all treatments!";
@@ -51,27 +51,27 @@ public class ClientFrame extends JFrame {
             loyaltyMessage = "You need to spend " + (salonManager.getLoyaltyThreshold() - client.getMoneySpent()) + " more money in order to get a loyalty card.";
         }
         JLabel loyaltyStatus = new JLabel(loyaltyMessage);
-        Utility.setFont(loyaltyStatus, 24);
+        
         this.add(loyaltyStatus);
 
         viewDueTreatments = new JButton("View due treatments");
-        Utility.setFont(viewDueTreatments, 24);
+        
         this.add(viewDueTreatments);
 
         viewPastTreatments = new JButton("View past treatments");
-        Utility.setFont(viewPastTreatments, 24);
+        
         this.add(viewPastTreatments);
 
         cancelTreatment = new JButton("Cancel a treatment");
-        Utility.setFont(cancelTreatment, 24);
+        
         this.add(cancelTreatment);
 
         bookTreatment = new JButton("Book treatment");
-        Utility.setFont(bookTreatment, 24);
+        
         this.add(bookTreatment);
 
         logout = new JButton("Logout");
-        Utility.setFont(logout, 24);
+        
         this.add(logout);
     }
 

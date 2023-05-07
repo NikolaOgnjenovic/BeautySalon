@@ -49,81 +49,81 @@ public class ManagerFrame extends JFrame {
         this.setTitle("Beauty salon - Manager");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setVisible(true);
+        
 
         editUsers = new JButton("Edit users");
-        Utility.setFont(editUsers, 24);
+        
         this.add(editUsers, "span");
 
         JLabel loyaltyThresholdLabel = new JLabel("Loyalty threshold");
-        Utility.setFont(loyaltyThresholdLabel, 24);
+        
         this.add(loyaltyThresholdLabel, "align right");
 
         loyaltyThreshold = new JTextField(String.valueOf(salonManager.getLoyaltyThreshold()), 7);
-        Utility.setFont(loyaltyThreshold, 24);
+        
         this.add(loyaltyThreshold, "align left");
 
         JLabel salonNameLabel = new JLabel("Salon name");
-        Utility.setFont(salonNameLabel, 24);
+        
         this.add(salonNameLabel, "align right");
 
         salonNameField = new JTextField(salonManager.getName(), 10);
-        Utility.setFont(salonNameField, 24);
+        
         this.add(salonNameField, "align left");
 
         JLabel salonOpeningHourLabel = new JLabel("Opening hour");
-        Utility.setFont(salonOpeningHourLabel, 24);
+        
         this.add(salonOpeningHourLabel, "align right");
 
         salonOpeningHourField = new JTextField(String.valueOf(salonManager.getOpeningHour()), 2);
-        Utility.setFont(salonOpeningHourField, 24);
+        
         this.add(salonOpeningHourField, "align left");
 
         JLabel salonClosingHourLabel = new JLabel("Closing hour");
-        Utility.setFont(salonClosingHourLabel, 24);
+        
         this.add(salonClosingHourLabel, "align right");
 
         salonClosingHourField = new JTextField(String.valueOf(salonManager.getClosingHour()), 2);
-        Utility.setFont(salonClosingHourField, 24);
+        
         this.add(salonClosingHourField, "align left");
 
         editTreatmentTypeCategories = new JButton("Edit treatment type categories");
-        Utility.setFont(editTreatmentTypeCategories, 24);
+        
         this.add(editTreatmentTypeCategories);
 
         editTreatmentTypes = new JButton("Edit treatment types");
-        Utility.setFont(editTreatmentTypes, 24);
+        
         this.add(editTreatmentTypes);
 
         editTreatments = new JButton("Edit all treatments");
-        Utility.setFont(editTreatments, 24);
+        
         this.add(editTreatments);
 
         treatmentStatusGraphButton = new JButton("View treatment status graph");
-        Utility.setFont(treatmentStatusGraphButton, 24);
+        
         this.add(treatmentStatusGraphButton);
 
         beauticianStatsButton = new JButton("View beautician finished treatments graph");
-        Utility.setFont(beauticianStatsButton, 24);
+        
         this.add(beauticianStatsButton);
 
         beauticianReport = new JButton("Beautician profit report");
-        Utility.setFont(beauticianReport, 24);
+        
         this.add(beauticianReport);
 
         treatmentCategoryProfitButton = new JButton("View profit by treatment category graph");
-        Utility.setFont(treatmentCategoryProfitButton, 24);
+        
         this.add(treatmentCategoryProfitButton);
 
         cancellationReport = new JButton("View cancellation report");
-        Utility.setFont(cancellationReport, 24);
+        
         this.add(cancellationReport);
 
         // TODO:
         //  salon profit & loss in a date interval
 
         logout = new JButton("Logout");
-        Utility.setFont(logout, 24);
+        
         this.add(logout, "span");
     }
 

@@ -14,9 +14,8 @@ public class MainFrame extends JFrame {
     private final TreatmentManager treatmentManager;
     private final UserManager userManager;
     private final AuthManager authManager;
-    private JPanel mainPanel;
-    private JButton login;
-    private JButton register;
+    private JButton buttonLogin;
+    private JButton buttonRegister;
 
     public MainFrame() {
         Database database = new Database("");
@@ -27,45 +26,35 @@ public class MainFrame extends JFrame {
 
         initialiseViews();
         initialiseListeners();
-
-        this.setTitle("Beauty salon");
-        this.setSize(1000, 1080);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setContentPane(mainPanel);
-        this.setVisible(true);
     }
 
     private void initialiseViews() {
+        this.setTitle("Beauty salon");
+        this.setSize(1000, 1080);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLayout(new MigLayout("wrap 1", "[grow, center]", "[grow]40"));
+
         JLabel welcome = new JLabel("Welcome");
-        Utility.setFont(welcome, 30);
+        this.add(welcome);
 
-        login = new JButton("Login");
-        Utility.setFont(login, 24);
+        buttonLogin = new JButton("Login");
+        this.add(buttonLogin);
 
-        register = new JButton("Register");
-        Utility.setFont(register, 24);
-
-        mainPanel = new JPanel();
-        // Wrap 1 -> start a new row after 1 component
-        // grow the column by x and y and center the content in the column
-        // grow the rows and set a gap between them
-        mainPanel.setLayout(new MigLayout("wrap 1", "[grow, center]", "[grow]40[grow]40[grow]"));
-        mainPanel.add(welcome);
-        mainPanel.add(login);
-        mainPanel.add(register);
-
-        mainPanel.setVisible(true);
+        buttonRegister = new JButton("Register");
+        this.add(buttonRegister);
     }
 
     private void initialiseListeners() {
-        login.addActionListener(e -> {
+        buttonLogin.addActionListener(e -> {
             this.dispose();
-            LoginFrame loginFrame = new LoginFrame(treatmentManager, userManager, salonManager, authManager);
+            LoginFrame loginFrame = new LoginFrame(salonManager, treatmentManager, userManager, authManager);
+            loginFrame.setVisible(true);
         });
 
-        register.addActionListener(e -> {
+        buttonRegister.addActionListener(e -> {
             this.dispose();
             RegisterFrame registerFrame = new RegisterFrame(treatmentManager, userManager, salonManager, authManager, false);
+            registerFrame.setVisible(true);
         });
     }
 }

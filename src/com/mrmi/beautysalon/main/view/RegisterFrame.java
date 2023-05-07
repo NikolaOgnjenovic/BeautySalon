@@ -32,67 +32,53 @@ public class RegisterFrame extends JFrame {
         initialiseListeners();
     }
     private void initialiseViews() {
-        this.setLayout(new MigLayout("wrap 2", "[center, grow]", "[center, grow]"));
+        this.setLayout(new MigLayout("wrap 2", "[center, grow, align right][center, grow, align left]", "[center, grow]"));
         this.setTitle("Beauty salon - Registration");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setVisible(true);
+        
 
         JLabel usernameLabel = new JLabel("Username");
-        Utility.setFont(usernameLabel, 24);
-        this.add(usernameLabel, "align right");
+        this.add(usernameLabel);
 
         usernameField = new JTextField(20);
-        Utility.setFont(usernameField, 24);
-        this.add(usernameField, "align left");
+        this.add(usernameField);
 
         JLabel passwordLabel = new JLabel("Password");
-        Utility.setFont(passwordLabel, 24);
-        this.add(passwordLabel, "align right");
+        this.add(passwordLabel);
 
         passwordField = new JTextField(20);
-        Utility.setFont(passwordField, 24);
-        this.add(passwordField, "align left");
+        this.add(passwordField);
 
         JLabel nameLabel = new JLabel("Name");
-        Utility.setFont(nameLabel, 24);
-        this.add(nameLabel, "align right");
+        this.add(nameLabel);
 
         nameField = new JTextField(20);
-        Utility.setFont(nameField, 24);
-        this.add(nameField, "align left");
+        this.add(nameField);
 
         JLabel surnameLabel = new JLabel("Surname");
-        Utility.setFont(surnameLabel, 24);
-        this.add(surnameLabel, "align right");
+        this.add(surnameLabel);
 
         surnameField = new JTextField(20);
-        Utility.setFont(surnameField, 24);
-        this.add(surnameField, "align left");
+        this.add(surnameField);
 
         JLabel genderLabel = new JLabel("Gender");
-        Utility.setFont(genderLabel, 24);
-        this.add(genderLabel, "align right");
+        this.add(genderLabel);
 
         genderField = new JTextField(20);
-        Utility.setFont(genderField, 24);
-        this.add(genderField, "align left");
+        this.add(genderField);
 
         JLabel phoneLabel = new JLabel("Phone number");
-        Utility.setFont(phoneLabel, 24);
-        this.add(phoneLabel, "align right");
+        this.add(phoneLabel);
 
         phoneField = new JTextField(20);
-        Utility.setFont(phoneField, 24);
-        this.add(phoneField, "align left");
+        this.add(phoneField);
 
         JLabel addressLabel = new JLabel("Address");
-        Utility.setFont(addressLabel, 24);
-        this.add(addressLabel, "align right");
+        this.add(addressLabel);
 
         addressField = new JTextField(20);
-        Utility.setFont(addressField, 24);
-        this.add(addressField, "align left");
+        this.add(addressField);
 
         if (canPickUserType) {
             userTypeComboBox = new JComboBox<>();
@@ -100,60 +86,57 @@ public class RegisterFrame extends JFrame {
             userTypeComboBox.addItem("Beautician");
             userTypeComboBox.addItem("Receptionist");
             userTypeComboBox.addItem("Manager");
-            Utility.setFont(userTypeComboBox, 24);
+            
             this.add(userTypeComboBox, "span");
 
             experienceLabel = new JLabel("Years of experience");
-            Utility.setFont(experienceLabel, 24);
-            this.add(experienceLabel, "align right");
+            
+            this.add(experienceLabel);
             experienceLabel.setVisible(false);
 
             experienceField = new JTextField(20);
-            Utility.setFont(experienceField, 24);
-            this.add(experienceField, "align left");
+            
+            this.add(experienceField);
             experienceField.setVisible(false);
 
             qualificationLabel = new JLabel("Qualification level");
-            Utility.setFont(qualificationLabel, 24);
-            this.add(qualificationLabel, "align right");
+            
+            this.add(qualificationLabel);
             qualificationLabel.setVisible(false);
 
             qualificationField = new JTextField(20);
-            Utility.setFont(qualificationField, 24);
-            this.add(qualificationField, "align left");
+            
+            this.add(qualificationField);
             qualificationField.setVisible(false);
 
             salaryLabel = new JLabel("Salary");
-            Utility.setFont(salaryLabel, 24);
-            this.add(salaryLabel, "align right");
+            
+            this.add(salaryLabel);
             salaryLabel.setVisible(false);
 
             salaryField = new JTextField(20);
-            Utility.setFont(salaryField, 24);
-            this.add(salaryField, "align left");
+            
+            this.add(salaryField);
             salaryField.setVisible(false);
 
             bonusLabel = new JLabel("Salary bonus");
-            Utility.setFont(bonusLabel, 24);
-            this.add(bonusLabel, "align right");
+            
+            this.add(bonusLabel);
             bonusLabel.setVisible(false);
 
             bonusField = new JTextField(20);
-            Utility.setFont(bonusField, 24);
-            this.add(bonusField, "align left");
+            
+            this.add(bonusField);
             bonusField.setVisible(false);
         }
 
         registerButton = new JButton("Register");
-        Utility.setFont(registerButton, 24);
-        this.add(registerButton, "span");
+        this.add(registerButton, "span, center");
 
         backButton = new JButton("Back");
-        Utility.setFont(backButton, 24);
-        this.add(backButton, "span");
+        this.add(backButton, "span, center");
     }
 
-    // TODO
     private void initialiseListeners() {
         if (canPickUserType) {
             userTypeComboBox.addActionListener(e -> {
@@ -179,6 +162,10 @@ public class RegisterFrame extends JFrame {
             });
         }
         registerButton.addActionListener(e -> {
+            if (!canPickUserType) {
+                Client client = new Client(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText());
+                ClientFrame clientFrame = new ClientFrame(client, usernameField.getText(), treatmentManager, userManager, salonManager, authManager);
+            }
             switch (userTypeComboBox.getSelectedIndex()) {
                 case 0:
                     Client client = new Client(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText());

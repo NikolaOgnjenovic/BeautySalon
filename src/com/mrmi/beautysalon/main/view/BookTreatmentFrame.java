@@ -52,7 +52,7 @@ public class BookTreatmentFrame extends JFrame {
         this.setTitle("Beauty salon - Book treatment");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setVisible(true);
+        
 
         TreatmentTypeTableModel treatmentTableModel = new TreatmentTypeTableModel(treatmentManager, treatmentManager.getTreatmentTypes(), false);
         treatmentTypeTable = new JTable(treatmentTableModel);
@@ -83,28 +83,28 @@ public class BookTreatmentFrame extends JFrame {
             }
         });
 
-        Utility.setFont(datePicker, 24);
+        
         this.add(datePicker);
         datePicker.setVisible(false);
 
         timeWindows = new Vector<>();
         treatmentTimeWindows = new JComboBox<>(timeWindows);
-        Utility.setFont(treatmentTimeWindows, 24);
+        
         this.add(treatmentTimeWindows);
         treatmentTimeWindows.setVisible(false);
 
         bookButton = new JButton("Book treatment");
-        Utility.setFont(bookButton, 24);
+        
         this.add(bookButton);
         bookButton.setVisible(false);
 
         backButton = new JButton("Back");
-        Utility.setFont(backButton, 24);
+        
         this.add(backButton);
     }
 
     private void displayTable(JTable table) {
-        Utility.setFont(table, 20);
+        
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "growx");
         table.setAutoCreateRowSorter(true);
@@ -114,7 +114,7 @@ public class BookTreatmentFrame extends JFrame {
 
         JTextField filterText = new JTextField("Search", 20);
         filterText.addActionListener(e -> filter(filterText.getText(), tableSorter));
-        Utility.setFont(filterText, 24);
+        
         this.add(filterText);
     }
 

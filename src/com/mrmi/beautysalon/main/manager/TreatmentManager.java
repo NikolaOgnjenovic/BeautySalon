@@ -204,9 +204,6 @@ public class TreatmentManager {
     public HashMap<Integer, Treatment> getTreatments() {
         return database.getTreatments();
     }
-    public void updateTreatment(Treatment treatment, Date date, int treatmentTypeId, String clientUsername, String beauticianUsername) {
-        database.updateTreatment(treatment, date, treatmentTypeId, clientUsername, beauticianUsername);
-    }
 
     public void updateTreatment(Treatment treatment, int id) {
         database.updateTreatment(treatment, id);

@@ -39,7 +39,7 @@ public class Database {
     //region User
     public void addUser(String username, User user) {
         users.put(username, user);
-        writeUser(user, username);
+        writeUser(username, user);
     }
 
     public HashMap<String, User> getUsers() {
@@ -64,15 +64,15 @@ public class Database {
     //endregion
 
     //region Treatment Type Category
-    public HashMap<Integer, TreatmentTypeCategory> getTreatmentTypeCategories() {
-        return treatmentTypeCategories;
-    }
-
     public void addTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory) {
         int id = getNextTreatmentTypeCategoryId();
         treatmentTypeCategories.put(id, treatmentTypeCategory);
-        writeTreatmentTypeCategory(treatmentTypeCategory, id);
+        writeTreatmentTypeCategory(id, treatmentTypeCategory);
         overwriteVariablesFile();
+    }
+
+    public HashMap<Integer, TreatmentTypeCategory> getTreatmentTypeCategories() {
+        return treatmentTypeCategories;
     }
 
     public int getNextTreatmentTypeCategoryId() {
@@ -85,23 +85,18 @@ public class Database {
         treatmentTypeCategories.put(id, treatmentTypeCategory);
         overwriteTreatmentTypeCategoriesFile();
     }
-
-    public void deleteTreatmentTypeCategory(int id) {
-        treatmentTypeCategories.remove(id);
-        overwriteTreatmentTypeCategoriesFile();
-    }
     //endregion
 
     //region Treatment types
-    public HashMap<Integer, TreatmentType> getTreatmentTypes() {
-        return treatmentTypes;
-    }
-
     public void addTreatmentType(TreatmentType type) {
         int id = getNextTreatmentTypeId();
         treatmentTypes.put(id, type);
         writeTreatmentType(type, id);
         overwriteVariablesFile();
+    }
+
+    public HashMap<Integer, TreatmentType> getTreatmentTypes() {
+        return treatmentTypes;
     }
 
     public int getNextTreatmentTypeId() {
@@ -114,31 +109,17 @@ public class Database {
         treatmentTypes.put(id, treatmentType);
         overwriteTreatmentTypesFile();
     }
-
-    public void deleteTreatmentType(int id) {
-        treatmentTypes.remove(id);
-        overwriteTreatmentTypesFile();
-    }
     //endregion
 
     //region Treatment
-    public void updateTreatment(Treatment treatment, Date date, int treatmentTypeId, String clientUsername, String beauticianUsername) {
-        treatment.setScheduledDate(date);
-        treatment.setTreatmentTypeId(treatmentTypeId);
-        treatment.setClientUsername(clientUsername);
-        treatment.setBeauticianUsername(beauticianUsername);
-        overwriteTreatmentsFile();
-    }
-
-    public void updateTreatment(Treatment treatment, int id) {
-        treatments.put(id, treatment);
-        overwriteTreatmentsFile();
-    }
-
     public void addTreatment(Treatment treatment) {
         int id = getNextTreatmentId();
         treatments.put(id, treatment);
-        writeTreatment(treatment, id);
+        writeTreatment(id, treatment);
+    }
+
+    public HashMap<Integer, Treatment> getTreatments() {
+        return treatments;
     }
 
     public int getNextTreatmentId() {
@@ -147,8 +128,9 @@ public class Database {
         return treatmentId;
     }
 
-    public HashMap<Integer, Treatment> getTreatments() {
-        return treatments;
+    public void updateTreatment(Treatment treatment, int id) {
+        treatments.put(id, treatment);
+        overwriteTreatmentsFile();
     }
 
     public void deleteTreatment(int id) {
@@ -156,6 +138,20 @@ public class Database {
         overwriteTreatmentsFile();
     }
     //endregion
+
+    //region Generic IO
+    private void writeFile(String fileName, String objectFileString) {
+        try {
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
+            out.write(objectFileString);
+            out.write("\n");
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    //endregion Generic IO
 
     //region Users IO
     private void readUsersFile() {
@@ -236,17 +232,9 @@ public class Database {
         }
     }
 
-    private void writeUser(User user, String username) {
+    private void writeUser(String username, User user) {
         String fileName = filePathPrefix + "data" + separator + "users.txt";
-        try {
-            File file = fileCheck(fileName);
-            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
-            out.write(user.getFileString(username));
-            out.write("\n");
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeFile(fileName, user.getFileString(username));
     }
 
     private void overwriteUsersFile() {
@@ -291,17 +279,9 @@ public class Database {
         }
     }
 
-    private void writeTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory, int id) {
+    private void writeTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
         String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
-        try {
-            File file = fileCheck(fileName);
-            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
-            out.write(treatmentTypeCategory.getFileString(id));
-            out.write("\n");
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeFile(fileName, treatmentTypeCategory.getFileString(id));
     }
 
     private void overwriteTreatmentTypeCategoriesFile() {
@@ -341,15 +321,7 @@ public class Database {
 
     private void writeTreatmentType(TreatmentType treatmentType, int id) {
         String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
-        try {
-            File file = fileCheck(fileName);
-            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
-            out.write(treatmentType.getFileString(id));
-            out.write("\n");
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeFile(fileName, treatmentType.getFileString(id));
     }
 
     private void overwriteTreatmentTypesFile() {
@@ -376,7 +348,7 @@ public class Database {
             File file = fileCheck(fileName);
             BufferedReader in = new BufferedReader(new FileReader(file));
             String line;
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
             while ((line = in.readLine()) != null) {
                 String[] data = line.split(",");
                 treatments.put(Integer.parseInt(data[0]), new Treatment(sdf.parse(data[1]), Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Double.parseDouble(data[6]), Treatment.Status.valueOf(data[7]), data[8]));
@@ -401,18 +373,9 @@ public class Database {
             e.printStackTrace();
         }
     }
-
-    private void writeTreatment(Treatment treatment, int id) {
+    private void writeTreatment(int id, Treatment treatment) {
         String fileName = filePathPrefix + "data" + separator + "treatments.txt";
-        try {
-            File file = fileCheck(fileName);
-            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
-            out.write(treatment.getFileString(id));
-            out.write("\n");
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeFile(fileName, treatment.getFileString(id));
     }
     //endregion
 
