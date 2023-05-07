@@ -1,6 +1,6 @@
-16,Gel lak,1600.0,1,1440.0,8,80,false
-17,Spa manikir,2000.0,0,0.0,8,90,false
-18,Pedikir,1600.0,1,1440.0,9,45,true
-13,Relaks,2000.0,1,1800.0,7,45,false
-14,Sportska,2500.0,0,0.0,7,75,false
-15,Francuski,1500.0,0,0.0,8,55,false
+1,Relaks masaza,2000.0,1,1800.0,1,45,false
+2,Sportska masaza,2500.0,0,0.0,1,75,false
+3,Francuski manikir,1500.0,0,0.0,2,55,false
+4,Gel lak,1600.0,1,1440.0,2,80,false
+5,Spa manikir,2000.0,1,1800.0,2,90,false
+6,Pedikir,1600.0,0,0.0,3,45,true

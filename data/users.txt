@@ -1,6 +1,6 @@
 R,pera,pera,Pera,Perić,M,123,Adresa 4,5,5,1000.0,10000.0,
-C,mika,mika,Mika,Mikić,M,1234,Adresa 2,true,182862.0
+C,mika,mika,Mika,Mikić,M,1234,Adresa 2,true,186102.0
 M,manager,manager,Nikola,Nikolić,M,1234,Adresa 1,7,3,0.0,100000.0,
-B,jadranka,jadranka,Jovanka,Jovanovic,F,123,adresa 6,6,3,3333.0,9000.0,6,;8;9;
-C,milica,milica,Milica,Milić,F,1234,Adresa 3,true,20860.0
-B,sima,sima,Sima,Simić,M,123,Adresa 5,4,3,0.0,9000.0,11,;7;8;
+B,jadranka,jadranka,Jovanka,Jovanovic,F,123,adresa 6,6,3,3333.0,9000.0,7,;2;
+C,milica,milica,Milica,Milić,F,1234,Adresa 3,true,22660.0
+B,sima,sima,Sima,Simić,M,123,Adresa 5,4,3,0.0,9000.0,13,;1;2;
