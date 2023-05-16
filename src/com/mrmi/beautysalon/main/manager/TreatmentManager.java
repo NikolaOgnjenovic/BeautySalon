@@ -328,7 +328,7 @@ public class TreatmentManager {
 
         Client client;
         try {
-            client = userManager.getClientByUsername(t.getClientUsername());
+            client = userManager.getClient(clientId);
         } catch (UserNotFoundException e) {
             e.printStackTrace();
             return;
@@ -356,6 +356,18 @@ public class TreatmentManager {
             updateTreatmentType(t.getTreatmentTypeId(), treatmentType);
         } catch (TreatmentTypeNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     *     Finishes treatments that aren't marked as cancelled and that were scheduled before the current date
+     */
+    public void finishTreatments() {
+        Calendar currentDate = Calendar.getInstance();
+        for (Treatment treatment : getTreatments().values()) {
+            if (treatment.getScheduledDate().before(currentDate) && !treatment.isCancelled()) {
+                treatment.setStatus(Treatment.Status.FINISHED);
+            }
         }
     }
     //endregion

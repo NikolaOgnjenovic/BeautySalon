@@ -1,5 +1,6 @@
 package com.mrmi.beautysalon.main;
 
+import com.formdev.flatlaf.intellijthemes.*;
 import com.mrmi.beautysalon.main.view.MainFrame;
 
 import javax.swing.*;
@@ -9,7 +10,8 @@ import java.util.Enumeration;
 
 public class Main {
     public static void main(String[] args) {
-        changeUIDefaults();
+        FlatNordIJTheme.setup();
+        //changeUIDefaults();
         MainFrame mainFrame = new MainFrame();
         mainFrame.setVisible(true);
     }
@@ -17,7 +19,7 @@ public class Main {
     private static void changeUIDefaults() {
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
         if (defaults.get("Table.alternateRowColor") == null) {
-            defaults.put("Table.alternateRowColor", new Color(199, 199, 199));
+            defaults.put("Table.alternateRowColor", new Color(103, 1, 111));
         }
 
         int fontSize = 18;

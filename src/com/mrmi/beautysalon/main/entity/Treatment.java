@@ -64,6 +64,10 @@ public class Treatment implements TableCell {
         this.cancelled = cancelled;
     }
 
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
     public String getClientUsername() {
         return clientUsername;
     }

@@ -9,6 +9,7 @@ import com.mrmi.beautysalon.main.entity.Treatment;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -54,6 +55,10 @@ public class ReceptionistFrame extends JFrame {
 
         buttonLogout = new JButton("Logout");
         this.add(buttonLogout);
+
+        // TODO:
+        //  Recepcioner ima mogućnost da filtrira sve zakazane tretmane po:
+        //  kozmetičkom tretmanu, njegovom tipu i opsegu cene koju klijent plaća.
     }
 
     private void initialiseListeners() {
@@ -84,7 +89,7 @@ public class ReceptionistFrame extends JFrame {
     }
 
     public void refreshClients() {
-        Collection<Client> clients = userManager.getClients();
+        ArrayList<Client> clients = userManager.getClients();
         comboBoxClient.removeAllItems();
         for (Client client : clients) {
             comboBoxClient.addItem(client);

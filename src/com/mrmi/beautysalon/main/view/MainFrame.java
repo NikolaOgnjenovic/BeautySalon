@@ -23,6 +23,7 @@ public class MainFrame extends JFrame {
         treatmentManager = new TreatmentManager(database, salonManager);
         userManager = new UserManager(database, salonManager);
         authManager = new AuthManager(userManager);
+        treatmentManager.finishTreatments();
 
         initialiseViews();
         initialiseListeners();

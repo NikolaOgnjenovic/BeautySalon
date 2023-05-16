@@ -37,7 +37,7 @@ public class UserManager {
     //endregion
 
     //region Client
-    public Collection<Client> getClients() {
+    public ArrayList<Client> getClients() {
         ArrayList<Client> clients = new ArrayList<>();
         for (User user : users.values()) {
             if (user instanceof Client) {
@@ -47,18 +47,17 @@ public class UserManager {
 
         return clients;
     }
-    public Client getClientByUsername(String username) throws UserNotFoundException {
-        for (Map.Entry<Integer, User> entry : users.entrySet()) {
-            if (entry.getValue().getClass().equals(Client.class) && entry.getValue().getUsername().equals(username)) {
-                return (Client) entry.getValue();
-            }
+
+    public Client getClient(int id) throws UserNotFoundException {
+        if (!users.containsKey(id) || !(users.get(id) instanceof Client)) {
+            throw new UserNotFoundException("User with id " + id + " not found.");
         }
-        throw new UserNotFoundException("User with username " + username + " not found.");
+        return (Client) users.get(id);
     }
 
     public int getClientIdByUsername(String username) throws UserNotFoundException {
         for (Map.Entry<Integer, User> entry : users.entrySet()) {
-            if (entry.getValue().getClass().equals(Client.class) && entry.getValue().getUsername().equals(username)) {
+            if (entry.getValue() instanceof Client && entry.getValue().getUsername().equals(username)) {
                 return entry.getKey();
             }
         }
@@ -137,14 +136,21 @@ public class UserManager {
     //endregion
 
     //region Beautician
-    public HashMap<Integer, Beautician> getBeauticians() {
-        HashMap<Integer, Beautician> beauticians = new HashMap<>();
+    public ArrayList<Beautician> getBeauticians() {
+        ArrayList<Beautician> beauticians = new ArrayList<>();
         for (Map.Entry<Integer, User> u : users.entrySet()) {
             if (u.getValue().getClass().equals(Beautician.class)) {
-                beauticians.put(u.getKey(), (Beautician) u.getValue());
+                beauticians.add((Beautician) u.getValue());
             }
         }
         return beauticians;
+    }
+
+    public Beautician getBeautician(int id) throws UserNotFoundException {
+        if (!users.containsKey(id) || !(users.get(id) instanceof Beautician)) {
+            throw new UserNotFoundException("User with id " + id + " not found.");
+        }
+        return (Beautician) users.get(id);
     }
 
     public HashMap<Integer, Treatment> getBeauticianTreatments(String beauticianUsername) {
@@ -196,13 +202,10 @@ public class UserManager {
         return beauticians;
     }
 
-    public void teachTreatment(int id, byte treatmentTypeCategoryId) {
-        Beautician b = (Beautician) users.get(id);
-        b.addTreatmentTypeCategoryID(treatmentTypeCategoryId);
-        try {
-            database.updateUser(id, b);
-        } catch (UserNotFoundException ignored) {
-        }
+    public void teachTreatment(int id, byte treatmentTypeCategoryId) throws UserNotFoundException {
+        Beautician beautician = getBeautician(id);
+        beautician.addTreatmentTypeCategoryID(treatmentTypeCategoryId);
+        database.updateUser(id, beautician);
     }
 
     public int getFinishedTreatments(String beauticianUsername) {

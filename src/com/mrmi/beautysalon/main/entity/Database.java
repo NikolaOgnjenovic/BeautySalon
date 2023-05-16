@@ -11,11 +11,11 @@ public class Database {
     private HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories;
     private HashMap<Integer, TreatmentType> treatmentTypes;
     private HashMap<Integer, Treatment> treatments;
-    private int userId = 0;
-    private int treatmentTypeCategoryId = 0;
-    private int treatmentTypeId = 0;
+    private int userId = -1;
+    private int treatmentTypeCategoryId = -1;
+    private int treatmentTypeId = -1;
 
-    private int treatmentId = 0;
+    private int treatmentId = -1;
 
     private final String filePathPrefix; // Used to differentiate test & regular files
     private final String separator;
@@ -401,10 +401,10 @@ public class Database {
                 treatmentTypeCategoryId = Integer.parseInt(in.readLine());
                 userId = Integer.parseInt(in.readLine());
             } catch (NumberFormatException e) {
-                treatmentTypeId = 0;
-                treatmentId = 0;
-                treatmentTypeCategoryId = 0;
-                userId = 0;
+                treatmentTypeId = -1;
+                treatmentId = -1;
+                treatmentTypeCategoryId = -1;
+                userId = -1;
             }
             in.close();
         } catch (Exception e) {

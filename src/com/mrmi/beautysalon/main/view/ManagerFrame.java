@@ -93,8 +93,12 @@ public class ManagerFrame extends JFrame {
         buttonCancellationReport = new JButton("Cancellation report");
         this.add(buttonCancellationReport);
 
-        // TODO: salon profit & loss in a date interval
+        // TODO:
+        //  Menadžer ima uvid o prihodioma i rashodima za odredjeni vremenski period
 
+        // TODO:
+        //  Bonus se dodaje na osnovu pravila koje će zadati menadžer (npr. broju
+        //  izvedenih kozmetičkih tretmana ili ostvarenom prihodu u jednoj nedelji, mesecu itd.).
         buttonLogout = new JButton("Logout");
         this.add(buttonLogout, "span, center");
     }
@@ -138,12 +142,12 @@ public class ManagerFrame extends JFrame {
             t.start();
         });
 
-        HashMap<Integer, Beautician> beauticians = userManager.getBeauticians();
+        ArrayList<Beautician> beauticians = userManager.getBeauticians();
         buttonBeauticianStats.addActionListener(e -> {
             PieChart chart = new PieChartBuilder().width(800).height(600).title("Beauticians by number of finished treatments").build();
             chart.getStyler().setSeriesColors(getChartColors(beauticians.size()));
-            for (Map.Entry<Integer, Beautician> beautician : beauticians.entrySet()) {
-                chart.addSeries("ID: " + beautician.getValue().getId() + "- " + beautician.getValue().getName(), userManager.getFinishedTreatments(beautician.getValue().getUsername()));
+            for (Beautician beautician : beauticians) {
+                chart.addSeries("ID: " + beautician.getId() + "- " + beautician.getName(), userManager.getFinishedTreatments(beautician.getUsername()));
             }
             Thread t = new Thread(() -> new SwingWrapper<>(chart).displayChart().setDefaultCloseOperation(DISPOSE_ON_CLOSE));
             t.start();
