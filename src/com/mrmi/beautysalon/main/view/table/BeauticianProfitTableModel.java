@@ -10,7 +10,8 @@ public class BeauticianProfitTableModel extends AbstractTableModel {
     private final String[] columnNames = new String[]{
             "Username", "Finished treatments", "Profit"
     };
-    private final Class[] columnClass = new Class[]{
+
+    private final Class<?>[] columnClass = new Class[]{
             String.class, Integer.class, Double.class
     };
 

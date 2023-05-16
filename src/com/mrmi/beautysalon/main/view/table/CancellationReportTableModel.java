@@ -7,13 +7,6 @@ import java.util.ArrayList;
 public class CancellationReportTableModel extends AbstractTableModel {
     private final ArrayList<String> reasons;
     private final ArrayList<Integer> amounts;
-    private final String[] columnNames = new String[]{
-            "Finished status / cancellation reason", "Amount"
-    };
-    private final Class[] columnClass = new Class[]{
-            String.class, Integer.class
-    };
-
     public CancellationReportTableModel(ArrayList<String> reasons, ArrayList<Integer> amounts) {
         this.reasons = reasons;
         this.amounts = amounts;
@@ -21,17 +14,23 @@ public class CancellationReportTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        return columnNames[column];
+        if (column == 0) {
+            return "Finished status / cancellation reason";
+        }
+        return "Amount";
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return columnClass[columnIndex];
+        if (columnIndex == 0) {
+            return String.class;
+        }
+        return Integer.class;
     }
 
     @Override
     public int getColumnCount() {
-        return columnNames.length;
+        return 2;
     }
 
     @Override

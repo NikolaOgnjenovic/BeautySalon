@@ -21,7 +21,7 @@ public class MainFrame extends JFrame {
         Database database = new Database("");
         salonManager = new SalonManager("");
         treatmentManager = new TreatmentManager(database, salonManager);
-        userManager = new UserManager(database, treatmentManager, salonManager);
+        userManager = new UserManager(database, salonManager);
         authManager = new AuthManager(userManager);
 
         initialiseViews();
@@ -32,7 +32,7 @@ public class MainFrame extends JFrame {
         this.setTitle("Beauty salon");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new MigLayout("wrap 1", "[grow, center]", "[grow]40"));
+        this.setLayout(new MigLayout("wrap 1", "[grow, center]", "[grow]"));
 
         JLabel welcome = new JLabel("Welcome");
         this.add(welcome);
@@ -53,7 +53,7 @@ public class MainFrame extends JFrame {
 
         buttonRegister.addActionListener(e -> {
             this.dispose();
-            RegisterFrame registerFrame = new RegisterFrame(treatmentManager, userManager, salonManager, authManager, false);
+            RegisterFrame registerFrame = new RegisterFrame(salonManager, treatmentManager, userManager, authManager, false, null, true);
             registerFrame.setVisible(true);
         });
     }

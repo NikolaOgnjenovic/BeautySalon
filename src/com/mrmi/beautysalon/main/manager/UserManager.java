@@ -7,43 +7,62 @@ import java.util.*;
 
 public class UserManager {
     private final Database database;
-    private final HashMap<String, User> users;
+    private final HashMap<Integer, User> users;
     private final HashMap<Integer, Treatment> treatments;
-    private final TreatmentManager treatmentManager;
     private final SalonManager salonManager;
 
-    public UserManager(Database database, TreatmentManager treatmentManager, SalonManager salonManager) {
+    public UserManager(Database database, SalonManager salonManager) {
         this.database = database;
         this.treatments = database.getTreatments();
         this.users = database.getUsers();
-        this.treatmentManager = treatmentManager;
         this.salonManager = salonManager;
     }
 
     //region User
-    public void addUser(String username, User user) {
-        database.addUser(username, user);
+    public void addUser(User user) {
+        database.addUser(user);
     }
 
-    public HashMap<String, User> getUsers() {
+    public HashMap<Integer, User> getUsers() {
         return database.getUsers();
     }
 
-    public void updateUser(String username, User user) throws UserNotFoundException {
-        database.updateUser(username, user);
+    public void updateUser(int id, User user) throws UserNotFoundException {
+        database.updateUser(id, user);
     }
 
-    public void deleteUser(String username) throws UserNotFoundException {
-        database.deleteUser(username);
+    public void deleteUser(int id) throws UserNotFoundException {
+        database.deleteUser(id);
     }
     //endregion
 
     //region Client
-    public Client getClientByUsername(String username) throws UserNotFoundException {
-        if (!users.containsKey(username)) {
-            throw new UserNotFoundException("Client with username " + username + " not found.");
+    public Collection<Client> getClients() {
+        ArrayList<Client> clients = new ArrayList<>();
+        for (User user : users.values()) {
+            if (user instanceof Client) {
+                clients.add((Client) user);
+            }
         }
-        return (Client) users.get(username);
+
+        return clients;
+    }
+    public Client getClientByUsername(String username) throws UserNotFoundException {
+        for (Map.Entry<Integer, User> entry : users.entrySet()) {
+            if (entry.getValue().getClass().equals(Client.class) && entry.getValue().getUsername().equals(username)) {
+                return (Client) entry.getValue();
+            }
+        }
+        throw new UserNotFoundException("User with username " + username + " not found.");
+    }
+
+    public int getClientIdByUsername(String username) throws UserNotFoundException {
+        for (Map.Entry<Integer, User> entry : users.entrySet()) {
+            if (entry.getValue().getClass().equals(Client.class) && entry.getValue().getUsername().equals(username)) {
+                return entry.getKey();
+            }
+        }
+        throw new UserNotFoundException("User with username " + username + " not found.");
     }
 
     public HashMap<Integer, Treatment> getClientTreatments(String clientUsername) {
@@ -59,9 +78,9 @@ public class UserManager {
     public HashMap<Integer, Treatment> getClientDueTreatments(String clientUsername) {
         HashMap<Integer, Treatment> dueTreatments = new HashMap<>();
         HashMap<Integer, Treatment> userTreatments = getClientTreatments(clientUsername);
-        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
         for (Map.Entry<Integer, Treatment> t : userTreatments.entrySet()) {
-            if (t.getValue().getScheduledDate().after(currentDate)) {
+            if (t.getValue().getScheduledDate().after(calendar)) {
                 dueTreatments.put(t.getKey(), t.getValue());
             }
         }
@@ -72,9 +91,9 @@ public class UserManager {
     public HashMap<Integer, Treatment> getClientPastTreatments(String clientUsername) {
         HashMap<Integer, Treatment> pastTreatments = new HashMap<>();
         HashMap<Integer, Treatment> userTreatments = getClientTreatments(clientUsername);
-        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
         for (Map.Entry<Integer, Treatment> t : userTreatments.entrySet()) {
-            if (t.getValue().getScheduledDate().before(currentDate)) {
+            if (t.getValue().getScheduledDate().before(calendar)) {
                 pastTreatments.put(t.getKey(), t.getValue());
             }
         }
@@ -82,40 +101,45 @@ public class UserManager {
         return pastTreatments;
     }
 
-    public void changeMoneySpent(String clientUsername, Client client, double refundedPrice, double loyaltyThreshold) {
+    public void changeMoneySpent(int clientId, Client client, double refundedPrice) {
         try {
             client.setMoneySpent(client.getMoneySpent() + refundedPrice);
-            client.setHasLoyaltyCard(client.getMoneySpent() >= loyaltyThreshold);
-            database.updateUser(clientUsername, client);
+            client.setHasLoyaltyCard(client.getMoneySpent() >= salonManager.getLoyaltyThreshold());
+            database.updateUser(clientId, client);
         } catch (UserNotFoundException ignored) {
-
         }
     }
 
-    public void bookTreatment(Treatment treatment, double loyaltyThreshold) {
-        Client client = (Client) users.get(treatment.getClientUsername());
-        Beautician beautician = (Beautician) users.get(treatment.getBeauticianUsername());
+    public void bookTreatment(Treatment treatment) {
+        int clientId = -1;
+        Client client = null;
+        for (Map.Entry<Integer, User> entry : database.getUsers().entrySet()) {
+            if (entry.getValue().getUsername().equals(treatment.getClientUsername())) {
+                clientId = entry.getKey();
+                client = (Client) entry.getValue();
+                break;
+            }
+        }
+        if (clientId == -1 || client == null) {
+            return;
+        }
+
         double price = treatment.getPrice();
         if (client.hasLoyaltyCard()) {
             price *= 0.9;
             treatment.setPrice(price);
         }
 
-        treatmentManager.bookTreatment(treatment, beautician, salonManager);
-        changeMoneySpent(treatment.getClientUsername(), client, price, loyaltyThreshold);
-    }
-    //endregion
-
-    //region Employee
-    public void addEmployee(String username, Employee employee) {
-        database.addUser(username, employee);
+        database.addTreatment(treatment);
+        salonManager.changeProfit(treatment.getPrice());
+        changeMoneySpent(clientId, client, price);
     }
     //endregion
 
     //region Beautician
-    public HashMap<String, Beautician> getBeauticians() {
-        HashMap<String, Beautician> beauticians = new HashMap<>();
-        for (Map.Entry<String, User> u : users.entrySet()) {
+    public HashMap<Integer, Beautician> getBeauticians() {
+        HashMap<Integer, Beautician> beauticians = new HashMap<>();
+        for (Map.Entry<Integer, User> u : users.entrySet()) {
             if (u.getValue().getClass().equals(Beautician.class)) {
                 beauticians.put(u.getKey(), (Beautician) u.getValue());
             }
@@ -137,9 +161,9 @@ public class UserManager {
     public HashMap<Integer, Treatment> getBeauticianDueTreatments(String beauticianUsername) {
         HashMap<Integer, Treatment> dueTreatments = new HashMap<>();
         HashMap<Integer, Treatment> beauticianTreatments = getBeauticianTreatments(beauticianUsername);
-        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
         for (Map.Entry<Integer, Treatment> t : beauticianTreatments.entrySet()) {
-            if (t.getValue().getScheduledDate().after(currentDate)) {
+            if (t.getValue().getScheduledDate().after(calendar)) {
                 dueTreatments.put(t.getKey(), t.getValue());
             }
         }
@@ -150,9 +174,9 @@ public class UserManager {
     public HashMap<Integer, Treatment> getBeauticianPastTreatments(String beauticianUsername) {
         HashMap<Integer, Treatment> pastTreatments = new HashMap<>();
         HashMap<Integer, Treatment> beauticianTreatments = getBeauticianTreatments(beauticianUsername);
-        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
         for (Map.Entry<Integer, Treatment> t : beauticianTreatments.entrySet()) {
-            if (t.getValue().getScheduledDate().before(currentDate)) {
+            if (t.getValue().getScheduledDate().before(calendar)) {
                 pastTreatments.put(t.getKey(), t.getValue());
             }
         }
@@ -160,11 +184,11 @@ public class UserManager {
         return pastTreatments;
     }
 
-    public HashMap<String, Beautician> getBeauticiansByTreatmentType(byte treatmentTypeId) {
-        HashMap<String, Beautician> beauticians = new HashMap<>();
-        for (Map.Entry<String, User> u : users.entrySet()) {
+    public HashMap<Integer, Beautician> getBeauticiansByTreatmentTypeCategory(int treatmentTypeCategoryId) {
+        HashMap<Integer, Beautician> beauticians = new HashMap<>();
+        for (Map.Entry<Integer, User> u : users.entrySet()) {
             if (u.getValue().getClass().equals(Beautician.class)) {
-                if (((Beautician) u.getValue()).getTreatmentTypeIDs().contains(treatmentTypeId)) {
+                if (((Beautician) u.getValue()).getTreatmentTypeCategoryIDs().contains(treatmentTypeCategoryId)) {
                     beauticians.put(u.getKey(), (Beautician) u.getValue());
                 }
             }
@@ -172,47 +196,25 @@ public class UserManager {
         return beauticians;
     }
 
-    public HashMap<String, Beautician> getBeauticiansByTreatmentTypeCategory(byte treatmentTypeCategoryId) {
-        HashMap<String, Beautician> beauticians = new HashMap<>();
-        for (Map.Entry<String, User> u : users.entrySet()) {
-            if (u.getValue().getClass().equals(Beautician.class)) {
-                if (((Beautician) u.getValue()).getTreatmentTypeIDs().contains(treatmentTypeCategoryId)) {
-                    beauticians.put(u.getKey(), (Beautician) u.getValue());
-                }
-            }
-        }
-        return beauticians;
-    }
-
-    public void teachTreatment(String username, byte treatmentTypeId) {
-        Beautician b = (Beautician) users.get(username);
-        b.addTreatmentTypeID(treatmentTypeId);
+    public void teachTreatment(int id, byte treatmentTypeCategoryId) {
+        Beautician b = (Beautician) users.get(id);
+        b.addTreatmentTypeCategoryID(treatmentTypeCategoryId);
         try {
-            database.updateUser(username, b);
+            database.updateUser(id, b);
         } catch (UserNotFoundException ignored) {
         }
     }
-    // TODO
-    public String getSchedule(String username) {
-//        List<Treatment> treatments = database.getBeauticianTreatments(username).values().stream().sorted(Comparator.comparing(Treatment::getScheduledDate)).toList();
-//        if (treatments.size() < 1) {
-//            return "";
-//        }
-//        StringBuilder sb = new StringBuilder();
-//        Date currentDate = treatments.get(0).getScheduledDate();
-//        sb.append(currentDate);
-//        sb.append("\n");
-//        for (Treatment t : treatments) {
-//            if (t.getScheduledDate().getDate() > currentDate.getDate()) {
-//                currentDate = t.getScheduledDate();
-//                sb.append(currentDate);
-//            }
-//            sb.append(t);
-//            sb.append("\n");
-//        }
-//
-//        return sb.toString();
-        return "";
+
+    public int getFinishedTreatments(String beauticianUsername) {
+        int counter = 0;
+        for (Treatment treatment : database.getTreatments().values()) {
+            if (treatment.getBeauticianUsername().equals(beauticianUsername) && treatment.getStatus() == Treatment.Status.FINISHED) {
+                counter++;
+            }
+        }
+
+        return counter;
     }
+
     //endregion
 }

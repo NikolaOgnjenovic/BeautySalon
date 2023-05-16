@@ -1,9 +1,9 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.manager.SalonManager;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Treatment;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,60 +12,62 @@ import java.util.HashMap;
 public class BeauticianFrame extends JFrame {
     private final TreatmentManager treatmentManager;
     private final UserManager userManager;
-    private final SalonManager salonManager;
-    private final String username;
-    private JButton logout;
-    private JButton viewDueTreatments;
-    private JButton viewPastTreatments;
-    private JButton viewSchedule;
+    private final String beauticianUsername;
+    private JButton buttonLogout;
+    private JButton buttonDueTreatments;
+    private JButton buttonPastTreatments;
+    private JButton buttonSchedule;
 
-    public BeauticianFrame(String beauticianUsername, TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager) {
-        username = beauticianUsername;
+    public BeauticianFrame(TreatmentManager treatmentManager, UserManager userManager, String beauticianUsername) {
         this.treatmentManager = treatmentManager;
         this.userManager = userManager;
-        this.salonManager = salonManager;
+        this.beauticianUsername = beauticianUsername;
+
         initialiseViews();
         initialiseListeners();
     }
 
     private void initialiseViews() {
-        this.setTitle("Beautician");
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setResizable(true);
+        this.setLayout(new MigLayout("wrap", "[center, grow]", "[center, grow]"));
+        this.setTitle("Beauty salon - Beautician");
         this.setSize(1000, 1080);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         this.getContentPane().setBackground(new Color(235, 235, 235));
         this.setLayout(new FlowLayout());
 
-        logout = new JButton("Logout");
-        this.add(logout);
+        buttonLogout = new JButton("Logout");
+        this.add(buttonLogout);
 
-        viewDueTreatments = new JButton("View due treatments");
-        this.add(viewDueTreatments);
+        buttonDueTreatments = new JButton("Due treatments");
+        this.add(buttonDueTreatments);
 
-        viewPastTreatments = new JButton("View past treatments");
-        this.add(viewPastTreatments);
+        buttonPastTreatments = new JButton("Past treatments");
+        this.add(buttonPastTreatments);
 
-        viewSchedule = new JButton("View schedule");
+        buttonSchedule = new JButton("Schedule");
     }
 
     private void initialiseListeners() {
-        logout.addActionListener(e -> {
+        buttonLogout.addActionListener(e -> {
             this.dispose();
             MainFrame mainFrame = new MainFrame();
+            mainFrame.setVisible(true);
         });
 
-        viewDueTreatments.addActionListener(e -> {
-            HashMap<Integer, Treatment> dueTreatments = userManager.getBeauticianDueTreatments(username);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, dueTreatments, false, false, false, salonManager.getLoyaltyThreshold(), false);
+        buttonDueTreatments.addActionListener(e -> {
+            HashMap<Integer, Treatment> dueTreatments = userManager.getBeauticianDueTreatments(beauticianUsername);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, dueTreatments, false, false);
+            treatmentsFrame.setVisible(true);
         });
 
-        viewPastTreatments.addActionListener(e -> {
-            HashMap<Integer, Treatment> pastTreatments = userManager.getBeauticianPastTreatments(username);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, pastTreatments, false, false, false, salonManager.getLoyaltyThreshold(), false);
+        buttonPastTreatments.addActionListener(e -> {
+            HashMap<Integer, Treatment> pastTreatments = userManager.getBeauticianPastTreatments(beauticianUsername);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, pastTreatments, false, false);
+            treatmentsFrame.setVisible(true);
         });
 
-        viewSchedule.addActionListener(e -> {
+        buttonSchedule.addActionListener(e -> {
             // TODO
         });
     }

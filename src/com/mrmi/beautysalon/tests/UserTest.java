@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.tests;
 
 import com.mrmi.beautysalon.main.manager.SalonManager;
-import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Client;
 import com.mrmi.beautysalon.main.entity.Database;
@@ -25,8 +24,7 @@ public class UserTest {
         Database database = new Database("test");
 
         SalonManager salonManager = new SalonManager("");
-        TreatmentManager treatmentManager = new TreatmentManager(database, salonManager);
-        userManager = new UserManager(database, treatmentManager, salonManager);
+        userManager = new UserManager(database, salonManager);
     }
 
     private boolean deleteFile(File file) {
@@ -47,14 +45,14 @@ public class UserTest {
 
     @Test
     public void testAddUser() {
-        userManager.addUser("Client", new Client("password", "name", "username", "M", "123456", "Address 3"));
-        userManager.addUser("Manager", new Manager("password", "name", "username", "M", "123456", "Address 3", (byte) 6, (byte) 5, 10000, 90000));
+        userManager.addUser(new Client(0, "username", "password", "name", "username", "M", "123456", "Address 3"));
+        userManager.addUser(new Manager(1, "username", "password", "name", "username", "M", "123456", "Address 3", (byte) 6, (byte) 5, 10000, 90000));
         assertEquals(userManager.getUsers().size(), 2);
     }
 
     @Test
     public void testRemoveUser() {
-        assertThrows(UserNotFoundException.class, () -> userManager.deleteUser("Client"));
+        assertThrows(UserNotFoundException.class, () -> userManager.deleteUser(0));
         assertEquals(userManager.getUsers().size(), 0);
     }
 }

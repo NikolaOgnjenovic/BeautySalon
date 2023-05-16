@@ -6,12 +6,12 @@ public class Employee extends User {
     private double bonus;
     private double monthlySalary;
 
-    public Employee(String password, String name, String surname, String gender, String phoneNumber, String address) {
-        super(password, name, surname, gender, phoneNumber, address);
+    public Employee(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
+        super(id, username, password, name, surname, gender, phoneNumber, address);
     }
 
-    public Employee(String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
-        super(password, name, surname, gender, phoneNumber, address);
+    public Employee(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(id, username, password, name, surname, gender, phoneNumber, address);
         this.qualificationLevel = qualificationLevel;
         this.yearsOfExperience = yearsOfExperience;
         this.bonus = bonus;
@@ -22,51 +22,47 @@ public class Employee extends User {
         return qualificationLevel;
     }
 
-    public void setQualificationLevel(byte qualificationLevel) {
-        this.qualificationLevel = qualificationLevel;
-    }
 
     public byte getYearsOfExperience() {
         return yearsOfExperience;
     }
 
-    public void setYearsOfExperience(byte yearsOfExperience) {
-        this.yearsOfExperience = yearsOfExperience;
-    }
 
     public double getBonus() {
         return bonus;
-    }
-
-    public void setBonus(double bonus) {
-        this.bonus = bonus;
     }
 
     public double getMonthlySalary() {
         return monthlySalary;
     }
 
-    public void setMonthlySalary(double monthlySalary) {
-        this.monthlySalary = monthlySalary;
-    }
 
-    // TODO: map qualification level to index
     public double getFullSalary() {
         return (monthlySalary + bonus) * (1 + (double) yearsOfExperience / 10) * qualificationLevel;
     }
 
     @Override
-    public String toString() {
-        return "Employee{" +
-                "qualificationLevel=" + qualificationLevel +
-                ", yearsOfExperience=" + yearsOfExperience +
-                ", bonus=" + bonus +
-                ", monthlySalary=" + monthlySalary +
-                '}';
+    public String getFileString() {
+        return super.getFileString() + qualificationLevel + "," + yearsOfExperience + "," + bonus + "," + monthlySalary + ",";
     }
 
     @Override
-    public String getFileString(String username) {
-        return super.getFileString(username) + qualificationLevel + "," + yearsOfExperience + "," + bonus + "," + monthlySalary + ",";
+    public Object getCell(int column, Object manager) {
+        if (column < 8) {
+            return super.getCell(column, manager);
+        }
+
+        switch (column) {
+            case 8:
+                return qualificationLevel;
+            case 9:
+                return yearsOfExperience;
+            case 10:
+                return monthlySalary;
+            case 11:
+                return bonus;
+        }
+
+        return null;
     }
 }

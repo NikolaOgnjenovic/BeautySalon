@@ -1,17 +1,19 @@
 package com.mrmi.beautysalon.main.entity;
 
-import java.util.List;
 
-public class TreatmentTypeCategory {
+public class TreatmentTypeCategory implements TableCell {
+    private int id;
     private String name;
-    private final List<Integer> treatmentTypeIds;
-    private double profit;
     private boolean isDeleted;
 
-    public TreatmentTypeCategory(String name, List<Integer> treatmentTypeIds, Double profit, boolean isDeleted) {
+    public TreatmentTypeCategory(int id, String name) {
+        this.id = id;
         this.name = name;
-        this.treatmentTypeIds = treatmentTypeIds;
-        this.profit = profit;
+        this.isDeleted = false;
+    }
+    public TreatmentTypeCategory(int id, String name, boolean isDeleted) {
+        this.id = id;
+        this.name = name;
         this.isDeleted = isDeleted;
     }
 
@@ -23,34 +25,16 @@ public class TreatmentTypeCategory {
         this.name = name;
     }
 
-    public double getProfit() {
-        return profit;
+    public int getId() {
+        return id;
     }
 
-    public void setProfit(double profit) {
-        this.profit = profit;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getFileString(int id) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(id);
-        sb.append(",");
-        sb.append(name);
-        sb.append(",");
-        sb.append(profit);
-        sb.append(",");
-        sb.append(isDeleted);
-        sb.append(",");
-        sb.append(";");
-        for (int i : treatmentTypeIds) {
-            sb.append(i);
-            sb.append(";");
-        }
-        return sb.toString();
-    }
-
-    public List<Integer> getTreatmentTypeIds() {
-        return treatmentTypeIds;
+    public String getFileString() {
+        return id + "," + name + "," + isDeleted;
     }
 
     public boolean isDeleted() {
@@ -59,5 +43,43 @@ public class TreatmentTypeCategory {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    @Override
+    public Object getCell(int column, Object manager) {
+        switch (column) {
+            case 0:
+                return id;
+            case 1:
+                return name;
+            case 2:
+                return isDeleted;
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        switch (column) {
+            case 0:
+                return "Id";
+            case 1:
+                return "Name";
+            case 2:
+                return "Is deleted";
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public int getColumnCount() {
+        return 3;
     }
 }

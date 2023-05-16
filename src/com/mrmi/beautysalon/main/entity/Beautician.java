@@ -1,68 +1,72 @@
 package com.mrmi.beautysalon.main.entity;
 
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Beautician extends Employee {
-    private List<Byte> treatmentTypeIDs;
-    private int finishedTreatments;
+    private final List<Integer> treatmentTypeCategoryIDs;
 
-    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs, int finishedTreatments) {
-        super(password, name, surname, gender, phoneNumber, address);
-        this.treatmentTypeIDs = treatmentTypeIDs;
-        this.finishedTreatments = finishedTreatments;
+    public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, ArrayList<Integer> treatmentTypeCategoryIDs) {
+        super(id, username, password, name, surname, gender, phoneNumber, address);
+        this.treatmentTypeCategoryIDs = treatmentTypeCategoryIDs;
     }
 
-    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, List<Byte> treatmentTypeIDs, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary, int finishedTreatments) {
-        super(password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
-        this.treatmentTypeIDs = treatmentTypeIDs;
-        this.finishedTreatments = finishedTreatments;
+    public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, ArrayList<Integer> treatmentTypeCategoryIDs, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(id, username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
+        this.treatmentTypeCategoryIDs = treatmentTypeCategoryIDs;
     }
 
-    public Beautician(String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
-        super(password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
-        this.treatmentTypeIDs = new ArrayList<>();
-        this.finishedTreatments = 0;
+    public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(id, username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
+        this.treatmentTypeCategoryIDs = new ArrayList<>();
     }
 
-    public List<Byte> getTreatmentTypeIDs() {
-        return treatmentTypeIDs;
+    public List<Integer> getTreatmentTypeCategoryIDs() {
+        return treatmentTypeCategoryIDs;
     }
 
-    public void addTreatmentTypeID(byte treatmentTypeId) {
-        if (!treatmentTypeIDs.contains(treatmentTypeId)) {
-            treatmentTypeIDs.add(treatmentTypeId);
+    public void addTreatmentTypeCategoryID(int treatmentTypeCategoryId) {
+        if (!treatmentTypeCategoryIDs.contains(treatmentTypeCategoryId)) {
+            treatmentTypeCategoryIDs.add(treatmentTypeCategoryId);
         }
-        //this.treatmentTypeIDs.add(treatmentTypeId);
     }
 
     @Override
-    public String getFileString(String username) {
+    public String toString() {
+        return getName() + " " + getSurname();
+    }
+
+    @Override
+    public String getFileString() {
         StringBuilder sb = new StringBuilder();
         sb.append("B");
-        sb.append(super.getFileString(username));
-        sb.append(finishedTreatments);
-        sb.append(",");
+        sb.append(super.getFileString());
         sb.append(";");
-        for (Byte type : treatmentTypeIDs) {
-            sb.append(type);
+        for (int category : treatmentTypeCategoryIDs) {
+            sb.append(category);
             sb.append(";");
         }
         return sb.toString();
     }
 
     @Override
-    public String toString() {
-        return super.toString() + "Beautician{" +
-                "treatmentTypeIDs=" + treatmentTypeIDs +
-                '}';
-    }
+    public Object getCell(int column, Object manager) {
+        if (column != 12) {
+            return super.getCell(column, manager);
+        }
 
-    public int getFinishedTreatments() {
-        return finishedTreatments;
-    }
-
-    public void setFinishedTreatments(int finishedTreatments) {
-        this.finishedTreatments = finishedTreatments;
+        StringBuilder types = new StringBuilder();
+        HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories = ((TreatmentManager) manager).getTreatmentTypeCategories();
+        for (int id : treatmentTypeCategoryIDs) {
+            TreatmentTypeCategory type = treatmentTypeCategories.get(id);
+            if (type != null) {
+                types.append(type.getName());
+                types.append(", ");
+            }
+        }
+        return types.toString();
     }
 }

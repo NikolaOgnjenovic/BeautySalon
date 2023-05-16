@@ -3,19 +3,16 @@ package com.mrmi.beautysalon.main.view;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.table.BeauticianProfitTableModel;
-import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
 import net.miginfocom.swing.MigLayout;
-import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 public class BeauticianProfitFrame extends JFrame {
     private final TreatmentManager treatmentManager;
@@ -45,52 +42,31 @@ public class BeauticianProfitFrame extends JFrame {
         this.setTitle("Beauty salon - Beautician profit graph");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
-
-        UtilDateModel model = new UtilDateModel();
-        Properties p = new Properties();
-        p.put("text.today", "Today");
-        p.put("text.month", "Month");
-        p.put("text.year", "Year");
-
-        JFormattedTextField.AbstractFormatter textField = new JFormattedTextField.AbstractFormatter() {
-            @Override
-            public Object stringToValue(String text) {
-                return null;
-            }
-
-            @Override
-            public String valueToString(Object value) {
-                return null;
-            }
-        };
 
         JLabel fromLabel = new JLabel("From");
-        
         this.add(fromLabel, "align right");
-
-        JDatePanelImpl fromDatePanel = new JDatePanelImpl(model, p);
-        fromDatePicker = new JDatePickerImpl(fromDatePanel, textField);
-        
+        fromDatePicker = DatePicker.getDatePicker();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -30);
+        fromDatePicker.getModel().setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR));
+        fromDatePicker.getModel().setSelected(true);
         this.add(fromDatePicker, "align left");
 
         JLabel toLabel = new JLabel("To");
-        
         this.add(toLabel, "align right");
-
-        JDatePanelImpl toDatePanel = new JDatePanelImpl(model, p);
-        toDatePicker = new JDatePickerImpl(toDatePanel, textField);
-        
+        toDatePicker = DatePicker.getDatePicker();
+        calendar.add(Calendar.DAY_OF_YEAR, 30);
+        toDatePicker.getModel().setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR));
+        toDatePicker.getModel().setSelected(true);
         this.add(toDatePicker, "align left");
 
         BeauticianProfitTableModel beauticianProfitTableModel = new BeauticianProfitTableModel(beauticianUsernames, finishedTreatments, profits);
         beauticianTable = new JTable(beauticianProfitTableModel);
-        beauticianTable.getTableHeader().setReorderingAllowed(false);
-        
         displayTable(beauticianTable);
 
+        refreshTable();
+
         backButton = new JButton("Back");
-        
         this.add(backButton, "span");
     }
 
@@ -109,17 +85,16 @@ public class BeauticianProfitFrame extends JFrame {
     }
 
     private void displayTable(JTable table) {
-        
         table.setRowHeight(22);
         this.add(new JScrollPane(table), "span");
         table.setAutoCreateRowSorter(true);
-        table.setSelectionModel(new SingleListSelectionModel());
         TableRowSorter<TableModel> tableSorter = new TableRowSorter<>(table.getModel());
         table.setRowSorter(tableSorter);
     }
 
     private void refreshTable() {
-        if (fromDate == null || toDate == null) {
+        beauticianTable.removeAll();
+        if (fromDate == null || toDate == null || fromDate.after(toDate)) {
             return;
         }
 
@@ -158,10 +133,6 @@ public class BeauticianProfitFrame extends JFrame {
         finishedTreatments.add(count);
         profits.add(profit);
 
-        // Temporary solution
         beauticianTable.setModel(new BeauticianProfitTableModel(beauticianUsernames, finishedTreatments, profits));
-
-        // TODO: figure out why this doesn't refresh
-        //beauticianProfitTableModel.fireTableDataChanged();
     }
 }

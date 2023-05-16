@@ -20,7 +20,7 @@ public class Main {
             defaults.put("Table.alternateRowColor", new Color(199, 199, 199));
         }
 
-        int fontSize = 22;
+        int fontSize = 18;
         changeDefaultFontSize(defaults, fontSize);
     }
 

@@ -1,49 +1,48 @@
 package com.mrmi.beautysalon.main.view;
 
+import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
 import com.mrmi.beautysalon.main.manager.SalonManager;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Beautician;
 import com.mrmi.beautysalon.main.entity.Treatment;
-import com.mrmi.beautysalon.main.view.table.BeauticianTableModel;
-import com.mrmi.beautysalon.main.view.table.SingleListSelectionModel;
-import com.mrmi.beautysalon.main.view.table.TreatmentTypeTableModel;
+import com.mrmi.beautysalon.main.view.table.GenericTable;
+import com.mrmi.beautysalon.main.view.table.GenericTableModel;
 import net.miginfocom.swing.MigLayout;
-import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.util.*;
 
 public class BookTreatmentFrame extends JFrame {
+    private final SalonManager salonManager;
     private final TreatmentManager treatmentManager;
     private final UserManager userManager;
-    private final SalonManager salonManager;
     private final String clientUsername;
-    private byte treatmentTypeId;
-    private byte treatmentTypeCategoryId;
+    private int treatmentTypeId;
+    private int treatmentTypeCategoryId;
     private double treatmentPrice;
     private String beauticianUsername;
-    private BeauticianTableModel beauticianTableModel;
-    private HashMap<String, Beautician> beauticians;
-    private Date selectedDate;
+    //private GenericTableModel beauticianTableModel;
+    private JComboBox<Beautician> comboBoxBeauticians;
+    private HashMap<Integer, Beautician> beauticians;
+    private Calendar selectedDate;
     private String selectedTime;
     private Vector<String> timeWindows;
-    private JTable treatmentTypeTable;
-    private JTable beauticianTable;
+    private GenericTable treatmentTypeTable;
+    //private GenericTable beauticianTable;
     private JComboBox<String> treatmentTimeWindows;
     private JDatePickerImpl datePicker;
-    private JButton bookButton;
-    private JButton backButton;
+    private JButton buttonBook;
+    private JButton buttonBack;
+    private JTextField textTreatmentTypeFilter;
 
-    public BookTreatmentFrame(TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager, String clientUsername) {
+    public BookTreatmentFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, String clientUsername) {
+        this.salonManager = salonManager;
         this.treatmentManager = treatmentManager;
         this.userManager = userManager;
-        this.salonManager = salonManager;
         this.clientUsername = clientUsername;
+
         initialiseViews();
         initialiseListeners();
     }
@@ -52,138 +51,105 @@ public class BookTreatmentFrame extends JFrame {
         this.setTitle("Beauty salon - Book treatment");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
 
-        TreatmentTypeTableModel treatmentTableModel = new TreatmentTypeTableModel(treatmentManager, treatmentManager.getTreatmentTypes(), false);
-        treatmentTypeTable = new JTable(treatmentTableModel);
-        treatmentTypeTable.getTableHeader().setReorderingAllowed(false);
-        displayTable(treatmentTypeTable);
+        GenericTableModel tableModel = new GenericTableModel(treatmentManager.getAvailableTreatmentTypes(), treatmentManager);
+        treatmentTypeTable = new GenericTable(tableModel);
+        this.add(new JScrollPane(treatmentTypeTable), "span, growx");
+
+        textTreatmentTypeFilter = new JTextField("Search treatment types", 20);
+        this.add(textTreatmentTypeFilter);
 
         beauticians = new HashMap<>();
-        beauticianTableModel = new BeauticianTableModel(treatmentManager, beauticians);
-        beauticianTable = new JTable(beauticianTableModel);
-        beauticianTable.getTableHeader().setReorderingAllowed(false);
-        displayTable(beauticianTable);
+        comboBoxBeauticians = new JComboBox<>();
+        this.add(comboBoxBeauticians);
 
-        UtilDateModel model = new UtilDateModel();
-        Properties p = new Properties();
-        p.put("text.today", "Today");
-        p.put("text.month", "Month");
-        p.put("text.year", "Year");
-        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-        datePicker = new JDatePickerImpl(datePanel, new JFormattedTextField.AbstractFormatter() {
-            @Override
-            public Object stringToValue(String text) {
-                return null;
-            }
+        JTextField textBeauticianFilter = new JTextField("Search beauticians", 20);
+        this.add(textBeauticianFilter);
 
-            @Override
-            public String valueToString(Object value) {
-                return null;
-            }
-        });
-
-        
+        datePicker = DatePicker.getDatePicker();
         this.add(datePicker);
         datePicker.setVisible(false);
 
         timeWindows = new Vector<>();
         treatmentTimeWindows = new JComboBox<>(timeWindows);
+        treatmentTimeWindows.setVisible(false);
         
         this.add(treatmentTimeWindows);
         treatmentTimeWindows.setVisible(false);
 
-        bookButton = new JButton("Book treatment");
-        
-        this.add(bookButton);
-        bookButton.setVisible(false);
+        buttonBook = new JButton("Book treatment");
+        this.add(buttonBook);
+        buttonBook.setVisible(false);
 
-        backButton = new JButton("Back");
-        
-        this.add(backButton);
-    }
-
-    private void displayTable(JTable table) {
-        
-        table.setRowHeight(22);
-        this.add(new JScrollPane(table), "growx");
-        table.setAutoCreateRowSorter(true);
-        table.setSelectionModel(new SingleListSelectionModel());
-        TableRowSorter<TableModel> tableSorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(tableSorter);
-
-        JTextField filterText = new JTextField("Search", 20);
-        filterText.addActionListener(e -> filter(filterText.getText(), tableSorter));
-        
-        this.add(filterText);
+        buttonBack = new JButton("Back");
+        this.add(buttonBack);
     }
 
     private void initialiseListeners() {
         treatmentTypeTable.getSelectionModel().addListSelectionListener(e -> {
             if (treatmentTypeTable.getSelectedRow() != -1) {
-                treatmentTypeCategoryId = (byte) treatmentManager.getTreatmentTypeCategoryIdByName(treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 0).toString());
-                treatmentTypeId = (byte) treatmentManager.getTreatmentTypeIdByName(treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 1).toString());
-                treatmentPrice = Double.parseDouble(treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 2).toString());
-                //displayAvailableBeauticians(treatmentTypeId);
-                displayAvailableBeauticians(treatmentTypeCategoryId);
+                treatmentTypeId = (int) treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 0);
+                try {
+                    treatmentTypeCategoryId = treatmentManager.getTreatmentTypeById(treatmentTypeId).getCategoryId();
+                    treatmentPrice = (double) treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 3);
+                    displayAvailableBeauticians(treatmentTypeCategoryId);
+                    treatmentTypeTable.clearSelection();
+                } catch (TreatmentTypeNotFoundException ignored) {
+                }
+
             } else {
-                bookButton.setVisible(false);
+                buttonBook.setVisible(false);
                 treatmentTimeWindows.setVisible(false);
             }
         });
 
-        beauticianTable.getSelectionModel().addListSelectionListener(e -> {
-            beauticianUsername = beauticianTable.getValueAt(beauticianTable.getSelectedRow(), 0).toString();
-            datePicker.setVisible(true);
+        textTreatmentTypeFilter.addActionListener(e -> treatmentTypeTable.filter(textTreatmentTypeFilter.getText()));
+
+        comboBoxBeauticians.addActionListener(e -> {
+            Beautician beautician = (Beautician) comboBoxBeauticians.getSelectedItem();
+            if (beautician != null) {
+                beauticianUsername = beautician.getUsername();
+                datePicker.setVisible(true);
+            }
         });
 
-        selectedDate = (Date) datePicker.getModel().getValue();
+        selectedDate = Calendar.getInstance();
         datePicker.addActionListener(e -> {
-            selectedDate = (Date) datePicker.getModel().getValue();
+            Date date = (Date) datePicker.getModel().getValue();
+            selectedDate.setTime(date);
             refreshTimeComboBox();
         });
 
         treatmentTimeWindows.addActionListener(e -> {
             if (treatmentTimeWindows.getSelectedItem() != null) {
                 selectedTime = treatmentTimeWindows.getSelectedItem().toString();
-                bookButton.setVisible(true);
+                buttonBook.setVisible(true);
             } else {
-                bookButton.setVisible(false);
+                buttonBook.setVisible(false);
                 treatmentTimeWindows.setVisible(false);
             }
         });
 
-        bookButton.addActionListener(e -> {
-            selectedDate.setHours(Integer.parseInt(selectedTime.substring(0, 2)));
-            selectedDate.setMinutes(0);
-            selectedDate.setSeconds(0);
-            userManager.bookTreatment(new Treatment(selectedDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), salonManager.getLoyaltyThreshold());
+        buttonBook.addActionListener(e -> {
+            selectedDate.set(Calendar.HOUR, Integer.parseInt(selectedTime.substring(0, 2)));
+            selectedDate.set(Calendar.MINUTE, 0);
+            selectedDate.set(Calendar.SECOND, 0);
+            userManager.bookTreatment(new Treatment(-1, selectedDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice));
+            this.dispose();
         });
 
-        backButton.addActionListener(e -> {
-            this.dispose();
-            //previousFrame.setVisible(true);
-        });
+        buttonBack.addActionListener(e -> this.dispose());
     }
 
-    private void displayAvailableBeauticians(byte treatmentTypeCategoryId) {
+    private void displayAvailableBeauticians(int treatmentTypeCategoryId) {
         beauticians = userManager.getBeauticiansByTreatmentTypeCategory(treatmentTypeCategoryId);
         if (beauticians.size() < 1) {
             return;
         }
-        beauticianTableModel = new BeauticianTableModel(treatmentManager, beauticians);
-        beauticianTable.setModel(beauticianTableModel);
-    }
-
-    private void filter(String text, TableRowSorter<TableModel> tableSorter) {
-        RowFilter<TableModel, Object> rf;
-        //If current expression doesn't parse, don't update.
-        try {
-            rf = RowFilter.regexFilter(text);
-        } catch (java.util.regex.PatternSyntaxException e) {
-            return;
+        comboBoxBeauticians.removeAllItems();
+        for (Beautician b : beauticians.values()) {
+            comboBoxBeauticians.addItem(b);
         }
-        tableSorter.setRowFilter(rf);
     }
 
     private void refreshTimeComboBox() {

@@ -1,9 +1,12 @@
 package com.mrmi.beautysalon.main.entity;
 
-import java.util.Date;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
 
-public class Treatment {
-    private Date scheduledDate; // Zbog pojednostavljivanja, smatrati da tretmani počinju uvek na pun sat.
+import java.util.Calendar;
+
+public class Treatment implements TableCell {
+    public int id;
+    private Calendar scheduledDate;
     private boolean cancelled;
 
     private String clientUsername;
@@ -12,7 +15,7 @@ public class Treatment {
 
     private int treatmentTypeId;
 
-    private Double price; // Although treatmentType holds price, this price can be affected by a loyalty discount
+    private double price; // Although treatmentType holds price, this price can be affected by a loyalty discount
     private Status status;
 
     public enum Status {
@@ -25,7 +28,8 @@ public class Treatment {
 
     private String cancellationReason;
 
-    public Treatment(Date scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price) {
+    public Treatment(int id, Calendar scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price) {
+        this.id = id;
         this.scheduledDate = scheduledDate;
         this.cancelled = cancelled;
         this.clientUsername = clientUsername;
@@ -33,10 +37,11 @@ public class Treatment {
         this.treatmentTypeId = treatmentTypeId;
         this.price = price;
         this.status = Status.SCHEDULED;
-        this.cancellationReason = "-";
+        this.cancellationReason = "N/A";
     }
 
-    public Treatment(Date scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price, Status status, String cancellationReason) {
+    public Treatment(int id, Calendar scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price, Status status, String cancellationReason) {
+        this.id = id;
         this.scheduledDate = scheduledDate;
         this.cancelled = cancelled;
         this.clientUsername = clientUsername;
@@ -47,16 +52,12 @@ public class Treatment {
         this.cancellationReason = cancellationReason;
     }
 
-    public Date getScheduledDate() {
+    public Calendar getScheduledDate() {
         return scheduledDate;
     }
 
-    public void setScheduledDate(Date scheduledDate) {
+    public void setScheduledDate(Calendar scheduledDate) {
         this.scheduledDate = scheduledDate;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
     }
 
     public void setCancelled(boolean cancelled) {
@@ -87,11 +88,11 @@ public class Treatment {
         this.treatmentTypeId = treatmentTypeId;
     }
 
-    public Double getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -111,7 +112,77 @@ public class Treatment {
         this.cancellationReason = cancellationReason;
     }
 
-    public String getFileString(int id) {
-        return id + "," + scheduledDate + "," + cancelled + "," + clientUsername + "," + beauticianUsername + "," + treatmentTypeId + "," + price + "," + status + "," + cancellationReason;
+    public String getFileString() {
+        return id + "," + scheduledDate.getTime() + "," + cancelled + "," + clientUsername + "," + beauticianUsername + "," + treatmentTypeId + "," + price + "," + status + "," + cancellationReason;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public Object getCell(int column, Object manager) {
+        TreatmentManager treatmentManager = (TreatmentManager) manager;
+        switch (column) {
+            case 0:
+                return id;
+            case 1:
+                return treatmentManager.getTreatmentTypeName(treatmentTypeId);
+            case 2:
+                return treatmentManager.getTreatmentTypeCategoryNameByTypeName(treatmentTypeId);
+            case 3:
+                return scheduledDate.getTime();
+            case 4:
+                return price;
+            case 5:
+                return clientUsername;
+            case 6:
+                return beauticianUsername;
+            case 7:
+                return status;
+            case 8:
+                return cancelled;
+            case 9:
+                return cancellationReason;
+            case 10:
+                return 0.9 * price;
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        switch (column) {
+            case 0:
+                return "Id";
+            case 1:
+                return "Type";
+            case 2:
+                return "Category";
+            case 3:
+                return "Date";
+            case 4:
+                return "Price";
+            case 5:
+                return "Client";
+            case 6:
+                return "Beautician";
+            case 7:
+                return "Status";
+            case 8:
+                return "Is cancelled";
+            case 9:
+                return "Cancellation reason";
+            case 10:
+                return "Refundable amount";
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public int getColumnCount() {
+        return 11;
     }
 }

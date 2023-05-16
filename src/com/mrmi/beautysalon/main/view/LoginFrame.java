@@ -35,7 +35,6 @@ public class LoginFrame extends JFrame {
         this.setTitle("Beauty salon - Login");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
 
         this.add(new JLabel("Login to your account"), "span, align center");
         this.add(new JLabel("Username"));
@@ -64,19 +63,19 @@ public class LoginFrame extends JFrame {
 
             if (authManager.getCurrentUser().getClass().equals(Client.class)) {
                 this.dispose();
-                ClientFrame clientFrame = new ClientFrame((Client) authManager.getCurrentUser(), authManager.getCurrentUsername(), treatmentManager, userManager, salonManager, authManager);
+                ClientFrame clientFrame = new ClientFrame(salonManager, treatmentManager, userManager, authManager, authManager.getCurrentUsername(), (Client) authManager.getCurrentUser());
                 clientFrame.setVisible(true);
             } else if (authManager.getCurrentUser().getClass().equals(Beautician.class)) {
                 this.dispose();
-                BeauticianFrame beauticianFrame = new BeauticianFrame(authManager.getCurrentUsername(), treatmentManager, userManager, salonManager);
+                BeauticianFrame beauticianFrame = new BeauticianFrame(treatmentManager, userManager, authManager.getCurrentUsername());
                 beauticianFrame.setVisible(true);
             } else if (authManager.getCurrentUser().getClass().equals(Receptionist.class)) {
                 this.dispose();
-                ReceptionistFrame receptionistFrame = new ReceptionistFrame(treatmentManager, userManager, salonManager);
+                ReceptionistFrame receptionistFrame = new ReceptionistFrame(salonManager, treatmentManager, userManager, authManager);
                 receptionistFrame.setVisible(true);
             } else if (authManager.getCurrentUser().getClass().equals(Manager.class)) {
                 this.dispose();
-                ManagerFrame managerFrame = new ManagerFrame(treatmentManager, userManager, salonManager, authManager);
+                ManagerFrame managerFrame = new ManagerFrame(salonManager, treatmentManager, userManager, authManager);
                 managerFrame.setVisible(true);
             }
         });

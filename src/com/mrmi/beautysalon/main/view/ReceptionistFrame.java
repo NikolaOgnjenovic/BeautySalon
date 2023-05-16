@@ -1,83 +1,94 @@
 package com.mrmi.beautysalon.main.view;
 
+import com.mrmi.beautysalon.main.entity.Client;
+import com.mrmi.beautysalon.main.entity.User;
+import com.mrmi.beautysalon.main.manager.AuthManager;
 import com.mrmi.beautysalon.main.manager.SalonManager;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Treatment;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import java.awt.*;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class ReceptionistFrame extends JFrame {
+    private final SalonManager salonManager;
     private final TreatmentManager treatmentManager;
     private final UserManager userManager;
-    private final SalonManager salonManager;
-    private JButton logout;
-    private JButton viewTreatments;
-    private JTextField clientUsernameField;
-    private JButton bookTreatment;
-    private JButton editTreatment;
+    private final AuthManager authManager;
 
-    public ReceptionistFrame(TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager) {
+    private JButton buttonLogout;
+    private JButton buttonViewTreatments;
+    private JComboBox<Client> comboBoxClient;
+    private JButton buttonBookTreatment;
+    private JButton buttonRegister;
+
+    public ReceptionistFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, AuthManager authManager) {
+        this.salonManager = salonManager;
         this.treatmentManager = treatmentManager;
         this.userManager = userManager;
-        this.salonManager = salonManager;
+        this.authManager = authManager;
 
         initialiseViews();
         initialiseListeners();
     }
     private void initialiseViews() {
-        this.setTitle("Receptionist");
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setResizable(true);
+        this.setLayout(new MigLayout("wrap", "[center, grow]", "[center, grow]"));
+        this.setTitle("Beauty salon - Receptionist");
         this.setSize(1000, 1080);
-        
-        this.getContentPane().setBackground(new Color(235, 235, 235));
-        this.setLayout(new FlowLayout());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        logout = new JButton("Logout");
-        this.add(logout);
+        buttonViewTreatments = new JButton("All treatments");
+        this.add(buttonViewTreatments);
 
-        viewTreatments = new JButton("View all treatments");
-        this.add(viewTreatments);
+        buttonBookTreatment = new JButton("Book treatment");
+        this.add(buttonBookTreatment);
 
-        clientUsernameField = new JTextField("Client username");
+        comboBoxClient = new JComboBox<>();
+        refreshClients();
+        this.add(comboBoxClient);
 
-        bookTreatment = new JButton("Book treatment");
-        this.add(bookTreatment);
+        buttonRegister = new JButton("Register client");
+        this.add(buttonRegister);
 
-        editTreatment = new JButton("Edit a treatment");
-        this.add(editTreatment);
+        buttonLogout = new JButton("Logout");
+        this.add(buttonLogout);
     }
 
     private void initialiseListeners() {
-        logout.addActionListener(e -> {
-            this.dispose();
-            MainFrame mainFrame = new MainFrame();
-        });
-
-        viewTreatments.addActionListener(e -> {
+        buttonViewTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> treatments = treatmentManager.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, treatments, false, false, false, salonManager.getLoyaltyThreshold(), false);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, treatments, true, false);
+            treatmentsFrame.setVisible(true);
         });
 
-        bookTreatment.addActionListener(e -> {
-            if (!userManager.getUsers().containsKey(clientUsernameField.getText())) {
-                registerUser();
-            } else {
-                BookTreatmentFrame bookFrame = new BookTreatmentFrame(treatmentManager, userManager, salonManager, clientUsernameField.getText());
+        buttonBookTreatment.addActionListener(e -> {
+            Client client = (Client) comboBoxClient.getSelectedItem();
+            if (client != null) {
+                BookTreatmentFrame bookFrame = new BookTreatmentFrame(salonManager, treatmentManager, userManager, client.getUsername());
+                bookFrame.setVisible(true);
             }
         });
 
-        editTreatment.addActionListener(e -> {
-            HashMap<Integer, Treatment> clientTreatments = treatmentManager.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, clientTreatments, true, true, false, salonManager.getLoyaltyThreshold(), false);
+        buttonRegister.addActionListener(e -> {
+            RegisterFrame registerFrame = new RegisterFrame(salonManager, treatmentManager, userManager, authManager, false, null, false);
+            registerFrame.setVisible(true);
+        });
+
+        buttonLogout.addActionListener(e -> {
+            this.dispose();
+            MainFrame mainFrame = new MainFrame();
+            mainFrame.setVisible(true);
         });
     }
 
-    // TODO
-    private void registerUser() {
-
+    public void refreshClients() {
+        Collection<Client> clients = userManager.getClients();
+        comboBoxClient.removeAllItems();
+        for (Client client : clients) {
+            comboBoxClient.addItem(client);
+        }
     }
 }

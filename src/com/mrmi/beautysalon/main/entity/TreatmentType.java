@@ -1,43 +1,39 @@
 package com.mrmi.beautysalon.main.entity;
 
-public class TreatmentType {
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+
+public class TreatmentType implements TableCell {
+    private int id;
     private String name;
     private double price;
-    private int timesBooked;
-    private double profit;
     private int categoryId;
-    private byte duration;
+    private int duration;
     private boolean isDeleted;
-    public TreatmentType(String name, double price, int categoryId, byte duration) {
+    public TreatmentType(int id, String name, double price, int categoryId, int duration) {
+        this.id = id;
         this.name = name;
         this.price = price;
-        this.timesBooked = 0;
-        this.profit = 0;
         this.categoryId = categoryId;
         this.duration = duration;
         this.isDeleted = false;
     }
-    public TreatmentType(String name, double price, int timesBooked, double profit, int categoryId, byte duration, boolean isDeleted) {
+    public TreatmentType(int id, String name, double price, int categoryId, int duration, boolean isDeleted) {
+        this.id = id;
         this.name = name;
         this.price = price;
-        this.timesBooked = timesBooked;
-        this.profit = profit;
         this.categoryId = categoryId;
         this.duration = duration;
         this.isDeleted = isDeleted;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public double getPrice() {
         return price;
     }
 
-    public void changeTimesBooked(int amount) {
-        this.timesBooked += amount;
-    }
-
-    public void changeProfit(double amount) {
-        this.profit += amount;
-    }
 
     public String getName() {
         return name;
@@ -51,22 +47,6 @@ public class TreatmentType {
         this.price = price;
     }
 
-    public int getTimesBooked() {
-        return timesBooked;
-    }
-
-    public void setTimesBooked(int timesBooked) {
-        this.timesBooked = timesBooked;
-    }
-
-    public double getProfit() {
-        return profit;
-    }
-
-    public void setProfit(double profit) {
-        this.profit = profit;
-    }
-
     public int getCategoryId() {
         return categoryId;
     }
@@ -75,15 +55,15 @@ public class TreatmentType {
         this.categoryId = categoryId;
     }
 
-    public String getFileString(int id) {
-        return id + "," + name + "," + price + "," + timesBooked + "," + profit + "," + categoryId + "," + duration + "," + isDeleted;
+    public String getFileString() {
+        return id + "," + name + "," + price + "," + categoryId + "," + duration + "," + isDeleted;
     }
 
-    public byte getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(byte duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
@@ -93,5 +73,64 @@ public class TreatmentType {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public Object getCell(int column, Object manager) {
+        TreatmentManager treatmentManager = (TreatmentManager) manager;
+        switch (column) {
+            case 0:
+                return id;
+            case 1:
+                return name;
+            case 2:
+                return treatmentManager.getTreatmentTypeCategoryName(categoryId);
+            case 3:
+                return price;
+            case 4:
+                return duration;
+            case 5:
+                return treatmentManager.getTimesBooked(id);
+            case 6:
+                return treatmentManager.getProfit(id);
+            case 7:
+                return isDeleted;
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        switch (column) {
+            case 0:
+                return "Id";
+            case 1:
+                return "Name";
+            case 2:
+                return "Category";
+            case 3:
+                return "Price";
+            case 4:
+                return "Duration";
+            case 5:
+                return "Times booked";
+            case 6:
+                return "Total profit";
+            case 7:
+                return "Is deleted";
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public int getColumnCount() {
+        return 8;
     }
 }

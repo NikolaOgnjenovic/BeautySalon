@@ -5,106 +5,161 @@ import com.mrmi.beautysalon.main.manager.SalonManager;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
-import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.entity.User;
-import com.mrmi.beautysalon.main.view.table.UserTableModel;
+import com.mrmi.beautysalon.main.view.table.GenericTable;
+import com.mrmi.beautysalon.main.view.table.GenericTableModel;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class UsersFrame extends JFrame {
+    private final SalonManager salonManager;
+    private final TreatmentManager treatmentManager;
+    private final UserManager userManager;
+    private final AuthManager authManager;
+    private final HashMap<Integer, User> users;
+    private JTextField filterText;
+    private GenericTable table;
+    private JButton buttonDelete;
+    private JButton buttonLearn;
+    private JButton buttonRegister;
+    private JButton buttonEdit;
+    private JButton buttonBack;
+    private JComboBox<String> comboBoxTreatmentTypeCategory;
 
-    private final TableRowSorter<TableModel> tableSorter;
-    private final JTextField filterText;
-    public UsersFrame(UserManager userManager, TreatmentManager treatmentManager, AuthManager authManager, SalonManager salonManager, HashMap<String, User> users, boolean canEdit, boolean canDelete) {
+    public UsersFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, AuthManager authManager, HashMap<Integer, User> users) {
+        this.salonManager = salonManager;
+        this.treatmentManager = treatmentManager;
+        this.userManager = userManager;
+        this.authManager = authManager;
+        this.users = users;
+
+        initialiseViews();
+        initialiseListeners();
+    }
+
+    private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Users");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
 
-        UserTableModel tableModel = new UserTableModel(userManager, treatmentManager, users, canEdit);
-        JTable table = new JTable(tableModel){
-            final DefaultTableCellRenderer renderLeft = new DefaultTableCellRenderer();
+        // Toolbar
+        JToolBar mainToolbar = new JToolBar();
+        mainToolbar.setFloatable(false);
 
-            {
-                renderLeft.setHorizontalAlignment(SwingConstants.LEFT);
-            }
+        ImageIcon addIcon = new ImageIcon("src/images/add.gif");
+        addIcon = new ImageIcon(addIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
+        buttonRegister = new JButton();
+        buttonRegister.setIcon(addIcon);
+        mainToolbar.add(buttonRegister);
 
-            @Override
-            public TableCellRenderer getCellRenderer (int arg0, int arg1) {
-                return renderLeft;
-            }
-        };
-        table.getTableHeader().setReorderingAllowed(false);
-        table.setRowHeight(22);
+        ImageIcon editIcon = new ImageIcon("src/images/edit.gif");
+        editIcon = new ImageIcon(editIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
+        buttonEdit = new JButton();
+        buttonEdit.setIcon(editIcon);
+        mainToolbar.add(buttonEdit);
+
+        ImageIcon deleteIcon = new ImageIcon("src/images/remove.gif");
+        deleteIcon = new ImageIcon(deleteIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
+        buttonDelete = new JButton();
+        buttonDelete.setIcon(deleteIcon);
+        mainToolbar.add(buttonDelete);
+
+        this.add(mainToolbar);
+
+        GenericTableModel tableModel = new GenericTableModel(users, treatmentManager);
+        table = new GenericTable(tableModel);
         this.add(new JScrollPane(table), "span, growx");
-        table.setAutoCreateRowSorter(true);
-        tableSorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(tableSorter);
 
         filterText = new JTextField("Search", 20);
-        filterText.addActionListener(e -> filter(filterText.getText()));
         this.add(filterText);
 
-        if (canDelete) {
-            JButton delete = new JButton("Delete user");
-            delete.addActionListener(e -> {
-                try {
-                    userManager.deleteUser(new ArrayList<>(users.keySet()).get(table.getSelectedRow()));
-                } catch (UserNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
-                tableModel.fireTableDataChanged();
-            });
-            this.add(delete);
+        buttonLearn = new JButton("Teach a beautician a new skill");
+        this.add(buttonLearn);
+
+        comboBoxTreatmentTypeCategory = new JComboBox<>();
+        for (Map.Entry<Integer, TreatmentTypeCategory> entry : treatmentManager.getAvailableTreatmentTypeCategories().entrySet()) {
+            comboBoxTreatmentTypeCategory.addItem(entry.getValue().getName() + ", id: " + entry.getKey());
         }
+        this.add(comboBoxTreatmentTypeCategory);
+        comboBoxTreatmentTypeCategory.setVisible(false);
 
-        if (canEdit) {
-            JButton learnButton = new JButton("Teach a beautician a new skill");
-            this.add(learnButton);
-
-            JComboBox<String> comboBox = new JComboBox<>();
-            for (Map.Entry<Integer, TreatmentTypeCategory> entry : treatmentManager.getAvailableTreatmentTypeCategories().entrySet()) {
-                comboBox.addItem(entry.getValue().getName() + ", id: " + entry.getKey());
-            }
-            this.add(comboBox);
-            comboBox.setVisible(false);
-
-            learnButton.addActionListener(e -> {
-                comboBox.setVisible(true);
-                userManager.teachTreatment(new ArrayList<>(users.keySet()).get(table.getSelectedRow()), Byte.parseByte(Objects.requireNonNull(comboBox.getSelectedItem()).toString().split(", id: ")[1]));
-            });
-        }
-
-        JButton register = new JButton("Register");
-        register.addActionListener(e -> {
-            this.dispose();
-            RegisterFrame registerFrame = new RegisterFrame(treatmentManager, userManager, salonManager, authManager, true);
-        });
-        this.add(register);
-
-        JButton back = new JButton("Back");
-        back.addActionListener(e -> this.dispose());
-        this.add(back);
+        buttonBack = new JButton("Back");
+        this.add(buttonBack);
     }
 
-    private void filter(String text) {
-        RowFilter<TableModel, Object> rf;
-        //If current expression doesn't parse, don't update.
-        try {
-            rf = RowFilter.regexFilter(text);
-        } catch (java.util.regex.PatternSyntaxException e) {
-            return;
-        }
-        tableSorter.setRowFilter(rf);
+    private void initialiseListeners() {
+        filterText.addActionListener(e -> table.filter(filterText.getText()));
+
+        buttonDelete.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(null, "Please select a valid table row.", "Error", JOptionPane.WARNING_MESSAGE);
+            } else {
+                try {
+                    int id = Integer.parseInt(table.getValueAt(row, 0).toString());
+                    User user = users.get(id);
+                    int choice = JOptionPane.showConfirmDialog(null,
+                            "Are you sure that you want to delete this user?"+
+                                    "\n" + user.getUsername(),
+                            "Deletion confirmation", JOptionPane.YES_NO_OPTION);
+                    if(choice == JOptionPane.YES_OPTION) {
+                        userManager.deleteUser(id);
+                        refreshData();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error processing user", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        buttonLearn.addActionListener(e -> {
+            comboBoxTreatmentTypeCategory.setVisible(true);
+            Object category = comboBoxTreatmentTypeCategory.getSelectedItem();
+            if (category != null) {
+                try {
+                    userManager.teachTreatment((int) table.getValueAt(table.getSelectedRow(), 0), Byte.parseByte(category.toString().split(", id: ")[1]));
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "This user cannot learn to do any treatment types", "Error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        buttonRegister.addActionListener(e -> {
+            this.dispose();
+            RegisterFrame registerFrame = new RegisterFrame(salonManager, treatmentManager, userManager, authManager, true, null, false);
+            registerFrame.setVisible(true);
+            refreshData();
+        });
+
+        buttonEdit.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(null, "Please select a valid table row.", "Error", JOptionPane.WARNING_MESSAGE);
+            } else {
+                try {
+                    int id = Integer.parseInt(table.getValueAt(row, 0).toString());
+                    User user = users.get(id);
+                    RegisterFrame registerFrame = new RegisterFrame(salonManager, treatmentManager, userManager, authManager, true, user, false);
+                    registerFrame.setVisible(true);
+                    refreshData();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error processing user", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        buttonBack.addActionListener(e -> this.dispose());
+    }
+
+    private void refreshData() {
+        GenericTableModel model = new GenericTableModel(users, treatmentManager);
+        table.setModel(model);
     }
 }

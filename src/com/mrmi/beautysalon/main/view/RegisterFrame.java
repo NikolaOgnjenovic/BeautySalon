@@ -1,5 +1,6 @@
 package com.mrmi.beautysalon.main.view;
 
+import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.manager.AuthManager;
 import com.mrmi.beautysalon.main.manager.SalonManager;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
@@ -10,184 +11,202 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 
 public class RegisterFrame extends JFrame {
+    private final SalonManager salonManager;
     private final TreatmentManager treatmentManager;
     private final UserManager userManager;
-    private final SalonManager salonManager;
     private final AuthManager authManager;
-    private JButton registerButton;
-    private JButton backButton;
-    private JTextField usernameField, passwordField, nameField, surnameField, genderField, phoneField, addressField;
     private final boolean canPickUserType;
-    private JComboBox<String> userTypeComboBox;
-    private JLabel bonusLabel, salaryLabel, qualificationLabel, experienceLabel;
-    private JTextField bonusField, salaryField, qualificationField, experienceField;
-    public RegisterFrame(TreatmentManager treatmentManager, UserManager userManager, SalonManager salonManager, AuthManager authManager, boolean canPickUserType) {
+    private final boolean isClient;
+    private final User user;
+    private JButton buttonRegister;
+    private JButton buttonBack;
+    private JTextField textUsername, textPassword, textName, textSurname, textGender, textPhone, textAddress, textBonus, textSalary, textQualificationLevel, textExperience;
+
+    private JComboBox<String> comboBoxUserType;
+    private JLabel labelBonus, labelSalary, labelQualificationLevel, labelExperience;
+    public RegisterFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, AuthManager authManager, boolean canPickUserType, User user, boolean isClient) {
+        this.salonManager = salonManager;
         this.treatmentManager = treatmentManager;
         this.userManager = userManager;
-        this.salonManager = salonManager;
         this.authManager = authManager;
         this.canPickUserType = canPickUserType;
+        this.isClient = isClient;
+        this.user = user;
 
         initialiseViews();
         initialiseListeners();
     }
+
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 2", "[center, grow, align right][center, grow, align left]", "[center, grow]"));
         this.setTitle("Beauty salon - Registration");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
 
-        JLabel usernameLabel = new JLabel("Username");
-        this.add(usernameLabel);
+        this.add(new JLabel("Username"));
+        textUsername = new JTextField(20);
+        this.add(textUsername);
 
-        usernameField = new JTextField(20);
-        this.add(usernameField);
+        this.add(new JLabel("Password"));
+        textPassword = new JTextField(20);
+        this.add(textPassword);
 
-        JLabel passwordLabel = new JLabel("Password");
-        this.add(passwordLabel);
+        this.add(new JLabel("Name"));
+        textName = new JTextField(20);
+        this.add(textName);
 
-        passwordField = new JTextField(20);
-        this.add(passwordField);
+        this.add(new JLabel("Surname"));
+        textSurname = new JTextField(20);
+        this.add(textSurname);
 
-        JLabel nameLabel = new JLabel("Name");
-        this.add(nameLabel);
+        this.add(new JLabel("Gender"));
+        textGender = new JTextField(20);
+        this.add(textGender);
 
-        nameField = new JTextField(20);
-        this.add(nameField);
+        this.add(new JLabel("Phone number"));
 
-        JLabel surnameLabel = new JLabel("Surname");
-        this.add(surnameLabel);
+        textPhone = new JTextField(20);
+        this.add(textPhone);
 
-        surnameField = new JTextField(20);
-        this.add(surnameField);
-
-        JLabel genderLabel = new JLabel("Gender");
-        this.add(genderLabel);
-
-        genderField = new JTextField(20);
-        this.add(genderField);
-
-        JLabel phoneLabel = new JLabel("Phone number");
-        this.add(phoneLabel);
-
-        phoneField = new JTextField(20);
-        this.add(phoneField);
-
-        JLabel addressLabel = new JLabel("Address");
-        this.add(addressLabel);
-
-        addressField = new JTextField(20);
-        this.add(addressField);
+        this.add(new JLabel("Address"));
+        textAddress = new JTextField(20);
+        this.add(textAddress);
 
         if (canPickUserType) {
-            userTypeComboBox = new JComboBox<>();
-            userTypeComboBox.addItem("Client");
-            userTypeComboBox.addItem("Beautician");
-            userTypeComboBox.addItem("Receptionist");
-            userTypeComboBox.addItem("Manager");
-            
-            this.add(userTypeComboBox, "span");
+            comboBoxUserType = new JComboBox<>();
+            comboBoxUserType.addItem("Client");
+            comboBoxUserType.addItem("Beautician");
+            comboBoxUserType.addItem("Receptionist");
+            comboBoxUserType.addItem("Manager");
 
-            experienceLabel = new JLabel("Years of experience");
-            
-            this.add(experienceLabel);
-            experienceLabel.setVisible(false);
+            this.add(comboBoxUserType, "span, center");
 
-            experienceField = new JTextField(20);
-            
-            this.add(experienceField);
-            experienceField.setVisible(false);
+            labelExperience = new JLabel("Years of experience");
+            this.add(labelExperience);
 
-            qualificationLabel = new JLabel("Qualification level");
-            
-            this.add(qualificationLabel);
-            qualificationLabel.setVisible(false);
+            textExperience = new JTextField(20);
+            this.add(textExperience);
 
-            qualificationField = new JTextField(20);
-            
-            this.add(qualificationField);
-            qualificationField.setVisible(false);
+            labelQualificationLevel = new JLabel("Qualification level");
+            this.add(labelQualificationLevel);
 
-            salaryLabel = new JLabel("Salary");
-            
-            this.add(salaryLabel);
-            salaryLabel.setVisible(false);
+            textQualificationLevel = new JTextField(20);
+            this.add(textQualificationLevel);
 
-            salaryField = new JTextField(20);
-            
-            this.add(salaryField);
-            salaryField.setVisible(false);
+            labelSalary = new JLabel("Salary");
+            this.add(labelSalary);
 
-            bonusLabel = new JLabel("Salary bonus");
-            
-            this.add(bonusLabel);
-            bonusLabel.setVisible(false);
+            textSalary = new JTextField(20);
+            this.add(textSalary);
 
-            bonusField = new JTextField(20);
-            
-            this.add(bonusField);
-            bonusField.setVisible(false);
+            labelBonus = new JLabel("Salary bonus");
+            this.add(labelBonus);
+
+            textBonus = new JTextField(20);
+            this.add(textBonus);
+
+            if (user != null) {
+                if (user instanceof Client) {
+                    comboBoxUserType.setSelectedIndex(0);
+                    toggleEmployeeFields(false);
+                } else {
+                    toggleEmployeeFields(true);
+
+                    if (user instanceof Beautician) {
+                        comboBoxUserType.setSelectedIndex(1);
+                    } else if (user instanceof Receptionist) {
+                        comboBoxUserType.setSelectedIndex(2);
+                    } else {
+                        comboBoxUserType.setSelectedIndex(3);
+                    }
+                }
+            }
         }
 
-        registerButton = new JButton("Register");
-        this.add(registerButton, "span, center");
+        if (user != null) {
+            textUsername.setText(user.getUsername());
+            textPassword.setText(user.getPassword());
+            textName.setText(user.getName());
+            textSurname.setText(user.getSurname());
+            textGender.setText(user.getGender());
+            textPhone.setText(user.getPhoneNumber());
+            textAddress.setText(user.getAddress());
 
-        backButton = new JButton("Back");
-        this.add(backButton, "span, center");
+            if (user instanceof Employee) {
+                textQualificationLevel.setText(String.valueOf(((Employee) user).getQualificationLevel()));
+                textExperience.setText(String.valueOf(((Employee) user).getYearsOfExperience()));
+                textSalary.setText(String.valueOf(((Employee) user).getMonthlySalary()));
+                textBonus.setText(String.valueOf(((Employee) user).getBonus()));
+            }
+        }
+
+        buttonRegister = new JButton((user == null) ? "Register" : "Save");
+        this.add(buttonRegister, "span, center");
+
+        buttonBack = new JButton("Back");
+        this.add(buttonBack, "span, center");
     }
 
     private void initialiseListeners() {
         if (canPickUserType) {
-            userTypeComboBox.addActionListener(e -> {
-                if (userTypeComboBox.getSelectedIndex() > 0) {
-                    experienceLabel.setVisible(true);
-                    experienceField.setVisible(true);
-                    qualificationLabel.setVisible(true);
-                    qualificationField.setVisible(true);
-                    salaryLabel.setVisible(true);
-                    salaryField.setVisible(true);
-                    bonusLabel.setVisible(true);
-                    bonusField.setVisible(true);
-                } else {
-                    experienceLabel.setVisible(false);
-                    experienceField.setVisible(false);
-                    qualificationLabel.setVisible(false);
-                    qualificationField.setVisible(false);
-                    salaryLabel.setVisible(false);
-                    salaryField.setVisible(false);
-                    bonusLabel.setVisible(false);
-                    bonusField.setVisible(false);
-                }
-            });
+            comboBoxUserType.addActionListener(e -> toggleEmployeeFields(comboBoxUserType.getSelectedIndex() > 0));
         }
-        registerButton.addActionListener(e -> {
-            if (!canPickUserType) {
-                Client client = new Client(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText());
-                ClientFrame clientFrame = new ClientFrame(client, usernameField.getText(), treatmentManager, userManager, salonManager, authManager);
+
+        buttonRegister.addActionListener(e -> {
+            int id = -1;
+            if (user != null) {
+                id = user.getId();
             }
-            switch (userTypeComboBox.getSelectedIndex()) {
+            if (!canPickUserType) {
+                Client client = new Client(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText());
+                userManager.addUser(client);
+                this.dispose();
+
+                if (isClient) {
+                    ClientFrame clientFrame = new ClientFrame(salonManager, treatmentManager, userManager, authManager, textUsername.getText(), client);
+                    clientFrame.setVisible(true);
+                }
+                return;
+            }
+            User newUser = user;
+            switch (comboBoxUserType.getSelectedIndex()) {
                 case 0:
-                    Client client = new Client(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText());
-                    ClientFrame clientFrame = new ClientFrame(client, usernameField.getText(), treatmentManager, userManager, salonManager, authManager);
+                    newUser = new Client(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText());
                     break;
                 case 1:
-                    Beautician beautician = new Beautician(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText(), Byte.parseByte(qualificationField.getText()), Byte.parseByte(experienceField.getText()), Float.parseFloat(bonusField.getText()), Float.parseFloat(salaryField.getText()));
-                    userManager.addUser(usernameField.getText(), beautician);
-                    this.dispose();
+                    newUser = new Beautician(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
                     break;
                 case 2:
-                    Receptionist receptionist = new Receptionist(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText(), Byte.parseByte(qualificationField.getText()), Byte.parseByte(experienceField.getText()), Float.parseFloat(bonusField.getText()), Float.parseFloat(salaryField.getText()));
-                    userManager.addUser(usernameField.getText(), receptionist);
-                    this.dispose();
+                    newUser = new Receptionist(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
                     break;
                 case 3:
-                    Manager manager = new Manager(passwordField.getText(), nameField.getText(), surnameField.getText(), genderField.getText(), phoneField.getText(), addressField.getText(), Byte.parseByte(qualificationField.getText()), Byte.parseByte(experienceField.getText()), Float.parseFloat(bonusField.getText()), Float.parseFloat(salaryField.getText()));
-                    userManager.addUser(usernameField.getText(), manager);
-                    this.dispose();
+                    newUser = new Manager(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
                     break;
             }
+
+            if (user == null) {
+                userManager.addUser(newUser);
+            } else {
+                try {
+                    userManager.updateUser(user.getId(), newUser);
+                } catch (UserNotFoundException ignored) {
+                }
+            }
+
+            this.dispose();
         });
-        backButton.addActionListener(e -> this.dispose());
+
+        buttonBack.addActionListener(e -> this.dispose());
+    }
+
+    private void toggleEmployeeFields(boolean value) {
+        labelExperience.setVisible(value);
+        textExperience.setVisible(value);
+        labelQualificationLevel.setVisible(value);
+        textQualificationLevel.setVisible(value);
+        labelSalary.setVisible(value);
+        textSalary.setVisible(value);
+        labelBonus.setVisible(value);
+        textBonus.setVisible(value);
     }
 }
