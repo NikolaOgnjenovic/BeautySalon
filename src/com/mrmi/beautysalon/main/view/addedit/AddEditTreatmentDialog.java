@@ -96,7 +96,7 @@ public class AddEditTreatmentDialog extends JDialog {
         // If a treatment is being edited then the treatment parameter of the constructor != null
         if (treatment != null) {
             try {
-                comboBoxType.setSelectedItem(treatmentManager.getTreatmentTypeById(treatment.getTreatmentTypeId()));
+                comboBoxType.setSelectedItem(treatmentManager.getTreatmentType(treatment.getTreatmentTypeId()));
             } catch (TreatmentTypeNotFoundException ignored) {
             }
 
@@ -115,7 +115,7 @@ public class AddEditTreatmentDialog extends JDialog {
                     JOptionPane.showMessageDialog(null, "Invalid treatment type", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                int treatmentTypeId = treatmentManager.getTreatmentTypeIdByName(comboBoxType.getSelectedItem().toString());
+                int treatmentTypeId = ((TreatmentType) comboBoxType.getSelectedItem()).getId();
 
                 Calendar scheduledDate = Calendar.getInstance();
                 Date date = (Date) datePicker.getModel().getValue();

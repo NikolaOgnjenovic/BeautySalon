@@ -91,34 +91,40 @@ public class CancellationReportFrame extends JFrame {
         amounts = new ArrayList<>();
 
         String currentReason = treatments.get(0).getCancellationReason();
-        int count = 0;
+        int counter = 1;
+        // Loop through all treatments
         for (Treatment t : treatments) {
-            if (t.getScheduledDate().before(fromDate) || t.getScheduledDate().after(toDate)) {
+            // If a treatment does not fit the given date interval continue looping
+            if (t.getScheduledDate().getTime().before(fromDate) || t.getScheduledDate().getTime().after(toDate)) {
                 continue;
             }
-            if (!t.getCancellationReason().equals(currentReason)) {
-                if (!currentReason.equals("-")) {
-                    reasons.add(currentReason);
-                    amounts.add(count);
-                } else {
-                    reasons.add("Finished");
-                    amounts.add(count);
-                }
-                currentReason = t.getCancellationReason();
-            } else {
-                count++;
+            // If the current treatment's cancellation reason == currentReason
+            if (t.getCancellationReason().equals(currentReason)) {
+                counter++;
+                continue;
             }
+
+            // If not, add the counter and reason to their respective lists
+            amounts.add(counter);
+            if (!currentReason.equals("N/A")) {
+                reasons.add(currentReason);
+            } else {
+                reasons.add("Finished");
+            }
+
+            // Reset the counter and current reason
+            counter = 1;
+            currentReason = t.getCancellationReason();
         }
 
-        if (!currentReason.equals("-")) {
+        // Since the loop will break without triggering a change on the last treatment, add the data to the lists
+        amounts.add(counter);
+        if (!currentReason.equals("N/A")) {
             reasons.add(currentReason);
-            amounts.add(count);
         } else {
             reasons.add("Finished");
-            amounts.add(count);
         }
 
-        // Temporary solution
         cancellationTable.setModel(new CancellationReportTableModel(reasons, amounts));
     }
 }

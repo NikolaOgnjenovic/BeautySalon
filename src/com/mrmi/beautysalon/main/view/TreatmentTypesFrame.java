@@ -81,7 +81,7 @@ public class TreatmentTypesFrame extends JFrame {
             } else {
                 try {
                     int id = Integer.parseInt(table.getValueAt(row, 0).toString());
-                    TreatmentType treatmentType = treatmentManager.getTreatmentTypeById(id);
+                    TreatmentType treatmentType = treatmentManager.getTreatmentType(id);
                     AddEditTreatmentTypeDialog add = new AddEditTreatmentTypeDialog(this, treatmentManager, treatmentType, id);
                     add.setVisible(true);
                 } catch (Exception ex) {
@@ -97,7 +97,7 @@ public class TreatmentTypesFrame extends JFrame {
             } else {
                 try {
                     int id = Integer.parseInt(table.getValueAt(row, 0).toString());
-                    TreatmentType treatmentType = treatmentManager.getTreatmentTypeById(id);
+                    TreatmentType treatmentType = treatmentManager.getTreatmentType(id);
                     int choice = JOptionPane.showConfirmDialog(null,
                             "Are you sure that you want to delete this treatment type?"+
                                     "\n" + treatmentType.getName() +

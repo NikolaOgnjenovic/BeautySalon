@@ -91,7 +91,7 @@ public class AddEditTreatmentTypeDialog extends JDialog {
                 JOptionPane.showMessageDialog(null, "Invalid treatment type category", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            int treatmentTypeCategoryId = treatmentManager.getTreatmentTypeCategoryIdByName(category.getName());
+            int treatmentTypeCategoryId = category.getId();
 
             int duration = Integer.parseInt(textDuration.getText());
             if (duration < 0) {

@@ -23,15 +23,13 @@ public class BookTreatmentFrame extends JFrame {
     private int treatmentTypeCategoryId;
     private double treatmentPrice;
     private String beauticianUsername;
-    //private GenericTableModel beauticianTableModel;
     private JComboBox<Beautician> comboBoxBeauticians;
     private HashMap<Integer, Beautician> beauticians;
     private Calendar selectedDate;
     private String selectedTime;
-    private Vector<String> timeWindows;
+    private Vector<String> availableTimeSlots;
     private GenericTable treatmentTypeTable;
-    //private GenericTable beauticianTable;
-    private JComboBox<String> treatmentTimeWindows;
+    private JComboBox<String> treatmentAvailableTimeSlots;
     private JDatePickerImpl datePicker;
     private JButton buttonBook;
     private JButton buttonBack;
@@ -70,12 +68,12 @@ public class BookTreatmentFrame extends JFrame {
         this.add(datePicker);
         datePicker.setVisible(false);
 
-        timeWindows = new Vector<>();
-        treatmentTimeWindows = new JComboBox<>(timeWindows);
-        treatmentTimeWindows.setVisible(false);
+        availableTimeSlots = new Vector<>();
+        treatmentAvailableTimeSlots = new JComboBox<>(availableTimeSlots);
+        treatmentAvailableTimeSlots.setVisible(false);
         
-        this.add(treatmentTimeWindows);
-        treatmentTimeWindows.setVisible(false);
+        this.add(treatmentAvailableTimeSlots);
+        treatmentAvailableTimeSlots.setVisible(false);
 
         buttonBook = new JButton("Book treatment");
         this.add(buttonBook);
@@ -90,7 +88,7 @@ public class BookTreatmentFrame extends JFrame {
             if (treatmentTypeTable.getSelectedRow() != -1) {
                 treatmentTypeId = (int) treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 0);
                 try {
-                    treatmentTypeCategoryId = treatmentManager.getTreatmentTypeById(treatmentTypeId).getCategoryId();
+                    treatmentTypeCategoryId = treatmentManager.getTreatmentType(treatmentTypeId).getCategoryId();
                     treatmentPrice = (double) treatmentTypeTable.getValueAt(treatmentTypeTable.getSelectedRow(), 3);
                     displayAvailableBeauticians(treatmentTypeCategoryId);
                     treatmentTypeTable.clearSelection();
@@ -99,7 +97,7 @@ public class BookTreatmentFrame extends JFrame {
 
             } else {
                 buttonBook.setVisible(false);
-                treatmentTimeWindows.setVisible(false);
+                treatmentAvailableTimeSlots.setVisible(false);
             }
         });
 
@@ -120,13 +118,13 @@ public class BookTreatmentFrame extends JFrame {
             refreshTimeComboBox();
         });
 
-        treatmentTimeWindows.addActionListener(e -> {
-            if (treatmentTimeWindows.getSelectedItem() != null) {
-                selectedTime = treatmentTimeWindows.getSelectedItem().toString();
+        treatmentAvailableTimeSlots.addActionListener(e -> {
+            if (treatmentAvailableTimeSlots.getSelectedItem() != null) {
+                selectedTime = treatmentAvailableTimeSlots.getSelectedItem().toString();
                 buttonBook.setVisible(true);
             } else {
                 buttonBook.setVisible(false);
-                treatmentTimeWindows.setVisible(false);
+                treatmentAvailableTimeSlots.setVisible(false);
             }
         });
 
@@ -153,9 +151,9 @@ public class BookTreatmentFrame extends JFrame {
     }
 
     private void refreshTimeComboBox() {
-        timeWindows = treatmentManager.getTreatmentTimeWindows(selectedDate, treatmentTypeId, salonManager);
-        treatmentTimeWindows.removeAllItems();
-        treatmentTimeWindows.setModel(new DefaultComboBoxModel<>(timeWindows));
-        treatmentTimeWindows.setVisible(true);
+        availableTimeSlots = treatmentManager.getAvailableTimeSlots(selectedDate, treatmentTypeId, salonManager);
+        treatmentAvailableTimeSlots.removeAllItems();
+        treatmentAvailableTimeSlots.setModel(new DefaultComboBoxModel<>(availableTimeSlots));
+        treatmentAvailableTimeSlots.setVisible(true);
     }
 }

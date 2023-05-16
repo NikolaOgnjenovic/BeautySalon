@@ -16,7 +16,6 @@ public class BeauticianFrame extends JFrame {
     private JButton buttonLogout;
     private JButton buttonDueTreatments;
     private JButton buttonPastTreatments;
-    private JButton buttonSchedule;
 
     public BeauticianFrame(TreatmentManager treatmentManager, UserManager userManager, String beauticianUsername) {
         this.treatmentManager = treatmentManager;
@@ -44,8 +43,6 @@ public class BeauticianFrame extends JFrame {
 
         buttonPastTreatments = new JButton("Past treatments");
         this.add(buttonPastTreatments);
-
-        buttonSchedule = new JButton("Schedule");
     }
 
     private void initialiseListeners() {
@@ -65,10 +62,6 @@ public class BeauticianFrame extends JFrame {
             HashMap<Integer, Treatment> pastTreatments = userManager.getBeauticianPastTreatments(beauticianUsername);
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, pastTreatments, false, false);
             treatmentsFrame.setVisible(true);
-        });
-
-        buttonSchedule.addActionListener(e -> {
-            // TODO
         });
     }
 }

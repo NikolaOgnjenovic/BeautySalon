@@ -80,6 +80,10 @@ public class TreatmentType implements TableCell {
         return name;
     }
 
+    public int getId() {
+        return id;
+    }
+
     @Override
     public Object getCell(int column, Object manager) {
         TreatmentManager treatmentManager = (TreatmentManager) manager;

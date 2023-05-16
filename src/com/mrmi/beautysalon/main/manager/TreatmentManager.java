@@ -59,15 +59,6 @@ public class TreatmentManager {
         return treatmentTypeCategory.getName();
     }
 
-    public int getTreatmentTypeCategoryIdByName(String name) {
-        for (Map.Entry<Integer, TreatmentTypeCategory> entry : getTreatmentTypeCategories().entrySet()) {
-            if (entry.getValue().getName().equals(name)) {
-                return entry.getKey();
-            }
-        }
-        return -1;
-    }
-
     public void updateTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
         database.updateTreatmentTypeCategory(id, treatmentTypeCategory);
     }
@@ -117,6 +108,10 @@ public class TreatmentManager {
         return database.getTreatmentTypes();
     }
 
+    /**
+     *
+     * @return HashMap of treatments types that aren't marked as deleted
+     */
     public HashMap<Integer, TreatmentType> getAvailableTreatmentTypes() {
         return (HashMap<Integer, TreatmentType>) database.getTreatmentTypes().entrySet()
                 .stream()
@@ -124,7 +119,7 @@ public class TreatmentManager {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public TreatmentType getTreatmentTypeById(int id) throws TreatmentTypeNotFoundException {
+    public TreatmentType getTreatmentType(int id) throws TreatmentTypeNotFoundException {
         HashMap<Integer, TreatmentType> treatmentTypes = database.getTreatmentTypes();
         if (!treatmentTypes.containsKey(id)) {
             throw new TreatmentTypeNotFoundException("Treatment type with id " + id + " not found.");
@@ -150,26 +145,6 @@ public class TreatmentManager {
         type.setDeleted(true);
         updateTreatmentType(id, type);
     }
-    public List<Treatment> getTreatmentsSortedByBeauticians() {
-        List<Treatment> list = new ArrayList<>(database.getTreatments().values());
-        list.sort(Comparator.comparing(Treatment::getBeauticianUsername));
-        return list;
-    }
-
-    public List<Treatment> getTreatmentsSortedByCancellationReason() {
-        List<Treatment> list = new ArrayList<>(database.getTreatments().values());
-        list.sort(Comparator.comparing(Treatment::getCancellationReason));
-        return list;
-    }
-
-    public int getTreatmentTypeIdByName(String name) {
-        for (Map.Entry<Integer, TreatmentType> entry : getTreatmentTypes().entrySet()) {
-            if (entry.getValue().getName().equals(name)) {
-                return entry.getKey();
-            }
-        }
-        return -1;
-    }
 
     public String getTreatmentTypeName(int treatmentTypeId) {
        TreatmentType treatmentType = database.getTreatmentTypes().get(treatmentTypeId);
@@ -179,40 +154,45 @@ public class TreatmentManager {
        return treatmentType.getName();
     }
 
-    public Vector<String> getTreatmentTimeWindows(Calendar calendar, int treatmentTypeId, SalonManager salonManager) {
+    /**
+     *
+     * @param selectedDate The date on which the time slots are being calculated
+     * @param treatmentTypeId The id of the treatment type
+     * @param salonManager Used for the opening & closing hour
+     * @return a Vector of Strings which contains available time slots for the treatment
+     */
+    public Vector<String> getAvailableTimeSlots(Calendar selectedDate, int treatmentTypeId, SalonManager salonManager) {
         HashMap<Integer, TreatmentType> treatmentTypes = database.getTreatmentTypes();
         HashMap<Integer, Treatment> treatments = database.getTreatments();
 
         if (!treatmentTypes.containsKey(treatmentTypeId)) {
             return new Vector<>();
         }
+
+        // Round the treatment duration (minutes) to hours
         int duration = treatmentTypes.get(treatmentTypeId).getDuration();
-        int roundedDuration = (duration / 60 + 1);
-        Vector<String> timeWindows = new Vector<>();
-        Treatment previousTreatment = null;
+        int roundedDurationHour = duration / 60 + 1;
+        Vector<String> availableTimeSlots = new Vector<>();
+
+        // Get all treatments
         List<Treatment> sortedTreatments = new ArrayList<>(treatments.values());
+        // Sort them by their date
         sortedTreatments.sort(Comparator.comparing(Treatment::getScheduledDate));
-        sortedTreatments = sortedTreatments.stream().filter(t -> t.getScheduledDate().get(Calendar.DATE) == calendar.get(Calendar.DATE)).collect(Collectors.toList());
-        if (sortedTreatments.size() > 0) {
-            for (Treatment treatment : sortedTreatments) {
-                if (previousTreatment != null) {
-                    int previousHour = previousTreatment.getScheduledDate().get(Calendar.HOUR);
-                    int currentHour = treatment.getScheduledDate().get(Calendar.HOUR);
-                    if (currentHour - previousHour >= roundedDuration) {
-                        for (int i = previousHour; duration + i <= currentHour && duration + i <= salonManager.getClosingHour(); i++) {
-                            timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration / 60) + ":" + hourToString(duration % 60));
-                        }
-                    }
-                }
-                previousTreatment = treatment;
+        // Filter the treatments by the given scheduled date
+        sortedTreatments = sortedTreatments.stream().filter(t -> t.getScheduledDate().get(Calendar.DATE) == selectedDate.get(Calendar.DATE)).collect(Collectors.toList());
+
+        // Loop from the salon's opening hour to the closing hour, increasing i by the duration of the treatment in hours
+        for (int i = salonManager.getOpeningHour(); i < salonManager.getClosingHour(); i += roundedDurationHour) {
+            int currentHour = i;
+            // If any of the filtered treatments' scheduled hour is == i continue looping
+            if (sortedTreatments.stream().anyMatch(treatment -> treatment.getScheduledDate().get(Calendar.HOUR) == currentHour)) {
+                continue;
             }
-        } else {
-            for (int i = salonManager.getOpeningHour(); roundedDuration + i <= salonManager.getClosingHour(); i++) {
-                timeWindows.add(hourToString(i) + ":00 - " + hourToString(i + duration / 60) + ":" + hourToString(duration % 60));
-            }
+            // Else print the current time slot for the treatment
+            availableTimeSlots.add(hourToString(i) + ":00 - " + hourToString(i + duration / 60) + ":" + hourToString(duration % 60));
         }
 
-        return timeWindows;
+        return availableTimeSlots;
     }
 
     private String hourToString(int h) {
@@ -323,6 +303,18 @@ public class TreatmentManager {
         return cost;
     }
 
+    public List<Treatment> getTreatmentsSortedByBeauticians() {
+        List<Treatment> list = new ArrayList<>(database.getTreatments().values());
+        list.sort(Comparator.comparing(Treatment::getBeauticianUsername));
+        return list;
+    }
+
+    public List<Treatment> getTreatmentsSortedByCancellationReason() {
+        List<Treatment> list = new ArrayList<>(database.getTreatments().values());
+        list.sort(Comparator.comparing(Treatment::getCancellationReason));
+        return list;
+    }
+
     public void cancelTreatment(int clientId, int treatmentId, boolean clientCancelled, String cancellationReason, UserManager userManager) {
         Treatment t;
         try {
@@ -360,7 +352,7 @@ public class TreatmentManager {
 
         userManager.changeMoneySpent(clientId, client, refundedPrice);
         try {
-            TreatmentType treatmentType = getTreatmentTypeById(t.getTreatmentTypeId());
+            TreatmentType treatmentType = getTreatmentType(t.getTreatmentTypeId());
             updateTreatmentType(t.getTreatmentTypeId(), treatmentType);
         } catch (TreatmentTypeNotFoundException e) {
             e.printStackTrace();

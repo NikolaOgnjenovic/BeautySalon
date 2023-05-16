@@ -1,7 +1,6 @@
 package com.mrmi.beautysalon.main.view;
 
 import com.mrmi.beautysalon.main.entity.Client;
-import com.mrmi.beautysalon.main.entity.User;
 import com.mrmi.beautysalon.main.manager.AuthManager;
 import com.mrmi.beautysalon.main.manager.SalonManager;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;

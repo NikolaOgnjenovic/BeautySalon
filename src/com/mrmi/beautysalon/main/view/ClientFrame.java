@@ -21,7 +21,6 @@ public class ClientFrame extends JFrame {
     private JButton buttonLogout;
     private JButton buttonDueTreatments;
     private JButton buttonPastTreatments;
-    private JButton buttonCancelTreatment;
     private JButton buttonBookTreatment;
 
     public ClientFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, AuthManager authManager, String clientUsername, Client client) {
@@ -58,9 +57,6 @@ public class ClientFrame extends JFrame {
         buttonPastTreatments = new JButton("Past treatments");
         this.add(buttonPastTreatments);
 
-        buttonCancelTreatment = new JButton("Cancel a treatment");
-        this.add(buttonCancelTreatment);
-
         buttonBookTreatment = new JButton("Book a treatment");
         this.add(buttonBookTreatment);
 
@@ -86,12 +82,6 @@ public class ClientFrame extends JFrame {
         buttonPastTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> pastTreatments = userManager.getClientPastTreatments(clientUsername);
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, pastTreatments, false, true);
-            treatmentsFrame.setVisible(true);
-        });
-
-        buttonCancelTreatment.addActionListener(e -> {
-            HashMap<Integer, Treatment> clientTreatments = userManager.getClientTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, clientTreatments, false, true);
             treatmentsFrame.setVisible(true);
         });
 
