@@ -19,7 +19,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         Database database = new Database("");
-        salonManager = new SalonManager("");
+        salonManager = new SalonManager(database);
         treatmentManager = new TreatmentManager(database, salonManager);
         userManager = new UserManager(database, salonManager);
         authManager = new AuthManager(userManager);

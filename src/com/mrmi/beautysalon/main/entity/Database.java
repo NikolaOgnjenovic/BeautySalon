@@ -11,6 +11,7 @@ public class Database {
     private HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories;
     private HashMap<Integer, TreatmentType> treatmentTypes;
     private HashMap<Integer, Treatment> treatments;
+    private BeautySalon beautySalon;
     private int userId = -1;
     private int treatmentTypeCategoryId = -1;
     private int treatmentTypeId = -1;
@@ -34,6 +35,7 @@ public class Database {
         readTreatmentTypesFile();
         readTreatmentTypeCategoriesFile();
         readVariablesFile();
+        readSalonFile();
     }
     //endregion
 
@@ -148,6 +150,17 @@ public class Database {
     public void deleteTreatment(int id) {
         this.treatments.remove(id);
         overwriteTreatmentsFile();
+    }
+    //endregion
+
+    //region Beauty salon
+    public BeautySalon getBeautySalon() {
+        return beautySalon;
+    }
+
+    public void updateBeautySalon(BeautySalon beautySalon) {
+        this.beautySalon = beautySalon;
+        overwriteSalonFile();
     }
     //endregion
 
@@ -428,6 +441,41 @@ public class Database {
     }
     //endregion
 
+    //region Beauty salon IO
+    private void readSalonFile() {
+        String fileName = filePathPrefix + "data" + separator + "salon.txt";
+        try {
+            File file = fileCheck(fileName);
+            BufferedReader in = new BufferedReader(new FileReader(file));
+            byte openingHour = Byte.parseByte(in.readLine());
+            byte closingHour = Byte.parseByte(in.readLine());
+            double loyaltyThreshold = Double.parseDouble(in.readLine());
+            double income = Double.parseDouble(in.readLine());
+            String name = in.readLine();
+            in.close();
+            beautySalon = new BeautySalon(openingHour, closingHour, loyaltyThreshold, income, name);
+        } catch (NumberFormatException | IOException ignored) {
+            beautySalon =  new BeautySalon();
+        }
+    }
+
+    private void overwriteSalonFile() {
+        String fileName = filePathPrefix + "data" + separator + "salon.txt";
+        try {
+            File file = fileCheck(fileName);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
+            out.write(beautySalon.getSalonOpeningHour() + "\n");
+            out.write(beautySalon.getSalonClosingHour() + "\n");
+            out.write(beautySalon.getLoyaltyThreshold() + "\n");
+            out.write(beautySalon.getSalonIncome() + "\n");
+            out.write(beautySalon.getName() + "\n");
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //endregion
     private void checkDataFile() {
         new File(filePathPrefix + "data").mkdir();
     }

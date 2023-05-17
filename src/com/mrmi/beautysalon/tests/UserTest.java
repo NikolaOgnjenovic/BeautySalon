@@ -23,15 +23,14 @@ public class UserTest {
     @BeforeEach
     public void setup() {
         Database database = new Database("test");
+        SalonManager salonManager = new SalonManager(database);
 
-        SalonManager salonManager = new SalonManager("");
         userManager = new UserManager(database, salonManager);
 
         userManager.addUser(new Client(-1, "Client", "password", "Client", "username", "M", "123456", "Address 1"));
         userManager.addUser(new Manager(-1, "Manager", "password", "Manager", "username", "M", "123456", "Address 2", (byte) 6, (byte) 5, 10000, 90000));
         userManager.addUser(new Beautician(-1, "Beautician", "password", "Beautician", "username", "M", "123456", "Address 3", (byte) 6, (byte) 5, 10000, 90000));
         userManager.addUser(new Receptionist(-1, "Receptionist", "password", "Receptionist", "username", "M", "123456", "Address 4", (byte) 6, (byte) 5, 10000, 90000));
-
     }
 
     private boolean deleteFile(File file) {

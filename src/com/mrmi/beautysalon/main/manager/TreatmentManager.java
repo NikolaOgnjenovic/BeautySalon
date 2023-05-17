@@ -336,11 +336,11 @@ public class TreatmentManager {
 
         double refundedPrice = t.getPrice();
         if (clientCancelled) {
-            salonManager.changeProfit(refundedPrice * 0.1);
+            salonManager.addIncome(refundedPrice * 0.1);
             refundedPrice *= 0.9;
             t.setStatus(Treatment.Status.CANCELLED_BY_CLIENT);
         } else {
-            salonManager.changeProfit(refundedPrice);
+            salonManager.addIncome(refundedPrice);
             t.setStatus(Treatment.Status.CANCELLED_BY_SALON);
         }
 

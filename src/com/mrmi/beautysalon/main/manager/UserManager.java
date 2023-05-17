@@ -130,7 +130,7 @@ public class UserManager {
         }
 
         database.addTreatment(treatment);
-        salonManager.changeProfit(treatment.getPrice());
+        salonManager.addIncome(treatment.getPrice());
         changeMoneySpent(clientId, client, price);
     }
     //endregion
