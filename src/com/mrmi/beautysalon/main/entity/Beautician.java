@@ -3,6 +3,7 @@ package com.mrmi.beautysalon.main.entity;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,8 +17,8 @@ public class Beautician extends Employee {
     }
 
     // Used when reading from files
-    public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, ArrayList<Integer> categoryIDs, byte qualificationLevel, byte yearsOfExperience, float monthlySalary) {
-        super(id, username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, monthlySalary);
+    public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, ArrayList<Integer> categoryIDs, byte qualificationLevel, byte yearsOfExperience, float monthlySalary, Calendar hiringDate) {
+        super(id, username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, monthlySalary, hiringDate);
         this.categoryIDs = categoryIDs;
     }
 
@@ -51,7 +52,7 @@ public class Beautician extends Employee {
 
     @Override
     public Object getCell(int column, Object manager) {
-        if (column != 11) {
+        if (column != 12) {
             return super.getCell(column, manager);
         }
 

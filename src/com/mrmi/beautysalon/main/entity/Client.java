@@ -46,7 +46,7 @@ public class Client extends User implements TableCell {
 
     @Override
     public Object getCell(int column, Object manager) {
-        if (column != 12) {
+        if (column != 13) {
             return super.getCell(column, manager);
         }
 

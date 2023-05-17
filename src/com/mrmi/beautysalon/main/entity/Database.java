@@ -174,6 +174,8 @@ public class Database {
             File file = fileCheck(fileName);
             BufferedReader in = new BufferedReader(new FileReader(file));
             String line;
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            Calendar hiringDate = Calendar.getInstance();
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] userData = line.split(",");
@@ -192,12 +194,13 @@ public class Database {
                         break;
                     case "B":
                         ArrayList<Integer> typeIDs = new ArrayList<>();
-                        String[] types = userData[12].split(";");
+                        String[] types = userData[13].split(";");
                         for (String s : types) {
                             if (!s.equals("")) {
                                 typeIDs.add(Integer.parseInt(s));
                             }
                         }
+                        hiringDate.setTime(sdf.parse(userData[12]));
                         users.put(Integer.parseInt(userData[1]), new Beautician(Integer.parseInt(userData[1]),
                                 userData[2],
                                 userData[3],
@@ -209,9 +212,11 @@ public class Database {
                                 typeIDs,
                                 Byte.parseByte(userData[9]),
                                 Byte.parseByte(userData[10]),
-                                Float.parseFloat(userData[11])));
+                                Float.parseFloat(userData[11]),
+                                hiringDate));
                         break;
                     case "R":
+                        hiringDate.setTime(sdf.parse(userData[12]));
                         users.put(Integer.parseInt(userData[1]), new Receptionist(Integer.parseInt(userData[1]),
                             userData[2],
                             userData[3],
@@ -222,9 +227,11 @@ public class Database {
                             userData[8],
                             Byte.parseByte(userData[9]),
                             Byte.parseByte(userData[10]),
-                            Float.parseFloat(userData[11])));
+                            Float.parseFloat(userData[11]),
+                                hiringDate));
                         break;
                     case "M":
+                        hiringDate.setTime(sdf.parse(userData[12]));
                         users.put(Integer.parseInt(userData[1]), new Manager(Integer.parseInt(userData[1]),
                             userData[2],
                             userData[3],
@@ -235,7 +242,8 @@ public class Database {
                             userData[8],
                             Byte.parseByte(userData[9]),
                             Byte.parseByte(userData[10]),
-                            Float.parseFloat(userData[11])));
+                            Float.parseFloat(userData[11]),
+                                hiringDate));
                         break;
                 }
             }
@@ -436,8 +444,8 @@ public class Database {
             byte closingHour = Byte.parseByte(in.readLine());
             float loyaltyThreshold = Float.parseFloat(in.readLine());
             float income = Float.parseFloat(in.readLine());
-            float bonus = Float.parseFloat(in.readLine());
             String name = in.readLine();
+            float bonus = Float.parseFloat(in.readLine());
             in.close();
             beautySalon = new BeautySalon(openingHour, closingHour, loyaltyThreshold, income, name, bonus);
         } catch (NumberFormatException | IOException e) {

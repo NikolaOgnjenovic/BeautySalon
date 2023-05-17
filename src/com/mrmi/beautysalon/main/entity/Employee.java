@@ -1,9 +1,14 @@
 package com.mrmi.beautysalon.main.entity;
 
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+
+import java.util.Calendar;
+
 public class Employee extends User {
     private final byte qualificationLevel; // [1-8]
     private final byte yearsOfExperience;
     private final float monthlySalary;
+    private final Calendar hiringDate;
 
     // Used when adding
     public Employee(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, float monthlySalary) {
@@ -11,14 +16,16 @@ public class Employee extends User {
         this.qualificationLevel = qualificationLevel;
         this.yearsOfExperience = yearsOfExperience;
         this.monthlySalary = monthlySalary;
+        this.hiringDate = Calendar.getInstance();
     }
 
     // Used when reading from files
-    public Employee(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, float monthlySalary) {
+    public Employee(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, float monthlySalary, Calendar hiringDate) {
         super(id, username, password, name, surname, gender, phoneNumber, address);
         this.qualificationLevel = qualificationLevel;
         this.yearsOfExperience = yearsOfExperience;
         this.monthlySalary = monthlySalary;
+        this.hiringDate = hiringDate;
     }
 
     public byte getQualificationLevel() {
@@ -36,10 +43,9 @@ public class Employee extends User {
         return monthlySalary;
     }
 
-
     @Override
     public String getFileString() {
-        return super.getFileString() + qualificationLevel + "," + yearsOfExperience + "," + monthlySalary + ",";
+        return super.getFileString() + qualificationLevel + "," + yearsOfExperience + "," + monthlySalary + "," + hiringDate + ",";
     }
 
     @Override
@@ -54,7 +60,13 @@ public class Employee extends User {
             case 9:
                 return yearsOfExperience;
             case 10:
-                return monthlySalary;
+                Calendar today = Calendar.getInstance();
+                // The salary increases every 6 months by the bonus amount
+                float bonus = today.get(Calendar.YEAR) * 12 + today.get(Calendar.MONTH) - hiringDate.get(Calendar.YEAR) * 12 - hiringDate.get(Calendar.MONTH) / 6f;
+                bonus *= ((TreatmentManager) manager).getBonus();
+                return monthlySalary + qualificationLevel * 3000 + yearsOfExperience * 1000 + bonus;
+            case 11:
+                return hiringDate.getTime();
         }
 
         return null;

@@ -350,4 +350,9 @@ public class TreatmentManager {
         }
     }
     //endregion
+
+    // Used for tables
+    public float getBonus() {
+        return salonManager.getBonus();
+    }
 }

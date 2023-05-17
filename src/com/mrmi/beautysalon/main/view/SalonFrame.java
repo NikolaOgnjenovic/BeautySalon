@@ -49,10 +49,7 @@ public class SalonFrame extends JFrame {
         this.add(textBonus, "align left");
 
         buttonBack = new JButton("Back");
-        this.add(buttonBack);
-        // TODO:
-        //  Bonus se dodaje na osnovu pravila koje će zadati menadžer (npr. broju
-        //  izvedenih kozmetičkih tretmana ili ostvarenom prihodu u jednoj nedelji, mesecu itd.).
+        this.add(buttonBack, "span");
     }
 
     private void initialiseListeners() {
@@ -60,7 +57,7 @@ public class SalonFrame extends JFrame {
         textSalonName.addActionListener(e -> salonManager.setName(textSalonName.getText()));
         textOpeningHour.addActionListener(e -> salonManager.setOpeningHour(Byte.parseByte(textOpeningHour.getText())));
         textClosingHour.addActionListener(e -> salonManager.setClosingHour(Byte.parseByte(textClosingHour.getText())));
-        textBonus.addActionListener(e -> salonManager.setBonus(Float.parseFloat(textBonus.toString())));
+        textBonus.addActionListener(e -> salonManager.setBonus(Float.parseFloat(textBonus.getText().toString())));
         buttonBack.addActionListener(e -> this.dispose());
     }
 }
