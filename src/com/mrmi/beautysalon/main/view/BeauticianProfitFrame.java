@@ -20,7 +20,7 @@ public class BeauticianProfitFrame extends JFrame {
     private JDatePickerImpl fromDatePicker;
     private JDatePickerImpl toDatePicker;
     private JTable beauticianTable;
-    private JButton backButton;
+    private JButton buttonBack;
     private Date fromDate;
     private Date toDate;
     private ArrayList<String> beauticianUsernames;
@@ -66,8 +66,8 @@ public class BeauticianProfitFrame extends JFrame {
 
         refreshTable();
 
-        backButton = new JButton("Back");
-        this.add(backButton, "span");
+        buttonBack = new JButton("Back");
+        this.add(buttonBack, "span");
     }
 
     private void initialiseListeners() {
@@ -81,7 +81,7 @@ public class BeauticianProfitFrame extends JFrame {
             refreshTable();
         });
 
-        backButton.addActionListener(e -> this.dispose());
+        buttonBack.addActionListener(e -> this.dispose());
     }
 
     private void displayTable(JTable table) {

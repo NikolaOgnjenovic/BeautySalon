@@ -277,11 +277,11 @@ public class TreatmentManager {
 
         Treatment.Status currentStatus = treatmentsByStatus.get(0).getStatus();
         int counter = 1;
-        for (int i = 0; i < treatmentsByStatus.size(); i++) {
-            if (currentStatus != treatmentsByStatus.get(0).getStatus()) {
+        for (Treatment treatment : treatmentsByStatus) {
+            if (currentStatus != treatment.getStatus()) {
                 statusCountMap.put(currentStatus, counter);
-                currentStatus = treatmentsByStatus.get(0).getStatus();
-                counter = 0;
+                currentStatus = treatment.getStatus();
+                counter = 1;
             } else {
                 counter++;
             }

@@ -1,11 +1,11 @@
-M,0,manager,manager,Nikola,Nikolić,M,1234,adresadagagd,7,3,0.0,100000.0,
+M,0,manager,manager,Nikola,Nikolić,M,1234,adresadagagd,7,3,0.0,
 C,16,gdagd,g,dg,gd,g,31,dg,false,39.0
 C,17,g,g,gg,g,g,g,g,false,0.0
 C,18,f,f,f,f,f,f,f,false,0.0
 C,19,ggf,ggf,ggf,ggf,ggf,gf,gf,false,0.0
-C,4,milica,milica,Milica,Milić,F,1234,Adresa 3,true,25302.40000000001
-B,5,sima,sima,Sima,Simić,M,123,Adresgggga 5,4,3,0.0,9000.0,;
-B,11,pera,pera,Pera,Perić,M,123,Adresa 4,5,5,1000.0,10000.0,;1;
-R,13,jadranka,jadranka,Jovanka,Jovanovic,F,123,adresa 6,6,3,3333.0,9000.0,
-R,14,rec,rec,rec,rec,f,123,adr,3,3,4444.0,100000.0,
+C,4,milica,milica,Milica,Milić,F,1234,Adresa 3,true,25314.10000000001
+B,5,sima,sima,Sima,Simić,M,123,Adresgggga 5,4,3,0.0,;
+B,11,pera,pera,Pera,Perić,M,123,Adresa 4,5,5,1000.0,;1;
+R,13,jadranka,jadranka,Jovanka,Jovanovic,F,123,adresa 6,6,3,3333.0,
+R,14,rec,rec,rec,rec,f,123,adr,3,3,4444.0,
 C,15,mrm,mrm,rm,rm,rm,123,mr,false,0.0

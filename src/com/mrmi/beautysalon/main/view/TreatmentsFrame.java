@@ -25,6 +25,7 @@ public class TreatmentsFrame extends JFrame {
     private GenericTableModel tableModel;
     private JButton buttonEdit;
     private JButton buttonDelete;
+    private JButton buttonBack;
 
     public TreatmentsFrame(TreatmentManager treatmentManager, UserManager userManager, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean isClient) {
         this.treatmentManager = treatmentManager;
@@ -84,9 +85,8 @@ public class TreatmentsFrame extends JFrame {
         JLabel clientRefund = new JLabel(0.9*totalCost + " will be refunded if the client cancels the treatments");
         this.add(clientRefund);
 
-        JButton back = new JButton("Back");
-        back.addActionListener(e -> this.dispose());
-        this.add(back);
+        buttonBack = new JButton("Back");
+        this.add(buttonBack, "span");
     }
 
     private void initialiseListeners() {
@@ -142,6 +142,8 @@ public class TreatmentsFrame extends JFrame {
                 }
             });
         }
+
+        buttonBack.addActionListener(e -> this.dispose());
     }
 
     public void refreshData() {

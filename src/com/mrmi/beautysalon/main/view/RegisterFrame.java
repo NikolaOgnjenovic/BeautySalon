@@ -19,10 +19,10 @@ public class RegisterFrame extends JFrame {
     private final User user;
     private JButton buttonRegister;
     private JButton buttonBack;
-    private JTextField textUsername, textPassword, textName, textSurname, textGender, textPhone, textAddress, textBonus, textSalary, textQualificationLevel, textExperience;
+    private JTextField textUsername, textPassword, textName, textSurname, textGender, textPhone, textAddress, textSalary, textQualificationLevel, textExperience;
 
     private JComboBox<String> comboBoxUserType;
-    private JLabel labelBonus, labelSalary, labelQualificationLevel, labelExperience;
+    private JLabel labelSalary, labelQualificationLevel, labelExperience;
     public RegisterFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, AuthManager authManager, boolean canPickUserType, User user, boolean isClient) {
         this.salonManager = salonManager;
         this.treatmentManager = treatmentManager;
@@ -98,12 +98,6 @@ public class RegisterFrame extends JFrame {
             textSalary = new JTextField(20);
             this.add(textSalary);
 
-            labelBonus = new JLabel("Salary bonus");
-            this.add(labelBonus);
-
-            textBonus = new JTextField(20);
-            this.add(textBonus);
-
             if (user != null) {
                 if (user instanceof Client) {
                     comboBoxUserType.setSelectedIndex(0);
@@ -135,7 +129,6 @@ public class RegisterFrame extends JFrame {
                 textQualificationLevel.setText(String.valueOf(((Employee) user).getQualificationLevel()));
                 textExperience.setText(String.valueOf(((Employee) user).getYearsOfExperience()));
                 textSalary.setText(String.valueOf(((Employee) user).getMonthlySalary()));
-                textBonus.setText(String.valueOf(((Employee) user).getBonus()));
             }
         }
 
@@ -169,13 +162,13 @@ public class RegisterFrame extends JFrame {
                     newUser = new Client(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText());
                     break;
                 case 1:
-                    newUser = new Beautician(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
+                    newUser = new Beautician(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textSalary.getText()));
                     break;
                 case 2:
-                    newUser = new Receptionist(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
+                    newUser = new Receptionist(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textSalary.getText()));
                     break;
                 case 3:
-                    newUser = new Manager(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
+                    newUser = new Manager(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textSalary.getText()));
                     break;
             }
 
@@ -199,7 +192,5 @@ public class RegisterFrame extends JFrame {
         textQualificationLevel.setVisible(value);
         labelSalary.setVisible(value);
         textSalary.setVisible(value);
-        labelBonus.setVisible(value);
-        textBonus.setVisible(value);
     }
 }

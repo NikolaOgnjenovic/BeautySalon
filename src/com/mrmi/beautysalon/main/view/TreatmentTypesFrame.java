@@ -18,6 +18,7 @@ public class TreatmentTypesFrame extends JFrame {
     private JButton buttonAdd;
     private JButton buttonEdit;
     private JButton buttonDelete;
+    private JButton buttonBack;
     private GenericTable table;
     private GenericTableModel tableModel;
     public TreatmentTypesFrame(TreatmentManager treatmentManager, HashMap<Integer, TreatmentType> treatmentTypes) {
@@ -63,6 +64,9 @@ public class TreatmentTypesFrame extends JFrame {
 
         filterText = new JTextField(20);
         this.add(filterText);
+
+        buttonBack = new JButton("Back");
+        this.add(buttonBack, "span");
     }
 
     private void initialiseListeners() {
@@ -113,6 +117,8 @@ public class TreatmentTypesFrame extends JFrame {
                 }
             }
         });
+
+        buttonBack.addActionListener(e -> this.dispose());
     }
 
     public void refreshData() {

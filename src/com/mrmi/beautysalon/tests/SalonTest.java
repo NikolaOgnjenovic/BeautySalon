@@ -55,4 +55,10 @@ public class SalonTest {
         salonManager.setLoyaltyThreshold(15000);
         assertEquals(15000, salonManager.getLoyaltyThreshold());
     }
+
+    @Test
+    public void testBonus() {
+        salonManager.setBonus(10000);
+        assertEquals(10000, salonManager.getBonus());
+    }
 }

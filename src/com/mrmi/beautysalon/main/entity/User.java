@@ -120,10 +120,8 @@ public abstract class User implements TableCell {
             case 10:
                 return "Monthly salary";
             case 11:
-                return "Bonus";
-            case 12:
                 return "Known treatment type categories";
-            case 13:
+            case 12:
                 return "Has loyalty card";
             default:
                 return null;
@@ -132,6 +130,6 @@ public abstract class User implements TableCell {
 
     @Override
     public int getColumnCount() {
-        return 14;
+        return 13;
     }
 }

@@ -19,7 +19,7 @@ public class ManagerFrame extends JFrame {
     private final UserManager userManager;
     private final AuthManager authManager;
     private JButton buttonEditUsers;
-    private JTextField textLoyaltyThreshold;
+    private JButton buttonEditSalon;
     private JButton buttonEditTreatmentTypeCategories;
     private JButton buttonEditTreatmentTypes;
     private JButton buttonEditTreatments;
@@ -30,9 +30,6 @@ public class ManagerFrame extends JFrame {
     private JButton buttonCancellationReport;
     private JButton beauticianReport;
     private JButton buttonLogout;
-    private JTextField textSalonName;
-    private JTextField textOpeningHour;
-    private JTextField textClosingHour;
 
     public ManagerFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, AuthManager authManager) {
         this.salonManager = salonManager;
@@ -50,21 +47,8 @@ public class ManagerFrame extends JFrame {
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        this.add(new JLabel("Loyalty threshold"));
-        textLoyaltyThreshold = new JTextField(String.valueOf(salonManager.getLoyaltyThreshold()), 7);
-        this.add(textLoyaltyThreshold);
-
-        this.add(new JLabel("Salon name"));
-        textSalonName = new JTextField(salonManager.getName(), 10);
-        this.add(textSalonName);
-
-        this.add(new JLabel("Opening hour"));
-        textOpeningHour = new JTextField(String.valueOf(salonManager.getOpeningHour()), 2);
-        this.add(textOpeningHour);
-
-        this.add(new JLabel("Closing hour"));
-        textClosingHour = new JTextField(String.valueOf(salonManager.getClosingHour()), 2);
-        this.add(textClosingHour);
+        buttonEditSalon = new JButton("Edit salon properties");
+        add(buttonEditSalon);
 
         buttonEditUsers = new JButton("Users");
         this.add(buttonEditUsers, "span, center");
@@ -95,25 +79,20 @@ public class ManagerFrame extends JFrame {
 
         // TODO:
         //  Menadžer ima uvid o prihodioma i rashodima za odredjeni vremenski period
-
-        // TODO:
-        //  Bonus se dodaje na osnovu pravila koje će zadati menadžer (npr. broju
-        //  izvedenih kozmetičkih tretmana ili ostvarenom prihodu u jednoj nedelji, mesecu itd.).
         buttonLogout = new JButton("Logout");
         this.add(buttonLogout, "span, center");
     }
 
     private void initialiseListeners() {
+        buttonEditSalon.addActionListener(e -> {
+            SalonFrame salonFrame = new SalonFrame(salonManager);
+            salonFrame.setVisible(true);
+        });
         buttonEditUsers.addActionListener(e -> {
             HashMap<Integer, User> users = userManager.getUsers();
             UsersFrame usersFrame = new UsersFrame(salonManager, treatmentManager, userManager, authManager, users);
             usersFrame.setVisible(true);
         });
-
-        textLoyaltyThreshold.addActionListener(e -> salonManager.setLoyaltyThreshold(Double.parseDouble(textLoyaltyThreshold.getText())));
-        textSalonName.addActionListener(e -> salonManager.setName(textSalonName.getText()));
-        textOpeningHour.addActionListener(e -> salonManager.setOpeningHour(Byte.parseByte(textOpeningHour.getText())));
-        textClosingHour.addActionListener(e -> salonManager.setClosingHour(Byte.parseByte(textClosingHour.getText())));
 
         buttonEditTreatmentTypeCategories.addActionListener(e -> {
             TreatmentTypeCategoriesFrame treatmentTypeCategoriesFrame = new TreatmentTypeCategoriesFrame(treatmentManager, treatmentManager.getTreatmentTypeCategories());

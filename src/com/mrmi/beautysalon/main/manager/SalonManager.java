@@ -56,4 +56,13 @@ public class SalonManager {
     public double getIncome() {
         return beautySalon.getSalonIncome();
     }
+
+    public void setBonus(double bonus) {
+        beautySalon.setBonus(bonus);
+        database.updateBeautySalon(beautySalon);
+    }
+
+    public double getBonus() {
+        return beautySalon.getBonus();
+    }
 }

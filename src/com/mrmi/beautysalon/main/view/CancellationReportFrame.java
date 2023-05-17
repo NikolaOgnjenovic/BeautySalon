@@ -22,7 +22,7 @@ public class CancellationReportFrame extends JFrame {
     private ArrayList<String> reasons;
     private ArrayList<Integer> amounts;
     private JTable cancellationTable;
-    private JButton backButton;
+    private JButton buttonBack;
 
     public CancellationReportFrame(TreatmentManager treatmentManager) {
         this.treatmentManager = treatmentManager;
@@ -52,8 +52,8 @@ public class CancellationReportFrame extends JFrame {
         cancellationTable = new JTable(cancellationReportTableModel);
         displayTable(cancellationTable);
 
-        backButton = new JButton("Back");
-        this.add(backButton, "span");
+        buttonBack = new JButton("Back");
+        this.add(buttonBack, "span");
     }
 
     private void displayTable(JTable table) {
@@ -74,7 +74,7 @@ public class CancellationReportFrame extends JFrame {
             refreshData();
         });
 
-        backButton.addActionListener(e -> this.dispose());
+        buttonBack.addActionListener(e -> this.dispose());
     }
 
     private void refreshData() {

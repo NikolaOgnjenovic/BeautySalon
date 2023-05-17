@@ -31,9 +31,9 @@ public class UserTest {
         treatmentManager = new TreatmentManager(database, salonManager);
 
         userManager.addUser(new Client("Client", "password", "Client", "username", "M", "123456", "Address 1"));
-        userManager.addUser(new Manager("Manager", "password", "Manager", "username", "M", "123456", "Address 2", (byte) 6, (byte) 5, 10000, 90000));
-        userManager.addUser(new Beautician("Beautician", "password", "Beautician", "username", "M", "123456", "Address 3", (byte) 6, (byte) 5, 10000, 90000));
-        userManager.addUser(new Receptionist("Receptionist", "password", "Receptionist", "username", "M", "123456", "Address 4", (byte) 6, (byte) 5, 10000, 90000));
+        userManager.addUser(new Manager("Manager", "password", "Manager", "username", "M", "123456", "Address 2", (byte) 6, (byte) 5, 90000));
+        userManager.addUser(new Beautician("Beautician", "password", "Beautician", "username", "M", "123456", "Address 3", (byte) 6, (byte) 5, 90000));
+        userManager.addUser(new Receptionist("Receptionist", "password", "Receptionist", "username", "M", "123456", "Address 4", (byte) 6, (byte) 5, 90000));
     }
 
     private boolean deleteFile(File file) {

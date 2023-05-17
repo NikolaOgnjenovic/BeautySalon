@@ -10,11 +10,11 @@ public class Database {
     private HashMap<Integer, TreatmentType> treatmentTypes;
     private HashMap<Integer, Treatment> treatments;
     private BeautySalon beautySalon;
-    private int userId = -1;
-    private int treatmentTypeCategoryId = -1;
-    private int treatmentTypeId = -1;
+    private int userId;
+    private int treatmentTypeCategoryId;
+    private int treatmentTypeId;
 
-    private int treatmentId = -1;
+    private int treatmentId;
 
     private final String filePathPrefix; // Used to differentiate test & regular files
     private final String separator;
@@ -192,7 +192,7 @@ public class Database {
                         break;
                     case "B":
                         ArrayList<Integer> treatmentTypeIDs = new ArrayList<>();
-                        String[] treatmentTypes = userData[13].split(";");
+                        String[] treatmentTypes = userData[12].split(";");
                         for (String s : treatmentTypes) {
                             if (!s.equals("")) {
                                 treatmentTypeIDs.add(Integer.parseInt(s));
@@ -209,8 +209,7 @@ public class Database {
                                 treatmentTypeIDs,
                                 Byte.parseByte(userData[9]),
                                 Byte.parseByte(userData[10]),
-                                Double.parseDouble(userData[11]),
-                                Double.parseDouble(userData[12])));
+                                Double.parseDouble(userData[11])));
                         break;
                     case "R":
                         users.put(Integer.parseInt(userData[1]), new Receptionist(Integer.parseInt(userData[1]),
@@ -223,8 +222,7 @@ public class Database {
                             userData[8],
                             Byte.parseByte(userData[9]),
                             Byte.parseByte(userData[10]),
-                            Double.parseDouble(userData[11]),
-                            Double.parseDouble(userData[12])));
+                            Double.parseDouble(userData[11])));
                         break;
                     case "M":
                         users.put(Integer.parseInt(userData[1]), new Manager(Integer.parseInt(userData[1]),
@@ -237,8 +235,7 @@ public class Database {
                             userData[8],
                             Byte.parseByte(userData[9]),
                             Byte.parseByte(userData[10]),
-                            Double.parseDouble(userData[11]),
-                            Double.parseDouble(userData[12])));
+                            Double.parseDouble(userData[11])));
                         break;
                 }
             }
@@ -439,11 +436,12 @@ public class Database {
             byte closingHour = Byte.parseByte(in.readLine());
             double loyaltyThreshold = Double.parseDouble(in.readLine());
             double income = Double.parseDouble(in.readLine());
+            double bonus = Double.parseDouble(in.readLine());
             String name = in.readLine();
             in.close();
-            beautySalon = new BeautySalon(openingHour, closingHour, loyaltyThreshold, income, name);
-        } catch (NumberFormatException | IOException ignored) {
-            beautySalon =  new BeautySalon();
+            beautySalon = new BeautySalon(openingHour, closingHour, loyaltyThreshold, income, name, bonus);
+        } catch (NumberFormatException | IOException e) {
+            beautySalon = new BeautySalon();
         }
     }
 
@@ -457,6 +455,7 @@ public class Database {
             out.write(beautySalon.getLoyaltyThreshold() + "\n");
             out.write(beautySalon.getSalonIncome() + "\n");
             out.write(beautySalon.getName() + "\n");
+            out.write(beautySalon.getBonus() + "\n");
             out.close();
         } catch (Exception e) {
             e.printStackTrace();
