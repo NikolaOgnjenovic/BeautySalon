@@ -3,9 +3,6 @@ package com.mrmi.beautysalon.main.manager;
 import com.mrmi.beautysalon.main.entity.BeautySalon;
 import com.mrmi.beautysalon.main.entity.Database;
 
-import javax.xml.crypto.Data;
-import java.io.*;
-
 public class SalonManager {
     private final Database database;
     private final BeautySalon beautySalon;

@@ -2,6 +2,7 @@ package com.mrmi.beautysalon.tests;
 
 import com.mrmi.beautysalon.main.entity.*;
 import com.mrmi.beautysalon.main.manager.SalonManager;
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserTest {
     private UserManager userManager;
+    private TreatmentManager treatmentManager;
 
     // TODO: introduce a test suite to run all test files together
 
@@ -26,11 +28,12 @@ public class UserTest {
         SalonManager salonManager = new SalonManager(database);
 
         userManager = new UserManager(database, salonManager);
+        treatmentManager = new TreatmentManager(database, salonManager);
 
-        userManager.addUser(new Client(-1, "Client", "password", "Client", "username", "M", "123456", "Address 1"));
-        userManager.addUser(new Manager(-1, "Manager", "password", "Manager", "username", "M", "123456", "Address 2", (byte) 6, (byte) 5, 10000, 90000));
-        userManager.addUser(new Beautician(-1, "Beautician", "password", "Beautician", "username", "M", "123456", "Address 3", (byte) 6, (byte) 5, 10000, 90000));
-        userManager.addUser(new Receptionist(-1, "Receptionist", "password", "Receptionist", "username", "M", "123456", "Address 4", (byte) 6, (byte) 5, 10000, 90000));
+        userManager.addUser(new Client("Client", "password", "Client", "username", "M", "123456", "Address 1"));
+        userManager.addUser(new Manager("Manager", "password", "Manager", "username", "M", "123456", "Address 2", (byte) 6, (byte) 5, 10000, 90000));
+        userManager.addUser(new Beautician("Beautician", "password", "Beautician", "username", "M", "123456", "Address 3", (byte) 6, (byte) 5, 10000, 90000));
+        userManager.addUser(new Receptionist("Receptionist", "password", "Receptionist", "username", "M", "123456", "Address 4", (byte) 6, (byte) 5, 10000, 90000));
     }
 
     private boolean deleteFile(File file) {
@@ -101,7 +104,7 @@ public class UserTest {
         ArrayList<Client> clients = userManager.getClients();
         Client client = clients.get(0);
         assertEquals(0, client.getMoneySpent());
-        userManager.changeMoneySpent(0, client, 900);
+        userManager.changeMoneySpent(client, 900);
         assertEquals(900, client.getMoneySpent());
     }
 
@@ -125,8 +128,8 @@ public class UserTest {
 
     @Test
     public void testBookTreatment() throws UserNotFoundException {
-        Treatment treatment = new Treatment(-1, Calendar.getInstance(), false, "Client", "Beautician", 0, 1000);
-        userManager.bookTreatment(treatment);
+        Treatment treatment = new Treatment(Calendar.getInstance(), "Client", "Beautician", 0, 1000);
+        userManager.bookTreatment(treatment, treatmentManager);
 
         Beautician beautician = userManager.getBeautician(2);
         Client client = userManager.getClient(0);

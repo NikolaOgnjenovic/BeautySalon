@@ -2,6 +2,7 @@ package com.mrmi.beautysalon.main.view.addedit;
 
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.entity.TreatmentType;
+import com.mrmi.beautysalon.main.exceptions.TreatmentNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
@@ -145,18 +146,25 @@ public class AddEditTreatmentDialog extends JDialog {
                         int clientId;
                         try {
                             clientId = userManager.getClientIdByUsername(clientUsername);
+                            treatmentManager.cancelTreatment(clientId, id, false, cancellationReason, userManager);
                         } catch (UserNotFoundException ex) {
                             JOptionPane.showMessageDialog(null, "Invalid client username", "Error", JOptionPane.ERROR_MESSAGE);
                             return;
+                        } catch (TreatmentNotFoundException ex) {
+                            JOptionPane.showMessageDialog(null, "Invalid treatment id", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
                         }
-                        treatmentManager.cancelTreatment(clientId, id, false, cancellationReason, userManager);
                     } else {
                         JOptionPane.showMessageDialog(null, "Invalid cancellation reason", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
 
-                treatmentManager.updateTreatment(id, treatment, treatmentTypeId, scheduledDate, price, clientUsername, beauticianUsername, status);
+                try {
+                    treatmentManager.updateTreatment(treatment, treatmentTypeId, scheduledDate, price, clientUsername, beauticianUsername, status);
+                } catch (TreatmentNotFoundException ignored) {
+
+                }
             }
 
             ((TreatmentsFrame) parent).refreshData();

@@ -10,7 +10,6 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class ReceptionistFrame extends JFrame {

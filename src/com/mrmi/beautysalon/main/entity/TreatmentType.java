@@ -1,5 +1,6 @@
 package com.mrmi.beautysalon.main.entity;
 
+import com.mrmi.beautysalon.main.exceptions.TreatmentTypeCategoryNotFoundException;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
 
 public class TreatmentType implements TableCell {
@@ -9,14 +10,17 @@ public class TreatmentType implements TableCell {
     private int categoryId;
     private int duration;
     private boolean isDeleted;
-    public TreatmentType(int id, String name, double price, int categoryId, int duration) {
-        this.id = id;
+
+    // Used when adding
+    public TreatmentType(String name, double price, int categoryId, int duration) {
         this.name = name;
         this.price = price;
         this.categoryId = categoryId;
         this.duration = duration;
         this.isDeleted = false;
     }
+
+    // Used when reading from files
     public TreatmentType(int id, String name, double price, int categoryId, int duration, boolean isDeleted) {
         this.id = id;
         this.name = name;
@@ -93,7 +97,11 @@ public class TreatmentType implements TableCell {
             case 1:
                 return name;
             case 2:
-                return treatmentManager.getTreatmentTypeCategoryName(categoryId);
+                try {
+                    return treatmentManager.getTreatmentTypeCategoryName(categoryId);
+                } catch (TreatmentTypeCategoryNotFoundException e) {
+                    return "Deleted treatment type category";
+                }
             case 3:
                 return price;
             case 4:

@@ -1,6 +1,7 @@
 package com.mrmi.beautysalon.main.manager;
 
 import com.mrmi.beautysalon.main.exceptions.TreatmentNotFoundException;
+import com.mrmi.beautysalon.main.exceptions.TreatmentTypeCategoryNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.entity.*;
@@ -11,85 +12,83 @@ import java.util.stream.Collectors;
 public class TreatmentManager {
     private final Database database;
     private final SalonManager salonManager;
+    private final HashMap<Integer, TreatmentTypeCategory> categories;
+    private final HashMap<Integer, TreatmentType> types;
+    private final HashMap<Integer, Treatment> treatments;
 
     public TreatmentManager(Database database,SalonManager salonManager) {
         this.database = database;
         this.salonManager = salonManager;
+        this.categories = database.getTreatmentTypeCategories();
+        this.types = database.getTreatmentTypes();
+        this.treatments = database.getTreatments();
     }
 
     //region Treatment type category
     public void addTreatmentTypeCategory(String name) {
-        TreatmentTypeCategory category = new TreatmentTypeCategory(-1, name);
-        database.addTreatmentTypeCategory(category);
+        int id = database.getNextTreatmentTypeCategoryId();
+        TreatmentTypeCategory category = new TreatmentTypeCategory(name);
+        categories.put(id, category);
+        database.addTreatmentTypeCategory(id, category);
     }
 
     public HashMap<Integer, TreatmentTypeCategory> getTreatmentTypeCategories() {
-        return database.getTreatmentTypeCategories();
+        return categories;
     }
 
-    public TreatmentTypeCategory getTreatmentTypeCategory(int id) {
-        return database.getTreatmentTypeCategories().get(id);
+    public TreatmentTypeCategory getTreatmentTypeCategory(int id) throws TreatmentTypeCategoryNotFoundException {
+        if (!categories.containsKey(id)) {
+            throw new TreatmentTypeCategoryNotFoundException("Treatment type category with id " + id + " not found.");
+        }
+        return categories.get(id);
     }
 
     public HashMap<Integer, TreatmentTypeCategory> getAvailableTreatmentTypeCategories() {
-        return (HashMap<Integer, TreatmentTypeCategory>) database.getTreatmentTypeCategories().entrySet()
+        return (HashMap<Integer, TreatmentTypeCategory>) categories.entrySet()
                 .stream()
                 .filter(category -> !category.getValue().isDeleted())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-    public String getTreatmentTypeCategoryName(int treatmentTypeCategoryId) {
-        TreatmentTypeCategory category = database.getTreatmentTypeCategories().get(treatmentTypeCategoryId);
-        if (category == null) {
-            return "Deleted treatment category";
-        }
+    public String getTreatmentTypeCategoryName(int treatmentTypeCategoryId) throws TreatmentTypeCategoryNotFoundException {
+        TreatmentTypeCategory category = getTreatmentTypeCategory(treatmentTypeCategoryId);
         return category.getName();
     }
 
-    public String getTreatmentTypeCategoryNameByTypeName(int treatmentTypeId) {
-        TreatmentType treatmentType = database.getTreatmentTypes().get(treatmentTypeId);
-        if (treatmentType == null) {
-            return "Deleted treatment type";
-        }
+    public String getTreatmentTypeCategoryNameByType(int treatmentTypeId) throws TreatmentTypeNotFoundException, TreatmentTypeCategoryNotFoundException {
+        TreatmentType treatmentType = getTreatmentType(treatmentTypeId);
 
-        TreatmentTypeCategory treatmentTypeCategory = database.getTreatmentTypeCategories().get(treatmentType.getCategoryId());
-        if (treatmentTypeCategory == null) {
-            return "Deleted treatment type category";
-        }
-
-        return treatmentTypeCategory.getName();
+        return getTreatmentTypeCategoryName(treatmentType.getCategoryId());
     }
 
-    public void updateTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
-        database.updateTreatmentTypeCategory(id, treatmentTypeCategory);
+    public void updateTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory) {
+        categories.put(treatmentTypeCategory.getId(), treatmentTypeCategory);
+        database.updateTreatmentTypeCategory(treatmentTypeCategory);
     }
 
-    public void updateTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory, String name) {
+    public void updateTreatmentTypeCategoryName(TreatmentTypeCategory treatmentTypeCategory, String name) {
         treatmentTypeCategory.setName(name);
-        database.updateTreatmentTypeCategory(id, treatmentTypeCategory);
+        database.updateTreatmentTypeCategory(treatmentTypeCategory);
     }
 
-    public void deleteTreatmentTypeCategory(int id) {
-        TreatmentTypeCategory category = database.getTreatmentTypeCategories().get(id);
+    public void deleteTreatmentTypeCategory(int id) throws TreatmentTypeCategoryNotFoundException {
+        TreatmentTypeCategory category = getTreatmentTypeCategory(id);
         category.setDeleted(true);
-        updateTreatmentTypeCategory(id, category);
+        updateTreatmentTypeCategory(category);
 
-        for (Map.Entry<Integer, TreatmentType> entry : database.getTreatmentTypes().entrySet()) {
+        for (Map.Entry<Integer, TreatmentType> entry : types.entrySet()) {
             if (entry.getValue().getCategoryId() == id) {
                 entry.getValue().setDeleted(true);
-                updateTreatmentType(entry.getKey(), entry.getValue());
+                updateTreatmentType(entry.getValue());
             }
         }
     }
 
     public int[] getCategoryProfitByMonths(int treatmentTypeCategoryId) {
-        HashMap<Integer, TreatmentType> treatmentTypes = database.getTreatmentTypes();
-        HashMap<Integer, Treatment> treatments = database.getTreatments();
-
         int[] profit = new int[12];
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, -1);
         for (Treatment t : treatments.values()) {
-            if (treatmentTypeCategoryId == treatmentTypes.get(t.getTreatmentTypeId()).getCategoryId()) {
+            if (treatmentTypeCategoryId == types.get(t.getTreatmentTypeId()).getCategoryId()) {
                 if (t.getScheduledDate().after(calendar)) {
                     profit[t.getScheduledDate().get(Calendar.MONTH)] += t.getPrice();
                 }
@@ -102,10 +101,11 @@ public class TreatmentManager {
 
     //region Treatment type
     public void addTreatmentType(String name, double price, int treatmentTypeCategoryId, int duration) {
-        database.addTreatmentType(new TreatmentType(-1, name, price, treatmentTypeCategoryId, duration));
+        int id = database.getNextTreatmentTypeId();
+        database.addTreatmentType(id, new TreatmentType(name, price, treatmentTypeCategoryId, duration));
     }
     public HashMap<Integer, TreatmentType> getTreatmentTypes() {
-        return database.getTreatmentTypes();
+        return types;
     }
 
     /**
@@ -113,45 +113,41 @@ public class TreatmentManager {
      * @return HashMap of treatments types that aren't marked as deleted
      */
     public HashMap<Integer, TreatmentType> getAvailableTreatmentTypes() {
-        return (HashMap<Integer, TreatmentType>) database.getTreatmentTypes().entrySet()
+        return (HashMap<Integer, TreatmentType>) types.entrySet()
                 .stream()
                 .filter(type -> !type.getValue().isDeleted())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public TreatmentType getTreatmentType(int id) throws TreatmentTypeNotFoundException {
-        HashMap<Integer, TreatmentType> treatmentTypes = database.getTreatmentTypes();
-        if (!treatmentTypes.containsKey(id)) {
+        if (!types.containsKey(id)) {
             throw new TreatmentTypeNotFoundException("Treatment type with id " + id + " not found.");
 
         }
-        return treatmentTypes.get(id);
+        return types.get(id);
     }
 
-    public void updateTreatmentType(int id, TreatmentType type) {
-        database.updateTreatmentType(id, type);
+    public void updateTreatmentType(TreatmentType type) {
+        database.updateTreatmentType(type.getId(), type);
     }
 
-    public void updateTreatmentType(int id, TreatmentType type, String name, double price, int treatmentTypeCategoryId, int duration) {
+    public void updateTreatmentType(TreatmentType type, String name, double price, int treatmentTypeCategoryId, int duration) {
         type.setName(name);
         type.setPrice(price);
         type.setCategoryId(treatmentTypeCategoryId);
         type.setDuration(duration);
-        database.updateTreatmentType(id, type);
+        database.updateTreatmentType(type.getId(), type);
     }
 
-    public void deleteTreatmentType(int id) {
-        TreatmentType type = database.getTreatmentTypes().get(id);
+    public void deleteTreatmentType(int id) throws TreatmentTypeNotFoundException {
+        TreatmentType type = getTreatmentType(id);
         type.setDeleted(true);
-        updateTreatmentType(id, type);
+        updateTreatmentType(type);
     }
 
-    public String getTreatmentTypeName(int treatmentTypeId) {
-       TreatmentType treatmentType = database.getTreatmentTypes().get(treatmentTypeId);
-       if (treatmentType == null) {
-           return "Deleted treatment type";
-       }
-       return treatmentType.getName();
+    public String getTreatmentTypeName(int treatmentTypeId) throws TreatmentTypeNotFoundException {
+        TreatmentType treatmentType = getTreatmentType(treatmentTypeId);
+        return treatmentType.getName();
     }
 
     /**
@@ -162,15 +158,12 @@ public class TreatmentManager {
      * @return a Vector of Strings which contains available time slots for the treatment
      */
     public Vector<String> getAvailableTimeSlots(Calendar selectedDate, int treatmentTypeId, SalonManager salonManager) {
-        HashMap<Integer, TreatmentType> treatmentTypes = database.getTreatmentTypes();
-        HashMap<Integer, Treatment> treatments = database.getTreatments();
-
-        if (!treatmentTypes.containsKey(treatmentTypeId)) {
+        if (!types.containsKey(treatmentTypeId)) {
             return new Vector<>();
         }
 
         // Round the treatment duration (minutes) to hours
-        int duration = treatmentTypes.get(treatmentTypeId).getDuration();
+        int duration = types.get(treatmentTypeId).getDuration();
         int roundedDurationHour = duration / 60 + 1;
         Vector<String> availableTimeSlots = new Vector<>();
 
@@ -203,9 +196,8 @@ public class TreatmentManager {
     }
 
     public int getTimesBooked(int treatmentTypeId) {
-        Collection<Treatment> treatments = database.getTreatments().values();
         int counter = 0;
-        for (Treatment t : treatments) {
+        for (Treatment t : treatments.values()) {
             if (t.getTreatmentTypeId() == treatmentTypeId) {
                 counter++;
             }
@@ -215,9 +207,8 @@ public class TreatmentManager {
     }
 
     public double getProfit(int treatmentTypeId) {
-        Collection<Treatment> treatments = database.getTreatments().values();
         double profit = 0;
-        for (Treatment t : treatments) {
+        for (Treatment t : treatments.values()) {
             if (t.getTreatmentTypeId() == treatmentTypeId) {
                 profit += t.getPrice();
             }
@@ -230,25 +221,30 @@ public class TreatmentManager {
     //region Treatment
 
     public HashMap<Integer, Treatment> getTreatments() {
-        return database.getTreatments();
+        return treatments;
+    }
+
+    public void addTreatment(Treatment treatment) {
+        int id = database.getNextTreatmentId();
+        treatments.put(id, treatment);
+        database.addTreatment(id, treatment);
     }
 
     public Treatment getTreatment(int id) throws TreatmentNotFoundException {
-        HashMap<Integer, Treatment> treatments = database.getTreatments();
         if (!treatments.containsKey(id)) {
             throw new TreatmentNotFoundException("Treatment with id " + id + " not found.");
         }
         return treatments.get(id);
     }
 
-    public void updateTreatment(int id, Treatment treatment) throws TreatmentNotFoundException {
-        if (!database.getTreatments().containsKey(id)) {
-            throw new TreatmentNotFoundException("Treatment with id " + id + " not found.");
+    public void updateTreatment(Treatment treatment) throws TreatmentNotFoundException {
+        if (!treatments.containsKey(treatment.getId())) {
+            throw new TreatmentNotFoundException("Treatment with id " + treatment.getId() + " not found.");
         }
-        database.updateTreatment(treatment, id);
+        database.updateTreatment(treatment);
     }
 
-    public void updateTreatment(int id, Treatment treatment, int treatmentTypeId, Calendar scheduledDate, Double price, String clientUsername, String beauticianUsername, Treatment.Status status) {
+    public void updateTreatment(Treatment treatment, int treatmentTypeId, Calendar scheduledDate, Double price, String clientUsername, String beauticianUsername, Treatment.Status status) throws TreatmentNotFoundException {
         treatment.setTreatmentTypeId(treatmentTypeId);
         treatment.setScheduledDate(scheduledDate);
         treatment.setPrice(price);
@@ -260,18 +256,18 @@ public class TreatmentManager {
             treatment.setCancellationReason("N/A");
         }
 
-        database.updateTreatment(treatment, id);
+        updateTreatment(treatment);
     }
 
     public void deleteTreatment(int id) throws TreatmentNotFoundException {
-        if (!database.getTreatments().containsKey(id)) {
+        if (!treatments.containsKey(id)) {
             throw new TreatmentNotFoundException("Treatment with id " + id + " not found.");
         }
         database.deleteTreatment(id);
     }
 
     public HashMap<Treatment.Status, Integer> getStatusCountMap() {
-        ArrayList<Treatment> treatmentsByStatus = new ArrayList<>(database.getTreatments().values());
+        ArrayList<Treatment> treatmentsByStatus = new ArrayList<>(treatments.values());
         treatmentsByStatus.sort(Comparator.comparing(Treatment::getStatus));
 
         HashMap<Treatment.Status, Integer> statusCountMap = new HashMap<>();
@@ -304,27 +300,21 @@ public class TreatmentManager {
     }
 
     public List<Treatment> getTreatmentsSortedByBeauticians() {
-        List<Treatment> list = new ArrayList<>(database.getTreatments().values());
+        List<Treatment> list = new ArrayList<>(treatments.values());
         list.sort(Comparator.comparing(Treatment::getBeauticianUsername));
         return list;
     }
 
     public List<Treatment> getTreatmentsSortedByCancellationReason() {
-        List<Treatment> list = new ArrayList<>(database.getTreatments().values());
+        List<Treatment> list = new ArrayList<>(treatments.values());
         list.sort(Comparator.comparing(Treatment::getCancellationReason));
         return list;
     }
 
-    public void cancelTreatment(int clientId, int treatmentId, boolean clientCancelled, String cancellationReason, UserManager userManager) {
-        Treatment t;
-        try {
-            t = getTreatment(treatmentId);
-        } catch (TreatmentNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-        t.setCancelled(true);
-        t.setCancellationReason(cancellationReason);
+    public void cancelTreatment(int clientId, int treatmentId, boolean clientCancelled, String cancellationReason, UserManager userManager) throws TreatmentNotFoundException {
+        Treatment treatment = getTreatment(treatmentId);
+        treatment.setCancelled(true);
+        treatment.setCancellationReason(cancellationReason);
 
         Client client;
         try {
@@ -334,29 +324,18 @@ public class TreatmentManager {
             return;
         }
 
-        double refundedPrice = t.getPrice();
+        double refundedPrice = treatment.getPrice();
         if (clientCancelled) {
             salonManager.addIncome(refundedPrice * 0.1);
             refundedPrice *= 0.9;
-            t.setStatus(Treatment.Status.CANCELLED_BY_CLIENT);
+            treatment.setStatus(Treatment.Status.CANCELLED_BY_CLIENT);
         } else {
             salonManager.addIncome(refundedPrice);
-            t.setStatus(Treatment.Status.CANCELLED_BY_SALON);
+            treatment.setStatus(Treatment.Status.CANCELLED_BY_SALON);
         }
 
-        try {
-            updateTreatment(treatmentId, t);
-        } catch (TreatmentNotFoundException ignored) {
-
-        }
-
-        userManager.changeMoneySpent(clientId, client, refundedPrice);
-        try {
-            TreatmentType treatmentType = getTreatmentType(t.getTreatmentTypeId());
-            updateTreatmentType(t.getTreatmentTypeId(), treatmentType);
-        } catch (TreatmentTypeNotFoundException e) {
-            e.printStackTrace();
-        }
+        userManager.changeMoneySpent(client, refundedPrice);
+        updateTreatment(treatment);
     }
 
     /**
@@ -364,7 +343,7 @@ public class TreatmentManager {
      */
     public void finishTreatments() {
         Calendar currentDate = Calendar.getInstance();
-        for (Treatment treatment : getTreatments().values()) {
+        for (Treatment treatment : treatments.values()) {
             if (treatment.getScheduledDate().before(currentDate) && !treatment.isCancelled()) {
                 treatment.setStatus(Treatment.Status.FINISHED);
             }

@@ -1,5 +1,7 @@
 package com.mrmi.beautysalon.main.entity;
 
+import com.mrmi.beautysalon.main.exceptions.TreatmentTypeCategoryNotFoundException;
+import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
 
 import java.util.Calendar;
@@ -28,10 +30,10 @@ public class Treatment implements TableCell {
 
     private String cancellationReason;
 
-    public Treatment(int id, Calendar scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price) {
-        this.id = id;
+    // Used when adding
+    public Treatment(Calendar scheduledDate, String clientUsername, String beauticianUsername, int treatmentTypeId, double price) {
         this.scheduledDate = scheduledDate;
-        this.cancelled = cancelled;
+        this.cancelled = false;
         this.clientUsername = clientUsername;
         this.beauticianUsername = beauticianUsername;
         this.treatmentTypeId = treatmentTypeId;
@@ -40,6 +42,7 @@ public class Treatment implements TableCell {
         this.cancellationReason = "N/A";
     }
 
+    // Used when reading from files
     public Treatment(int id, Calendar scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price, Status status, String cancellationReason) {
         this.id = id;
         this.scheduledDate = scheduledDate;
@@ -124,6 +127,10 @@ public class Treatment implements TableCell {
         this.id = id;
     }
 
+    public int getId() {
+        return id;
+    }
+
     @Override
     public Object getCell(int column, Object manager) {
         TreatmentManager treatmentManager = (TreatmentManager) manager;
@@ -131,9 +138,19 @@ public class Treatment implements TableCell {
             case 0:
                 return id;
             case 1:
-                return treatmentManager.getTreatmentTypeName(treatmentTypeId);
+                try {
+                    return treatmentManager.getTreatmentTypeName(treatmentTypeId);
+                } catch (TreatmentTypeNotFoundException e) {
+                    return "Treatment type not found";
+                }
             case 2:
-                return treatmentManager.getTreatmentTypeCategoryNameByTypeName(treatmentTypeId);
+                try {
+                    return treatmentManager.getTreatmentTypeCategoryNameByType(treatmentTypeId);
+                } catch (TreatmentTypeCategoryNotFoundException e) {
+                    return "Treatment type category not found";
+                } catch (TreatmentTypeNotFoundException e) {
+                    return "Treatment type not found";
+                }
             case 3:
                 return scheduledDate.getTime();
             case 4:

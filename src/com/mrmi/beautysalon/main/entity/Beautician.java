@@ -9,19 +9,16 @@ import java.util.List;
 public class Beautician extends Employee {
     private final List<Integer> treatmentTypeCategoryIDs;
 
-    public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, ArrayList<Integer> treatmentTypeCategoryIDs) {
-        super(id, username, password, name, surname, gender, phoneNumber, address);
-        this.treatmentTypeCategoryIDs = treatmentTypeCategoryIDs;
+    // Used when adding
+    public Beautician(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
+        this.treatmentTypeCategoryIDs = new ArrayList<>();
     }
 
+    // Used when reading from files
     public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, ArrayList<Integer> treatmentTypeCategoryIDs, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
         super(id, username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
         this.treatmentTypeCategoryIDs = treatmentTypeCategoryIDs;
-    }
-
-    public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
-        super(id, username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, bonus, monthlySalary);
-        this.treatmentTypeCategoryIDs = new ArrayList<>();
     }
 
     public List<Integer> getTreatmentTypeCategoryIDs() {

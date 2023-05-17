@@ -132,7 +132,7 @@ public class BookTreatmentFrame extends JFrame {
             selectedDate.set(Calendar.HOUR, Integer.parseInt(selectedTime.substring(0, 2)));
             selectedDate.set(Calendar.MINUTE, 0);
             selectedDate.set(Calendar.SECOND, 0);
-            userManager.bookTreatment(new Treatment(-1, selectedDate, false, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice));
+            userManager.bookTreatment(new Treatment(selectedDate, clientUsername, beauticianUsername, treatmentTypeId, treatmentPrice), treatmentManager);
             this.dispose();
         });
 

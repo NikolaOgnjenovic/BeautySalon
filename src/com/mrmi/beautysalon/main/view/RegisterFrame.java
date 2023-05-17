@@ -1,6 +1,5 @@
 package com.mrmi.beautysalon.main.view;
 
-import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.manager.AuthManager;
 import com.mrmi.beautysalon.main.manager.SalonManager;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
@@ -153,12 +152,8 @@ public class RegisterFrame extends JFrame {
         }
 
         buttonRegister.addActionListener(e -> {
-            int id = -1;
-            if (user != null) {
-                id = user.getId();
-            }
             if (!canPickUserType) {
-                Client client = new Client(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText());
+                Client client = new Client(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText());
                 userManager.addUser(client);
                 this.dispose();
 
@@ -171,26 +166,24 @@ public class RegisterFrame extends JFrame {
             User newUser = user;
             switch (comboBoxUserType.getSelectedIndex()) {
                 case 0:
-                    newUser = new Client(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText());
+                    newUser = new Client(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText());
                     break;
                 case 1:
-                    newUser = new Beautician(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
+                    newUser = new Beautician(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
                     break;
                 case 2:
-                    newUser = new Receptionist(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
+                    newUser = new Receptionist(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
                     break;
                 case 3:
-                    newUser = new Manager(id, textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
+                    newUser = new Manager(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textBonus.getText()), Float.parseFloat(textSalary.getText()));
                     break;
             }
 
             if (user == null) {
                 userManager.addUser(newUser);
             } else {
-                try {
-                    userManager.updateUser(user.getId(), newUser);
-                } catch (UserNotFoundException ignored) {
-                }
+                newUser.setId(user.getId());
+                userManager.updateUser(newUser);
             }
 
             this.dispose();

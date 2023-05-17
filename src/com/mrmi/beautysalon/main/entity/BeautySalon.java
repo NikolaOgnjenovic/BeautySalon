@@ -7,20 +7,22 @@ public class BeautySalon {
     private double salonIncome;
     private String name;
 
-    public BeautySalon(byte salonOpeningHour, byte salonClosingHour, double loyaltyThreshold, double salonIncome, String name) {
-        this.salonOpeningHour = salonOpeningHour;
-        this.salonClosingHour = salonClosingHour;
-        this.loyaltyThreshold = loyaltyThreshold;
-        this.salonIncome = salonIncome;
-        this.name = name;
-    }
-
+    // Used when adding
     public BeautySalon() {
         this.salonOpeningHour = 8;
         this.salonClosingHour = 20;
         this.loyaltyThreshold = 15000;
         this.salonIncome = 0;
         this.name = "Salon";
+    }
+
+    // Used when reading from files
+    public BeautySalon(byte salonOpeningHour, byte salonClosingHour, double loyaltyThreshold, double salonIncome, String name) {
+        this.salonOpeningHour = salonOpeningHour;
+        this.salonClosingHour = salonClosingHour;
+        this.loyaltyThreshold = loyaltyThreshold;
+        this.salonIncome = salonIncome;
+        this.name = name;
     }
 
     public byte getSalonOpeningHour() {

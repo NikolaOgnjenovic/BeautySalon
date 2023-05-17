@@ -1,7 +1,5 @@
 package com.mrmi.beautysalon.main.entity;
 
-import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
-
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,8 +38,7 @@ public class Database {
     //endregion
 
     //region User
-    public void addUser(User user) {
-        int id = getNextUserId();
+    public void addUser(int id, User user) {
         user.setId(id);
         users.put(id, user);
         writeUser(user);
@@ -51,18 +48,12 @@ public class Database {
         return users;
     }
 
-    public void updateUser(int userId, User user) throws UserNotFoundException {
-        if (!users.containsKey(userId)) {
-            throw new UserNotFoundException("User with username " + userId + " not found.");
-        }
-        users.put(userId, user);
+    public void updateUser(User user) {
+        users.put(user.getId(), user);
         overwriteUsersFile();
     }
 
-    public void deleteUser(int userId) throws UserNotFoundException {
-        if (!users.containsKey(userId)) {
-            throw new UserNotFoundException("User with username " + userId + " not found.");
-        }
+    public void deleteUser(int userId) {
         users.remove(userId);
         overwriteUsersFile();
     }
@@ -75,8 +66,7 @@ public class Database {
     //endregion
 
     //region Treatment Type Category
-    public void addTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory) {
-        int id = getNextTreatmentTypeCategoryId();
+    public void addTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
         treatmentTypeCategory.setId(id);
         treatmentTypeCategories.put(id, treatmentTypeCategory);
         writeTreatmentTypeCategory(treatmentTypeCategory);
@@ -93,15 +83,14 @@ public class Database {
         return treatmentTypeCategoryId;
     }
 
-    public void updateTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
-        treatmentTypeCategories.put(id, treatmentTypeCategory);
+    public void updateTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory) {
+        treatmentTypeCategories.put(treatmentTypeCategory.getId(), treatmentTypeCategory);
         overwriteTreatmentTypeCategoriesFile();
     }
     //endregion
 
     //region Treatment types
-    public void addTreatmentType(TreatmentType type) {
-        int id = getNextTreatmentTypeId();
+    public void addTreatmentType(int id, TreatmentType type) {
         type.setId(id);
         treatmentTypes.put(id, type);
         writeTreatmentType(type);
@@ -125,8 +114,7 @@ public class Database {
     //endregion
 
     //region Treatment
-    public void addTreatment(Treatment treatment) {
-        int id = getNextTreatmentId();
+    public void addTreatment(int id, Treatment treatment) {
         treatment.setId(id);
         treatments.put(id, treatment);
         writeTreatment(treatment);
@@ -142,8 +130,8 @@ public class Database {
         return treatmentId;
     }
 
-    public void updateTreatment(Treatment treatment, int id) {
-        treatments.put(id, treatment);
+    public void updateTreatment(Treatment treatment) {
+        treatments.put(treatment.getId(), treatment);
         overwriteTreatmentsFile();
     }
 

@@ -11,6 +11,18 @@ public abstract class User implements TableCell {
     private final String phoneNumber;
     private final String address;
 
+    // Used when adding
+    public User(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+    }
+
+    // Used when reading from files
     public User(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
         this.id = id;
         this.username = username;

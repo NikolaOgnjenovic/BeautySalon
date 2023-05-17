@@ -20,18 +20,25 @@ public class UserManager {
 
     //region User
     public void addUser(User user) {
-        database.addUser(user);
+        int id = database.getNextUserId();
+        users.put(id, user);
+        database.addUser(id, user);
     }
 
     public HashMap<Integer, User> getUsers() {
-        return database.getUsers();
+        return users;
     }
 
-    public void updateUser(int id, User user) throws UserNotFoundException {
-        database.updateUser(id, user);
+    public void updateUser(User user) {
+        users.put(user.getId(), user);
+        database.updateUser(user);
     }
 
     public void deleteUser(int id) throws UserNotFoundException {
+        if (!users.containsKey(id)) {
+            throw new UserNotFoundException("User with id " + id + " not found.");
+        }
+        users.remove(id);
         database.deleteUser(id);
     }
     //endregion
@@ -100,26 +107,21 @@ public class UserManager {
         return pastTreatments;
     }
 
-    public void changeMoneySpent(int clientId, Client client, double refundedPrice) {
-        try {
-            client.setMoneySpent(client.getMoneySpent() + refundedPrice);
-            client.setHasLoyaltyCard(client.getMoneySpent() >= salonManager.getLoyaltyThreshold());
-            database.updateUser(clientId, client);
-        } catch (UserNotFoundException ignored) {
-        }
+    public void changeMoneySpent(Client client, double refundedPrice) {
+        client.setMoneySpent(client.getMoneySpent() + refundedPrice);
+        client.setHasLoyaltyCard(client.getMoneySpent() >= salonManager.getLoyaltyThreshold());
+        updateUser(client);
     }
 
-    public void bookTreatment(Treatment treatment) {
-        int clientId = -1;
+    public void bookTreatment(Treatment treatment, TreatmentManager treatmentManager) {
         Client client = null;
-        for (Map.Entry<Integer, User> entry : database.getUsers().entrySet()) {
-            if (entry.getValue().getUsername().equals(treatment.getClientUsername())) {
-                clientId = entry.getKey();
-                client = (Client) entry.getValue();
+        for (User user : users.values()) {
+            if (user.getUsername().equals(treatment.getClientUsername()) && user instanceof Client) {
+                client = (Client) user;
                 break;
             }
         }
-        if (clientId == -1 || client == null) {
+        if (client == null) {
             return;
         }
 
@@ -129,9 +131,9 @@ public class UserManager {
             treatment.setPrice(price);
         }
 
-        database.addTreatment(treatment);
+        treatmentManager.addTreatment(treatment);
         salonManager.addIncome(treatment.getPrice());
-        changeMoneySpent(clientId, client, price);
+        changeMoneySpent(client, price);
     }
     //endregion
 
@@ -205,12 +207,12 @@ public class UserManager {
     public void teachTreatment(int id, byte treatmentTypeCategoryId) throws UserNotFoundException {
         Beautician beautician = getBeautician(id);
         beautician.addTreatmentTypeCategoryID(treatmentTypeCategoryId);
-        database.updateUser(id, beautician);
+        database.updateUser(beautician);
     }
 
     public int getFinishedTreatments(String beauticianUsername) {
         int counter = 0;
-        for (Treatment treatment : database.getTreatments().values()) {
+        for (Treatment treatment : treatments.values()) {
             if (treatment.getBeauticianUsername().equals(beauticianUsername) && treatment.getStatus() == Treatment.Status.FINISHED) {
                 counter++;
             }

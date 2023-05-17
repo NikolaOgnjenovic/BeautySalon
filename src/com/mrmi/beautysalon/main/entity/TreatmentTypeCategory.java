@@ -6,11 +6,13 @@ public class TreatmentTypeCategory implements TableCell {
     private String name;
     private boolean isDeleted;
 
-    public TreatmentTypeCategory(int id, String name) {
-        this.id = id;
+    // Used when adding
+    public TreatmentTypeCategory(String name) {
         this.name = name;
         this.isDeleted = false;
     }
+
+    // Used when reading from files
     public TreatmentTypeCategory(int id, String name, boolean isDeleted) {
         this.id = id;
         this.name = name;

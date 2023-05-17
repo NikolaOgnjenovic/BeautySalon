@@ -1,15 +1,21 @@
 package com.mrmi.beautysalon.main.entity;
 
 public class Employee extends User {
-    private byte qualificationLevel; // Nivo strucne spreme [1-8]
-    private byte yearsOfExperience;
-    private double bonus;
-    private double monthlySalary;
+    private final byte qualificationLevel; // [1-8]
+    private final byte yearsOfExperience;
+    private final double bonus;
+    private final double monthlySalary;
 
-    public Employee(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
-        super(id, username, password, name, surname, gender, phoneNumber, address);
+    // Used when adding
+    public Employee(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
+        super(username, password, name, surname, gender, phoneNumber, address);
+        this.qualificationLevel = qualificationLevel;
+        this.yearsOfExperience = yearsOfExperience;
+        this.bonus = bonus;
+        this.monthlySalary = monthlySalary;
     }
 
+    // Used when reading from files
     public Employee(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double bonus, double monthlySalary) {
         super(id, username, password, name, surname, gender, phoneNumber, address);
         this.qualificationLevel = qualificationLevel;

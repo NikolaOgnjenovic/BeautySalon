@@ -12,7 +12,6 @@ public class AddEditTreatmentTypeDialog extends JDialog {
     private final JFrame parent;
     private final TreatmentManager treatmentManager;
     private final TreatmentType treatmentType;
-    private final int id;
 
     public AddEditTreatmentTypeDialog(JFrame parent, TreatmentManager treatmentManager, TreatmentType treatmentType, int id) {
         super(parent, true);
@@ -26,7 +25,6 @@ public class AddEditTreatmentTypeDialog extends JDialog {
 
         this.treatmentManager = treatmentManager;
         this.treatmentType = treatmentType;
-        this.id = id;
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -100,7 +98,7 @@ public class AddEditTreatmentTypeDialog extends JDialog {
             }
 
             if (treatmentType != null) {
-                treatmentManager.updateTreatmentType(id, treatmentType, name, price, treatmentTypeCategoryId, duration);
+                treatmentManager.updateTreatmentType(treatmentType, name, price, treatmentTypeCategoryId, duration);
             } else {
                 treatmentManager.addTreatmentType(name, price, treatmentTypeCategoryId, duration);
             }

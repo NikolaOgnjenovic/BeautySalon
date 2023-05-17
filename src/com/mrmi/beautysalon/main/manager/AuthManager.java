@@ -5,12 +5,12 @@ import com.mrmi.beautysalon.main.entity.User;
 import java.util.HashMap;
 
 public class AuthManager {
-    private final UserManager userManager;
     private String currentUsername;
     private User currentUser;
+    private final HashMap<Integer, User> users;
 
     public AuthManager(UserManager userManager) {
-        this.userManager = userManager;
+        this.users = userManager.getUsers();
     }
 
     public String getCurrentUsername() {
@@ -22,7 +22,6 @@ public class AuthManager {
     }
 
     public boolean login(String username, String password) {
-        HashMap<Integer, User> users = userManager.getUsers();
         for (User user : users.values()) {
             if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
                 currentUser = user;
