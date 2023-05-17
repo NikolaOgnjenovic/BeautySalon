@@ -37,8 +37,13 @@ public class Employee extends User {
         return yearsOfExperience;
     }
 
-
-
+    public float getFullSalary(float bonusIncome) {
+        Calendar today = Calendar.getInstance();
+        // The salary increases every 6 months by the entered bonus
+        float bonus = today.get(Calendar.YEAR) * 12 + today.get(Calendar.MONTH) - hiringDate.get(Calendar.YEAR) * 12 - hiringDate.get(Calendar.MONTH) / 6f;
+        bonus *= bonusIncome;
+        return monthlySalary + qualificationLevel * 3000 + yearsOfExperience * 1000 + bonus;
+    }
     public float getMonthlySalary() {
         return monthlySalary;
     }
@@ -60,11 +65,7 @@ public class Employee extends User {
             case 9:
                 return yearsOfExperience;
             case 10:
-                Calendar today = Calendar.getInstance();
-                // The salary increases every 6 months by the bonus amount
-                float bonus = today.get(Calendar.YEAR) * 12 + today.get(Calendar.MONTH) - hiringDate.get(Calendar.YEAR) * 12 - hiringDate.get(Calendar.MONTH) / 6f;
-                bonus *= ((TreatmentManager) manager).getBonus();
-                return monthlySalary + qualificationLevel * 3000 + yearsOfExperience * 1000 + bonus;
+               return getFullSalary(((TreatmentManager) manager).getBonus());
             case 11:
                 return hiringDate.getTime();
         }

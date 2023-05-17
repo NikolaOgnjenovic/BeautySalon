@@ -252,7 +252,6 @@ public class TreatmentManager {
         treatment.setBeauticianUsername(beauticianUsername);
         treatment.setStatus(status);
         if (status != Treatment.Status.CANCELLED_BY_CLIENT && status != Treatment.Status.CANCELLED_BY_SALON) {
-            treatment.setCancelled(false);
             treatment.setCancellationReason("N/A");
         }
 
@@ -313,8 +312,8 @@ public class TreatmentManager {
 
     public void cancelTreatment(int clientId, int treatmentId, boolean clientCancelled, String cancellationReason, UserManager userManager) throws TreatmentNotFoundException {
         Treatment treatment = getTreatment(treatmentId);
-        treatment.setCancelled(true);
         treatment.setCancellationReason(cancellationReason);
+        treatment.setCancellationDate(Calendar.getInstance());
 
         Client client;
         try {
@@ -344,7 +343,7 @@ public class TreatmentManager {
     public void finishTreatments() {
         Calendar currentDate = Calendar.getInstance();
         for (Treatment treatment : treatments.values()) {
-            if (treatment.getScheduledDate().before(currentDate) && !treatment.isCancelled()) {
+            if (treatment.getScheduledDate().before(currentDate) && !treatment.getStatus().equals(Treatment.Status.CANCELLED_BY_CLIENT) && !treatment.getStatus().equals(Treatment.Status.CANCELLED_BY_SALON)) {
                 treatment.setStatus(Treatment.Status.FINISHED);
             }
         }

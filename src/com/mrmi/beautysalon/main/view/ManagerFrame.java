@@ -30,6 +30,7 @@ public class ManagerFrame extends JFrame {
     private JButton buttonCancellationReport;
     private JButton beauticianReport;
     private JButton buttonLogout;
+    private JButton buttonRevenueExpense;
 
     public ManagerFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, AuthManager authManager) {
         this.salonManager = salonManager;
@@ -78,8 +79,9 @@ public class ManagerFrame extends JFrame {
         buttonCancellationReport = new JButton("Cancellation report");
         this.add(buttonCancellationReport);
 
-        // TODO:
-        //  Menadžer ima uvid o prihodioma i rashodima za odredjeni vremenski period
+        buttonRevenueExpense = new JButton("Salon revenue & expenses");
+        this.add(buttonRevenueExpense, "span, center");
+
         buttonLogout = new JButton("Logout");
         this.add(buttonLogout, "span, center");
     }
@@ -158,6 +160,10 @@ public class ManagerFrame extends JFrame {
             beauticianProfitFrame.setVisible(true);
         });
 
+        buttonRevenueExpense.addActionListener(e -> {
+            RevenueExpenseFrame revenueExpenseFrame = new RevenueExpenseFrame(treatmentManager, userManager);
+            revenueExpenseFrame.setVisible(true);
+        });
         buttonLogout.addActionListener(e -> {
             authManager.logout();
             this.dispose();

@@ -57,7 +57,7 @@ public class SalonFrame extends JFrame {
         textSalonName.addActionListener(e -> salonManager.setName(textSalonName.getText()));
         textOpeningHour.addActionListener(e -> salonManager.setOpeningHour(Byte.parseByte(textOpeningHour.getText())));
         textClosingHour.addActionListener(e -> salonManager.setClosingHour(Byte.parseByte(textClosingHour.getText())));
-        textBonus.addActionListener(e -> salonManager.setBonus(Float.parseFloat(textBonus.getText().toString())));
+        textBonus.addActionListener(e -> salonManager.setBonus(Float.parseFloat(textBonus.getText())));
         buttonBack.addActionListener(e -> this.dispose());
     }
 }

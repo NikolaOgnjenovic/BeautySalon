@@ -20,8 +20,6 @@ public class UserTest {
     private UserManager userManager;
     private TreatmentManager treatmentManager;
 
-    // TODO: introduce a test suite to run all test files together
-
     @BeforeEach
     public void setup() {
         Database database = new Database("test");

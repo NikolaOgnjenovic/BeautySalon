@@ -367,7 +367,13 @@ public class Database {
                 String[] data = line.split(",");
                 Calendar scheduledDate = Calendar.getInstance();
                 scheduledDate.setTime(sdf.parse(data[1]));
-                treatments.put(Integer.parseInt(data[0]), new Treatment(Integer.parseInt(data[0]), scheduledDate, Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Float.parseFloat(data[6]), Treatment.Status.valueOf(data[7]), data[8]));
+                Calendar cancelledDate = null;
+                if (data.length == 9) {
+                    cancelledDate = Calendar.getInstance();
+                    cancelledDate.setTime(sdf.parse(data[8]));
+                }
+
+                treatments.put(Integer.parseInt(data[0]), new Treatment(Integer.parseInt(data[0]), scheduledDate, data[2], data[3], Byte.parseByte(data[4]), Float.parseFloat(data[5]), Treatment.Status.valueOf(data[6]), data[7], cancelledDate));
             }
             in.close();
         } catch (Exception e) {

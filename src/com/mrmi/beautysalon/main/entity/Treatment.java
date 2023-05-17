@@ -9,7 +9,6 @@ import java.util.Calendar;
 public class Treatment implements TableCell {
     public int id;
     private Calendar scheduledDate;
-    private boolean cancelled;
 
     private String clientUsername;
 
@@ -19,6 +18,8 @@ public class Treatment implements TableCell {
 
     private float price; // Although type holds price, this price can be affected by a loyalty discount
     private Status status;
+
+    private Calendar cancellationDate;
 
     public enum Status {
         SCHEDULED,
@@ -33,26 +34,26 @@ public class Treatment implements TableCell {
     // Used when adding
     public Treatment(Calendar scheduledDate, String clientUsername, String beauticianUsername, int typeId, float price) {
         this.scheduledDate = scheduledDate;
-        this.cancelled = false;
         this.clientUsername = clientUsername;
         this.beauticianUsername = beauticianUsername;
         this.typeId = typeId;
         this.price = price;
         this.status = Status.SCHEDULED;
         this.cancellationReason = "N/A";
+        this.cancellationDate = null;
     }
 
     // Used when reading from files
-    public Treatment(int id, Calendar scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int typeId, float price, Status status, String cancellationReason) {
+    public Treatment(int id, Calendar scheduledDate, String clientUsername, String beauticianUsername, int typeId, float price, Status status, String cancellationReason, Calendar cancellationDate) {
         this.id = id;
         this.scheduledDate = scheduledDate;
-        this.cancelled = cancelled;
         this.clientUsername = clientUsername;
         this.beauticianUsername = beauticianUsername;
         this.typeId = typeId;
         this.price = price;
         this.status = status;
         this.cancellationReason = cancellationReason;
+        this.cancellationDate = cancellationDate;
     }
 
     public Calendar getScheduledDate() {
@@ -61,14 +62,6 @@ public class Treatment implements TableCell {
 
     public void setScheduledDate(Calendar scheduledDate) {
         this.scheduledDate = scheduledDate;
-    }
-
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
     }
 
     public String getClientUsername() {
@@ -120,7 +113,7 @@ public class Treatment implements TableCell {
     }
 
     public String getFileString() {
-        return id + "," + scheduledDate.getTime() + "," + cancelled + "," + clientUsername + "," + beauticianUsername + "," + typeId + "," + price + "," + status + "," + cancellationReason;
+        return id + "," + scheduledDate.getTime() + "," + clientUsername + "," + beauticianUsername + "," + typeId + "," + price + "," + status + "," + cancellationReason;
     }
 
     public void setId(int id) {
@@ -129,6 +122,14 @@ public class Treatment implements TableCell {
 
     public int getId() {
         return id;
+    }
+
+    public void setCancellationDate(Calendar cancellationDate) {
+        this.cancellationDate = cancellationDate;
+    }
+
+    public Calendar getCancellationDate() {
+        return cancellationDate;
     }
 
     @Override
@@ -162,11 +163,11 @@ public class Treatment implements TableCell {
             case 7:
                 return status;
             case 8:
-                return cancelled;
-            case 9:
                 return cancellationReason;
-            case 10:
+            case 9:
                 return ((int) (0.9 * price) * 100) / 100f;
+            case 10:
+                return cancellationDate;
             default:
                 return null;
         }
@@ -192,11 +193,11 @@ public class Treatment implements TableCell {
             case 7:
                 return "Status";
             case 8:
-                return "Is cancelled";
-            case 9:
                 return "Cancellation reason";
-            case 10:
+            case 9:
                 return "Refundable amount";
+            case 10:
+                return "Cancellation date";
             default:
                 return null;
         }
