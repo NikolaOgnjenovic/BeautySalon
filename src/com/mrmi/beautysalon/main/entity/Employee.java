@@ -3,10 +3,10 @@ package com.mrmi.beautysalon.main.entity;
 public class Employee extends User {
     private final byte qualificationLevel; // [1-8]
     private final byte yearsOfExperience;
-    private final double monthlySalary;
+    private final float monthlySalary;
 
     // Used when adding
-    public Employee(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double monthlySalary) {
+    public Employee(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, float monthlySalary) {
         super(username, password, name, surname, gender, phoneNumber, address);
         this.qualificationLevel = qualificationLevel;
         this.yearsOfExperience = yearsOfExperience;
@@ -14,7 +14,7 @@ public class Employee extends User {
     }
 
     // Used when reading from files
-    public Employee(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double monthlySalary) {
+    public Employee(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, float monthlySalary) {
         super(id, username, password, name, surname, gender, phoneNumber, address);
         this.qualificationLevel = qualificationLevel;
         this.yearsOfExperience = yearsOfExperience;
@@ -32,7 +32,7 @@ public class Employee extends User {
 
 
 
-    public double getMonthlySalary() {
+    public float getMonthlySalary() {
         return monthlySalary;
     }
 

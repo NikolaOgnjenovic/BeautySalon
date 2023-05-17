@@ -6,13 +6,13 @@ import java.util.*;
 
 public class Database {
     private HashMap<Integer, User> users;
-    private HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories;
-    private HashMap<Integer, TreatmentType> treatmentTypes;
+    private HashMap<Integer, TreatmentTypeCategory> categories;
+    private HashMap<Integer, TreatmentType> types;
     private HashMap<Integer, Treatment> treatments;
     private BeautySalon beautySalon;
     private int userId;
-    private int treatmentTypeCategoryId;
-    private int treatmentTypeId;
+    private int categoryId;
+    private int typeId;
 
     private int treatmentId;
 
@@ -66,25 +66,25 @@ public class Database {
     //endregion
 
     //region Treatment Type Category
-    public void addTreatmentTypeCategory(int id, TreatmentTypeCategory treatmentTypeCategory) {
-        treatmentTypeCategory.setId(id);
-        treatmentTypeCategories.put(id, treatmentTypeCategory);
-        writeTreatmentTypeCategory(treatmentTypeCategory);
+    public void addTreatmentTypeCategory(int id, TreatmentTypeCategory category) {
+        category.setId(id);
+        categories.put(id, category);
+        writeTreatmentTypeCategory(category);
         overwriteVariablesFile();
     }
 
     public HashMap<Integer, TreatmentTypeCategory> getTreatmentTypeCategories() {
-        return treatmentTypeCategories;
+        return categories;
     }
 
     public int getNextTreatmentTypeCategoryId() {
-        treatmentTypeCategoryId++;
+        categoryId++;
         overwriteVariablesFile();
-        return treatmentTypeCategoryId;
+        return categoryId;
     }
 
-    public void updateTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory) {
-        treatmentTypeCategories.put(treatmentTypeCategory.getId(), treatmentTypeCategory);
+    public void updateTreatmentTypeCategory(TreatmentTypeCategory category) {
+        categories.put(category.getId(), category);
         overwriteTreatmentTypeCategoriesFile();
     }
     //endregion
@@ -92,23 +92,23 @@ public class Database {
     //region Treatment types
     public void addTreatmentType(int id, TreatmentType type) {
         type.setId(id);
-        treatmentTypes.put(id, type);
+        types.put(id, type);
         writeTreatmentType(type);
         overwriteVariablesFile();
     }
 
     public HashMap<Integer, TreatmentType> getTreatmentTypes() {
-        return treatmentTypes;
+        return types;
     }
 
     public int getNextTreatmentTypeId() {
-        treatmentTypeId++;
+        typeId++;
         overwriteVariablesFile();
-        return treatmentTypeId;
+        return typeId;
     }
 
-    public void updateTreatmentType(int id, TreatmentType treatmentType) {
-        treatmentTypes.put(id, treatmentType);
+    public void updateTreatmentType(int id, TreatmentType type) {
+        types.put(id, type);
         overwriteTreatmentTypesFile();
     }
     //endregion
@@ -188,14 +188,14 @@ public class Database {
                             userData[7],
                             userData[8],
                             Boolean.parseBoolean(userData[9]),
-                            Double.parseDouble(userData[10])));
+                            Float.parseFloat(userData[10])));
                         break;
                     case "B":
-                        ArrayList<Integer> treatmentTypeIDs = new ArrayList<>();
-                        String[] treatmentTypes = userData[12].split(";");
-                        for (String s : treatmentTypes) {
+                        ArrayList<Integer> typeIDs = new ArrayList<>();
+                        String[] types = userData[12].split(";");
+                        for (String s : types) {
                             if (!s.equals("")) {
-                                treatmentTypeIDs.add(Integer.parseInt(s));
+                                typeIDs.add(Integer.parseInt(s));
                             }
                         }
                         users.put(Integer.parseInt(userData[1]), new Beautician(Integer.parseInt(userData[1]),
@@ -206,10 +206,10 @@ public class Database {
                                 userData[6],
                                 userData[7],
                                 userData[8],
-                                treatmentTypeIDs,
+                                typeIDs,
                                 Byte.parseByte(userData[9]),
                                 Byte.parseByte(userData[10]),
-                                Double.parseDouble(userData[11])));
+                                Float.parseFloat(userData[11])));
                         break;
                     case "R":
                         users.put(Integer.parseInt(userData[1]), new Receptionist(Integer.parseInt(userData[1]),
@@ -222,7 +222,7 @@ public class Database {
                             userData[8],
                             Byte.parseByte(userData[9]),
                             Byte.parseByte(userData[10]),
-                            Double.parseDouble(userData[11])));
+                            Float.parseFloat(userData[11])));
                         break;
                     case "M":
                         users.put(Integer.parseInt(userData[1]), new Manager(Integer.parseInt(userData[1]),
@@ -235,7 +235,7 @@ public class Database {
                             userData[8],
                             Byte.parseByte(userData[9]),
                             Byte.parseByte(userData[10]),
-                            Double.parseDouble(userData[11])));
+                            Float.parseFloat(userData[11])));
                         break;
                 }
             }
@@ -268,8 +268,8 @@ public class Database {
 
     //region TreatmentTypeCategory IO
     private void readTreatmentTypeCategoriesFile() {
-        treatmentTypeCategories = new HashMap<>();
-        String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
+        categories = new HashMap<>();
+        String fileName = filePathPrefix + "data" + separator + "categories.txt";
         try {
             File file = fileCheck(fileName);
             BufferedReader in = new BufferedReader(new FileReader(file));
@@ -277,7 +277,7 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                treatmentTypeCategories.put(Integer.parseInt(data[0]), new TreatmentTypeCategory(Integer.parseInt(data[0]), data[1], Boolean.parseBoolean(data[2])));
+                categories.put(Integer.parseInt(data[0]), new TreatmentTypeCategory(Integer.parseInt(data[0]), data[1], Boolean.parseBoolean(data[2])));
             }
             in.close();
         } catch (Exception e) {
@@ -285,17 +285,17 @@ public class Database {
         }
     }
 
-    private void writeTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory) {
-        String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
-        writeFile(fileName, treatmentTypeCategory.getFileString());
+    private void writeTreatmentTypeCategory(TreatmentTypeCategory category) {
+        String fileName = filePathPrefix + "data" + separator + "categories.txt";
+        writeFile(fileName, category.getFileString());
     }
 
     private void overwriteTreatmentTypeCategoriesFile() {
-        String fileName = filePathPrefix + "data" + separator + "treatmentTypeCategories.txt";
+        String fileName = filePathPrefix + "data" + separator + "categories.txt";
         try {
             File file = fileCheck(fileName);
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
-            for (Map.Entry<Integer, TreatmentTypeCategory> t : treatmentTypeCategories.entrySet()) {
+            for (Map.Entry<Integer, TreatmentTypeCategory> t : categories.entrySet()) {
                 out.write(t.getValue().getFileString());
                 out.write("\n");
             }
@@ -308,8 +308,8 @@ public class Database {
 
     //region TreatmentTypes IO
     private void readTreatmentTypesFile() {
-        treatmentTypes = new HashMap<>();
-        String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
+        types = new HashMap<>();
+        String fileName = filePathPrefix + "data" + separator + "types.txt";
         try {
             File file = fileCheck(fileName);
             BufferedReader in = new BufferedReader(new FileReader(file));
@@ -317,7 +317,7 @@ public class Database {
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 String[] data = line.split(",");
-                treatmentTypes.put(Integer.parseInt(data[0]), new TreatmentType(Integer.parseInt(data[0]), data[1], Double.parseDouble(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), Boolean.parseBoolean(data[5])));
+                types.put(Integer.parseInt(data[0]), new TreatmentType(Integer.parseInt(data[0]), data[1], Float.parseFloat(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), Boolean.parseBoolean(data[5])));
             }
             in.close();
         } catch (Exception e) {
@@ -325,17 +325,17 @@ public class Database {
         }
     }
 
-    private void writeTreatmentType(TreatmentType treatmentType) {
-        String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
-        writeFile(fileName, treatmentType.getFileString());
+    private void writeTreatmentType(TreatmentType type) {
+        String fileName = filePathPrefix + "data" + separator + "types.txt";
+        writeFile(fileName, type.getFileString());
     }
 
     private void overwriteTreatmentTypesFile() {
-        String fileName = filePathPrefix + "data" + separator + "treatmentTypes.txt";
+        String fileName = filePathPrefix + "data" + separator + "types.txt";
         try {
             File file = fileCheck(fileName);
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
-            for (Map.Entry<Integer, TreatmentType> t : treatmentTypes.entrySet()) {
+            for (Map.Entry<Integer, TreatmentType> t : types.entrySet()) {
                 out.write(t.getValue().getFileString());
                 out.write("\n");
             }
@@ -359,7 +359,7 @@ public class Database {
                 String[] data = line.split(",");
                 Calendar scheduledDate = Calendar.getInstance();
                 scheduledDate.setTime(sdf.parse(data[1]));
-                treatments.put(Integer.parseInt(data[0]), new Treatment(Integer.parseInt(data[0]), scheduledDate, Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Double.parseDouble(data[6]), Treatment.Status.valueOf(data[7]), data[8]));
+                treatments.put(Integer.parseInt(data[0]), new Treatment(Integer.parseInt(data[0]), scheduledDate, Boolean.parseBoolean(data[2]), data[3], data[4], Byte.parseByte(data[5]), Float.parseFloat(data[6]), Treatment.Status.valueOf(data[7]), data[8]));
             }
             in.close();
         } catch (Exception e) {
@@ -394,14 +394,14 @@ public class Database {
             File file = fileCheck(fileName);
             BufferedReader in = new BufferedReader(new FileReader(file));
             try {
-                treatmentTypeId = Integer.parseInt(in.readLine());
+                typeId = Integer.parseInt(in.readLine());
                 treatmentId = Integer.parseInt(in.readLine());
-                treatmentTypeCategoryId = Integer.parseInt(in.readLine());
+                categoryId = Integer.parseInt(in.readLine());
                 userId = Integer.parseInt(in.readLine());
             } catch (NumberFormatException e) {
-                treatmentTypeId = -1;
+                typeId = -1;
                 treatmentId = -1;
-                treatmentTypeCategoryId = -1;
+                categoryId = -1;
                 userId = -1;
             }
             in.close();
@@ -415,9 +415,9 @@ public class Database {
         try {
             File file = fileCheck(fileName);
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
-            out.write(treatmentTypeId + "\n");
+            out.write(typeId + "\n");
             out.write(treatmentId + "\n");
-            out.write(treatmentTypeCategoryId + "\n");
+            out.write(categoryId + "\n");
             out.write(userId + "\n");
             out.close();
         } catch (Exception e) {
@@ -434,9 +434,9 @@ public class Database {
             BufferedReader in = new BufferedReader(new FileReader(file));
             byte openingHour = Byte.parseByte(in.readLine());
             byte closingHour = Byte.parseByte(in.readLine());
-            double loyaltyThreshold = Double.parseDouble(in.readLine());
-            double income = Double.parseDouble(in.readLine());
-            double bonus = Double.parseDouble(in.readLine());
+            float loyaltyThreshold = Float.parseFloat(in.readLine());
+            float income = Float.parseFloat(in.readLine());
+            float bonus = Float.parseFloat(in.readLine());
             String name = in.readLine();
             in.close();
             beautySalon = new BeautySalon(openingHour, closingHour, loyaltyThreshold, income, name, bonus);

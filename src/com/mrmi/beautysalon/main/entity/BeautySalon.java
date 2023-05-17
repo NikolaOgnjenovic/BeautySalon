@@ -3,10 +3,10 @@ package com.mrmi.beautysalon.main.entity;
 public class BeautySalon {
     private byte salonOpeningHour;
     private byte salonClosingHour;
-    private double loyaltyThreshold;
-    private double salonIncome;
+    private float loyaltyThreshold;
+    private float salonIncome;
     private String name;
-    private double bonus;
+    private float bonus;
 
     // Used when adding
     public BeautySalon() {
@@ -19,7 +19,7 @@ public class BeautySalon {
     }
 
     // Used when reading from files
-    public BeautySalon(byte salonOpeningHour, byte salonClosingHour, double loyaltyThreshold, double salonIncome, String name, double bonus) {
+    public BeautySalon(byte salonOpeningHour, byte salonClosingHour, float loyaltyThreshold, float salonIncome, String name, float bonus) {
         this.salonOpeningHour = salonOpeningHour;
         this.salonClosingHour = salonClosingHour;
         this.loyaltyThreshold = loyaltyThreshold;
@@ -44,19 +44,19 @@ public class BeautySalon {
         this.salonClosingHour = salonClosingHour;
     }
 
-    public double getLoyaltyThreshold() {
+    public float getLoyaltyThreshold() {
         return loyaltyThreshold;
     }
 
-    public void setLoyaltyThreshold(double loyaltyThreshold) {
+    public void setLoyaltyThreshold(float loyaltyThreshold) {
         this.loyaltyThreshold = loyaltyThreshold;
     }
 
-    public double getSalonIncome() {
+    public float getSalonIncome() {
         return salonIncome;
     }
 
-    public void setSalonIncome(double salonIncome) {
+    public void setSalonIncome(float salonIncome) {
         this.salonIncome = salonIncome;
     }
 
@@ -68,11 +68,11 @@ public class BeautySalon {
         this.name = name;
     }
 
-    public double getBonus() {
+    public float getBonus() {
         return bonus;
     }
 
-    public void setBonus(double bonus) {
+    public void setBonus(float bonus) {
         this.bonus = bonus;
     }
 }

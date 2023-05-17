@@ -41,6 +41,7 @@ public class RegisterFrame extends JFrame {
         this.setTitle("Beauty salon - Registration");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         this.add(new JLabel("Username"));
         textUsername = new JTextField(20);

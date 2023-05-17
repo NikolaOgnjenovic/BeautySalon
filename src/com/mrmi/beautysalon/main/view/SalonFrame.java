@@ -26,6 +26,7 @@ public class SalonFrame extends JFrame {
         this.setTitle("Beauty salon - salon");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         this.add(new JLabel("Loyalty threshold"), "align right");
         textLoyaltyThreshold = new JTextField(String.valueOf(salonManager.getLoyaltyThreshold()), 7);
@@ -55,11 +56,11 @@ public class SalonFrame extends JFrame {
     }
 
     private void initialiseListeners() {
-        textLoyaltyThreshold.addActionListener(e -> salonManager.setLoyaltyThreshold(Double.parseDouble(textLoyaltyThreshold.getText())));
+        textLoyaltyThreshold.addActionListener(e -> salonManager.setLoyaltyThreshold(Float.parseFloat(textLoyaltyThreshold.getText())));
         textSalonName.addActionListener(e -> salonManager.setName(textSalonName.getText()));
         textOpeningHour.addActionListener(e -> salonManager.setOpeningHour(Byte.parseByte(textOpeningHour.getText())));
         textClosingHour.addActionListener(e -> salonManager.setClosingHour(Byte.parseByte(textClosingHour.getText())));
-        textBonus.addActionListener(e -> salonManager.setBonus(Double.parseDouble(textBonus.toString())));
+        textBonus.addActionListener(e -> salonManager.setBonus(Float.parseFloat(textBonus.toString())));
         buttonBack.addActionListener(e -> this.dispose());
     }
 }

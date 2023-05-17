@@ -6,16 +6,16 @@ import java.util.ArrayList;
 public class BeauticianProfitTableModel extends AbstractTableModel {
     private final ArrayList<String> beauticianUsernames;
     private final ArrayList<Integer> finishedTreatments;
-    private final ArrayList<Double> profits;
+    private final ArrayList<Float> profits;
     private final String[] columnNames = new String[]{
             "Username", "Finished treatments", "Profit"
     };
 
     private final Class<?>[] columnClass = new Class[]{
-            String.class, Integer.class, Double.class
+            String.class, Integer.class, Float.class
     };
 
-    public BeauticianProfitTableModel(ArrayList<String> beauticianUsernames, ArrayList<Integer> finishedTreatments, ArrayList<Double> profits) {
+    public BeauticianProfitTableModel(ArrayList<String> beauticianUsernames, ArrayList<Integer> finishedTreatments, ArrayList<Float> profits) {
         this.beauticianUsernames = beauticianUsernames;
         this.finishedTreatments = finishedTreatments;
         this.profits = profits;

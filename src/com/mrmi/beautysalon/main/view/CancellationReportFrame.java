@@ -37,6 +37,7 @@ public class CancellationReportFrame extends JFrame {
         this.setTitle("Beauty salon - Treatment cancellation report");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         JLabel fromLabel = new JLabel("From");
         this.add(fromLabel, "align right");

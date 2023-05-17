@@ -7,27 +7,27 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Beautician extends Employee {
-    private final List<Integer> treatmentTypeCategoryIDs;
+    private final List<Integer> categoryIDs;
 
     // Used when adding
-    public Beautician(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, double monthlySalary) {
+    public Beautician(String username, String password, String name, String surname, String gender, String phoneNumber, String address, byte qualificationLevel, byte yearsOfExperience, float monthlySalary) {
         super(username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, monthlySalary);
-        this.treatmentTypeCategoryIDs = new ArrayList<>();
+        this.categoryIDs = new ArrayList<>();
     }
 
     // Used when reading from files
-    public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, ArrayList<Integer> treatmentTypeCategoryIDs, byte qualificationLevel, byte yearsOfExperience, double monthlySalary) {
+    public Beautician(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, ArrayList<Integer> categoryIDs, byte qualificationLevel, byte yearsOfExperience, float monthlySalary) {
         super(id, username, password, name, surname, gender, phoneNumber, address, qualificationLevel, yearsOfExperience, monthlySalary);
-        this.treatmentTypeCategoryIDs = treatmentTypeCategoryIDs;
+        this.categoryIDs = categoryIDs;
     }
 
     public List<Integer> getTreatmentTypeCategoryIDs() {
-        return treatmentTypeCategoryIDs;
+        return categoryIDs;
     }
 
-    public void addTreatmentTypeCategoryID(int treatmentTypeCategoryId) {
-        if (!treatmentTypeCategoryIDs.contains(treatmentTypeCategoryId)) {
-            treatmentTypeCategoryIDs.add(treatmentTypeCategoryId);
+    public void addTreatmentTypeCategoryID(int categoryId) {
+        if (!categoryIDs.contains(categoryId)) {
+            categoryIDs.add(categoryId);
         }
     }
 
@@ -42,7 +42,7 @@ public class Beautician extends Employee {
         sb.append("B");
         sb.append(super.getFileString());
         sb.append(";");
-        for (int category : treatmentTypeCategoryIDs) {
+        for (int category : categoryIDs) {
             sb.append(category);
             sb.append(";");
         }
@@ -56,9 +56,9 @@ public class Beautician extends Employee {
         }
 
         StringBuilder types = new StringBuilder();
-        HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories = ((TreatmentManager) manager).getTreatmentTypeCategories();
-        for (int id : treatmentTypeCategoryIDs) {
-            TreatmentTypeCategory type = treatmentTypeCategories.get(id);
+        HashMap<Integer, TreatmentTypeCategory> categories = ((TreatmentManager) manager).getTreatmentTypeCategories();
+        for (int id : categoryIDs) {
+            TreatmentTypeCategory type = categories.get(id);
             if (type != null) {
                 types.append(type.getName());
                 types.append(", ");

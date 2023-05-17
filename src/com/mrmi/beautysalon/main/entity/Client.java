@@ -1,7 +1,7 @@
 package com.mrmi.beautysalon.main.entity;
 
 public class Client extends User implements TableCell {
-    private double moneySpent;
+    private float moneySpent;
     private boolean hasLoyaltyCard;
 
     // Used when adding
@@ -12,17 +12,17 @@ public class Client extends User implements TableCell {
     }
 
     // Used when reading from files
-    public Client(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, boolean hasLoyaltyCard, Double moneySpent) {
+    public Client(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, boolean hasLoyaltyCard, Float moneySpent) {
         super(id, username, password, name, surname, gender, phoneNumber, address);
         this.hasLoyaltyCard = hasLoyaltyCard;
         this.moneySpent = moneySpent;
     }
 
-    public double getMoneySpent() {
+    public float getMoneySpent() {
         return moneySpent;
     }
 
-    public void setMoneySpent (double moneySpent) {
+    public void setMoneySpent (float moneySpent) {
         this.moneySpent = moneySpent;
     }
 

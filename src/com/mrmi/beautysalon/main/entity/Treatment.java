@@ -15,9 +15,9 @@ public class Treatment implements TableCell {
 
     private String beauticianUsername;
 
-    private int treatmentTypeId;
+    private int typeId;
 
-    private double price; // Although treatmentType holds price, this price can be affected by a loyalty discount
+    private float price; // Although type holds price, this price can be affected by a loyalty discount
     private Status status;
 
     public enum Status {
@@ -31,25 +31,25 @@ public class Treatment implements TableCell {
     private String cancellationReason;
 
     // Used when adding
-    public Treatment(Calendar scheduledDate, String clientUsername, String beauticianUsername, int treatmentTypeId, double price) {
+    public Treatment(Calendar scheduledDate, String clientUsername, String beauticianUsername, int typeId, float price) {
         this.scheduledDate = scheduledDate;
         this.cancelled = false;
         this.clientUsername = clientUsername;
         this.beauticianUsername = beauticianUsername;
-        this.treatmentTypeId = treatmentTypeId;
+        this.typeId = typeId;
         this.price = price;
         this.status = Status.SCHEDULED;
         this.cancellationReason = "N/A";
     }
 
     // Used when reading from files
-    public Treatment(int id, Calendar scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int treatmentTypeId, double price, Status status, String cancellationReason) {
+    public Treatment(int id, Calendar scheduledDate, boolean cancelled, String clientUsername, String beauticianUsername, int typeId, float price, Status status, String cancellationReason) {
         this.id = id;
         this.scheduledDate = scheduledDate;
         this.cancelled = cancelled;
         this.clientUsername = clientUsername;
         this.beauticianUsername = beauticianUsername;
-        this.treatmentTypeId = treatmentTypeId;
+        this.typeId = typeId;
         this.price = price;
         this.status = status;
         this.cancellationReason = cancellationReason;
@@ -88,18 +88,18 @@ public class Treatment implements TableCell {
     }
 
     public int getTreatmentTypeId() {
-        return treatmentTypeId;
+        return typeId;
     }
 
-    public void setTreatmentTypeId(int treatmentTypeId) {
-        this.treatmentTypeId = treatmentTypeId;
+    public void setTreatmentTypeId(int typeId) {
+        this.typeId = typeId;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -120,7 +120,7 @@ public class Treatment implements TableCell {
     }
 
     public String getFileString() {
-        return id + "," + scheduledDate.getTime() + "," + cancelled + "," + clientUsername + "," + beauticianUsername + "," + treatmentTypeId + "," + price + "," + status + "," + cancellationReason;
+        return id + "," + scheduledDate.getTime() + "," + cancelled + "," + clientUsername + "," + beauticianUsername + "," + typeId + "," + price + "," + status + "," + cancellationReason;
     }
 
     public void setId(int id) {
@@ -139,13 +139,13 @@ public class Treatment implements TableCell {
                 return id;
             case 1:
                 try {
-                    return treatmentManager.getTreatmentTypeName(treatmentTypeId);
+                    return treatmentManager.getTreatmentTypeName(typeId);
                 } catch (TreatmentTypeNotFoundException e) {
                     return "Treatment type not found";
                 }
             case 2:
                 try {
-                    return treatmentManager.getTreatmentTypeCategoryNameByType(treatmentTypeId);
+                    return treatmentManager.getTreatmentTypeCategoryNameByType(typeId);
                 } catch (TreatmentTypeCategoryNotFoundException e) {
                     return "Treatment type category not found";
                 } catch (TreatmentTypeNotFoundException e) {
@@ -154,7 +154,7 @@ public class Treatment implements TableCell {
             case 3:
                 return scheduledDate.getTime();
             case 4:
-                return price;
+                return ((int) price * 100) / 100f;
             case 5:
                 return clientUsername;
             case 6:
@@ -166,7 +166,7 @@ public class Treatment implements TableCell {
             case 9:
                 return cancellationReason;
             case 10:
-                return 0.9 * price;
+                return ((int) (0.9 * price) * 100) / 100f;
             default:
                 return null;
         }

@@ -12,7 +12,7 @@ public class SalonManager {
         this.beautySalon = database.getBeautySalon();
     }
 
-    public void addIncome(double income) {
+    public void addIncome(float income) {
         beautySalon.setSalonIncome(beautySalon.getSalonIncome() + income);
         database.updateBeautySalon(beautySalon);
     }
@@ -44,25 +44,25 @@ public class SalonManager {
         return beautySalon.getName();
     }
 
-    public void setLoyaltyThreshold(double threshold) {
+    public void setLoyaltyThreshold(float threshold) {
         beautySalon.setLoyaltyThreshold(threshold);
         database.updateBeautySalon(beautySalon);
     }
 
-    public double getLoyaltyThreshold() {
+    public float getLoyaltyThreshold() {
         return beautySalon.getLoyaltyThreshold();
     }
 
-    public double getIncome() {
+    public float getIncome() {
         return beautySalon.getSalonIncome();
     }
 
-    public void setBonus(double bonus) {
+    public void setBonus(float bonus) {
         beautySalon.setBonus(bonus);
         database.updateBeautySalon(beautySalon);
     }
 
-    public double getBonus() {
+    public float getBonus() {
         return beautySalon.getBonus();
     }
 }

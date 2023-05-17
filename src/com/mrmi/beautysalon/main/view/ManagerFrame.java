@@ -46,12 +46,13 @@ public class ManagerFrame extends JFrame {
         this.setTitle("Beauty salon - Manager");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         buttonEditSalon = new JButton("Edit salon properties");
         add(buttonEditSalon);
 
         buttonEditUsers = new JButton("Users");
-        this.add(buttonEditUsers, "span, center");
+        this.add(buttonEditUsers);
 
         buttonEditTreatmentTypeCategories = new JButton("Treatment type categories");
         this.add(buttonEditTreatmentTypeCategories);
@@ -95,13 +96,13 @@ public class ManagerFrame extends JFrame {
         });
 
         buttonEditTreatmentTypeCategories.addActionListener(e -> {
-            TreatmentTypeCategoriesFrame treatmentTypeCategoriesFrame = new TreatmentTypeCategoriesFrame(treatmentManager, treatmentManager.getTreatmentTypeCategories());
-            treatmentTypeCategoriesFrame.setVisible(true);
+            TreatmentTypeCategoriesFrame typeCategoriesFrame = new TreatmentTypeCategoriesFrame(treatmentManager, treatmentManager.getTreatmentTypeCategories());
+            typeCategoriesFrame.setVisible(true);
         });
 
         buttonEditTreatmentTypes.addActionListener(e -> {
-            TreatmentTypesFrame treatmentTypesFrame = new TreatmentTypesFrame(treatmentManager, treatmentManager.getTreatmentTypes());
-            treatmentTypesFrame.setVisible(true);
+            TreatmentTypesFrame typesFrame = new TreatmentTypesFrame(treatmentManager, treatmentManager.getTreatmentTypes());
+            typesFrame.setVisible(true);
         });
 
         buttonEditTreatments.addActionListener(e -> {
@@ -132,15 +133,15 @@ public class ManagerFrame extends JFrame {
             t.start();
         });
 
-        HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories = treatmentManager.getTreatmentTypeCategories();
+        HashMap<Integer, TreatmentTypeCategory> categories = treatmentManager.getTreatmentTypeCategories();
         buttonTreatmentCategoryProfit.addActionListener(e -> {
             XYChart chart = new XYChartBuilder().width(800).height(600).xAxisTitle("Profit").yAxisTitle("Time").build();
             chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNE);
-            chart.getStyler().setSeriesColors(getChartColors(treatmentTypeCategories.size()));
+            chart.getStyler().setSeriesColors(getChartColors(categories.size()));
             chart.setXAxisTitle("Month");
             chart.setYAxisTitle("Profit");
             chart.setTitle("Profit by treatment type category per month");
-            for (Map.Entry<Integer, TreatmentTypeCategory> category : treatmentTypeCategories.entrySet()) {
+            for (Map.Entry<Integer, TreatmentTypeCategory> category : categories.entrySet()) {
                 chart.addSeries("ID: " + category.getValue().getId() + "- " + category.getValue().getName(), treatmentManager.getCategoryProfitByMonths(category.getKey()));
             }
             Thread t = new Thread(() -> new SwingWrapper<>(chart).displayChart().setDefaultCloseOperation(DISPOSE_ON_CLOSE));

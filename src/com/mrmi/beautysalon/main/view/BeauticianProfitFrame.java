@@ -25,7 +25,7 @@ public class BeauticianProfitFrame extends JFrame {
     private Date toDate;
     private ArrayList<String> beauticianUsernames;
     private ArrayList<Integer> finishedTreatments;
-    private ArrayList<Double> profits;
+    private ArrayList<Float> profits;
 
     public BeauticianProfitFrame(TreatmentManager treatmentManager) {
         this.treatmentManager = treatmentManager;
@@ -42,6 +42,7 @@ public class BeauticianProfitFrame extends JFrame {
         this.setTitle("Beauty salon - Beautician profit graph");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         JLabel fromLabel = new JLabel("From");
         this.add(fromLabel, "align right");
@@ -109,7 +110,7 @@ public class BeauticianProfitFrame extends JFrame {
 
         String currentBeautician = treatments.get(0).getBeauticianUsername();
         int count = 0;
-        double profit = 0;
+        float profit = 0;
 
         for (Treatment t : treatments) {
             if (t.getScheduledDate().before(fromDate) || t.getScheduledDate().after(toDate)) {

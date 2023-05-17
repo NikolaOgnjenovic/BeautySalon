@@ -107,7 +107,7 @@ public class UserManager {
         return pastTreatments;
     }
 
-    public void changeMoneySpent(Client client, double refundedPrice) {
+    public void changeMoneySpent(Client client, float refundedPrice) {
         client.setMoneySpent(client.getMoneySpent() + refundedPrice);
         client.setHasLoyaltyCard(client.getMoneySpent() >= salonManager.getLoyaltyThreshold());
         updateUser(client);
@@ -125,7 +125,7 @@ public class UserManager {
             return;
         }
 
-        double price = treatment.getPrice();
+        float price = treatment.getPrice();
         if (client.hasLoyaltyCard()) {
             price *= 0.9;
             treatment.setPrice(price);
@@ -192,11 +192,11 @@ public class UserManager {
         return pastTreatments;
     }
 
-    public HashMap<Integer, Beautician> getBeauticiansByTreatmentTypeCategory(int treatmentTypeCategoryId) {
+    public HashMap<Integer, Beautician> getBeauticiansByTreatmentTypeCategory(int categoryId) {
         HashMap<Integer, Beautician> beauticians = new HashMap<>();
         for (Map.Entry<Integer, User> u : users.entrySet()) {
             if (u.getValue().getClass().equals(Beautician.class)) {
-                if (((Beautician) u.getValue()).getTreatmentTypeCategoryIDs().contains(treatmentTypeCategoryId)) {
+                if (((Beautician) u.getValue()).getTreatmentTypeCategoryIDs().contains(categoryId)) {
                     beauticians.put(u.getKey(), (Beautician) u.getValue());
                 }
             }
@@ -204,9 +204,9 @@ public class UserManager {
         return beauticians;
     }
 
-    public void teachTreatment(int id, byte treatmentTypeCategoryId) throws UserNotFoundException {
+    public void teachTreatment(int id, byte categoryId) throws UserNotFoundException {
         Beautician beautician = getBeautician(id);
-        beautician.addTreatmentTypeCategoryID(treatmentTypeCategoryId);
+        beautician.addTreatmentTypeCategoryID(categoryId);
         database.updateUser(beautician);
     }
 

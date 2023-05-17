@@ -46,6 +46,7 @@ public class UsersFrame extends JFrame {
         this.setTitle("Beauty salon - Users");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         // Toolbar
         JToolBar mainToolbar = new JToolBar();

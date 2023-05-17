@@ -116,7 +116,7 @@ public class AddEditTreatmentDialog extends JDialog {
                     JOptionPane.showMessageDialog(null, "Invalid treatment type", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                int treatmentTypeId = ((TreatmentType) comboBoxType.getSelectedItem()).getId();
+                int typeId = ((TreatmentType) comboBoxType.getSelectedItem()).getId();
 
                 Calendar scheduledDate = Calendar.getInstance();
                 Date date = (Date) datePicker.getModel().getValue();
@@ -126,7 +126,7 @@ public class AddEditTreatmentDialog extends JDialog {
                 }
                 scheduledDate.setTime(date);
 
-                double price = Double.parseDouble(textPrice.getText().trim());
+                float price = Float.parseFloat(textPrice.getText().trim());
                 if (price <= 0) {
                     JOptionPane.showMessageDialog(null, "Invalid price", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -161,7 +161,7 @@ public class AddEditTreatmentDialog extends JDialog {
                 }
 
                 try {
-                    treatmentManager.updateTreatment(treatment, treatmentTypeId, scheduledDate, price, clientUsername, beauticianUsername, status);
+                    treatmentManager.updateTreatment(treatment, typeId, scheduledDate, price, clientUsername, beauticianUsername, status);
                 } catch (TreatmentNotFoundException ignored) {
 
                 }

@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class TreatmentTypesFrame extends JFrame {
     private final TreatmentManager treatmentManager;
-    private final HashMap<Integer, TreatmentType> treatmentTypes;
+    private final HashMap<Integer, TreatmentType> types;
     private JTextField filterText;
     private JButton buttonAdd;
     private JButton buttonEdit;
@@ -21,9 +21,9 @@ public class TreatmentTypesFrame extends JFrame {
     private JButton buttonBack;
     private GenericTable table;
     private GenericTableModel tableModel;
-    public TreatmentTypesFrame(TreatmentManager treatmentManager, HashMap<Integer, TreatmentType> treatmentTypes) {
+    public TreatmentTypesFrame(TreatmentManager treatmentManager, HashMap<Integer, TreatmentType> types) {
         this.treatmentManager = treatmentManager;
-        this.treatmentTypes = treatmentTypes;
+        this.types = types;
         initialiseViews();
         initialiseListeners();
     }
@@ -33,6 +33,7 @@ public class TreatmentTypesFrame extends JFrame {
         this.setTitle("Beauty salon - Treatment types");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         // Toolbar
         JToolBar mainToolbar = new JToolBar();
@@ -58,7 +59,7 @@ public class TreatmentTypesFrame extends JFrame {
 
         this.add(mainToolbar);
 
-        tableModel = new GenericTableModel(treatmentTypes, treatmentManager);
+        tableModel = new GenericTableModel(types, treatmentManager);
         table = new GenericTable(tableModel);
         this.add(new JScrollPane(table), "span, growx");
 
@@ -73,7 +74,7 @@ public class TreatmentTypesFrame extends JFrame {
         filterText.addActionListener(e -> table.filter(filterText.getText()));
 
         buttonAdd.addActionListener(e -> {
-            AddEditTreatmentTypeDialog edit = new AddEditTreatmentTypeDialog(this, treatmentManager, null, -1);
+            AddEditTreatmentTypeDialog edit = new AddEditTreatmentTypeDialog(this, treatmentManager, null);
             edit.setVisible(true);
             tableModel.fireTableDataChanged();
         });
@@ -85,8 +86,8 @@ public class TreatmentTypesFrame extends JFrame {
             } else {
                 try {
                     int id = Integer.parseInt(table.getValueAt(row, 0).toString());
-                    TreatmentType treatmentType = treatmentManager.getTreatmentType(id);
-                    AddEditTreatmentTypeDialog add = new AddEditTreatmentTypeDialog(this, treatmentManager, treatmentType, id);
+                    TreatmentType type = treatmentManager.getTreatmentType(id);
+                    AddEditTreatmentTypeDialog add = new AddEditTreatmentTypeDialog(this, treatmentManager, type);
                     add.setVisible(true);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Error processing treatment type", "Error", JOptionPane.ERROR_MESSAGE);
@@ -101,12 +102,12 @@ public class TreatmentTypesFrame extends JFrame {
             } else {
                 try {
                     int id = Integer.parseInt(table.getValueAt(row, 0).toString());
-                    TreatmentType treatmentType = treatmentManager.getTreatmentType(id);
+                    TreatmentType type = treatmentManager.getTreatmentType(id);
                     int choice = JOptionPane.showConfirmDialog(null,
                             "Are you sure that you want to delete this treatment type?"+
-                                    "\n" + treatmentType.getName() +
-                                    "\n" + treatmentType.getPrice() +
-                                    "\n" + treatmentType.getDuration(),
+                                    "\n" + type.getName() +
+                                    "\n" + type.getPrice() +
+                                    "\n" + type.getDuration(),
                             "Deletion confirmation", JOptionPane.YES_NO_OPTION);
                     if(choice == JOptionPane.YES_OPTION) {
                         treatmentManager.deleteTreatmentType(id);
@@ -122,7 +123,7 @@ public class TreatmentTypesFrame extends JFrame {
     }
 
     public void refreshData() {
-        GenericTableModel model = new GenericTableModel(treatmentTypes, treatmentManager);
+        GenericTableModel model = new GenericTableModel(types, treatmentManager);
         table.setModel(model);
     }
 }

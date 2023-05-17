@@ -6,13 +6,13 @@ import com.mrmi.beautysalon.main.manager.TreatmentManager;
 public class TreatmentType implements TableCell {
     private int id;
     private String name;
-    private double price;
+    private float price;
     private int categoryId;
     private int duration;
     private boolean isDeleted;
 
     // Used when adding
-    public TreatmentType(String name, double price, int categoryId, int duration) {
+    public TreatmentType(String name, float price, int categoryId, int duration) {
         this.name = name;
         this.price = price;
         this.categoryId = categoryId;
@@ -21,7 +21,7 @@ public class TreatmentType implements TableCell {
     }
 
     // Used when reading from files
-    public TreatmentType(int id, String name, double price, int categoryId, int duration, boolean isDeleted) {
+    public TreatmentType(int id, String name, float price, int categoryId, int duration, boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -34,7 +34,7 @@ public class TreatmentType implements TableCell {
         this.id = id;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 
@@ -47,7 +47,7 @@ public class TreatmentType implements TableCell {
         this.name = name;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 

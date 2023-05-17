@@ -10,20 +10,20 @@ import javax.swing.*;
 public class AddEditTreatmentTypeCategoryDialog extends JDialog {
     private final JFrame parent;
     private final TreatmentManager treatmentManager;
-    private final TreatmentTypeCategory treatmentTypeCategory;
+    private final TreatmentTypeCategory category;
 
-    public AddEditTreatmentTypeCategoryDialog(JFrame parent, TreatmentManager treatmentManager, TreatmentTypeCategory treatmentTypeCategory, int id) {
+    public AddEditTreatmentTypeCategoryDialog(JFrame parent, TreatmentManager treatmentManager, TreatmentTypeCategory category) {
         super(parent, true);
         this.parent = parent;
 
-        if (treatmentTypeCategory != null) {
+        if (category != null) {
             setTitle("Edit treatment type category");
         } else {
             setTitle("Add treatment type category");
         }
 
         this.treatmentManager = treatmentManager;
-        this.treatmentTypeCategory = treatmentTypeCategory;
+        this.category = category;
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -46,8 +46,8 @@ public class AddEditTreatmentTypeCategoryDialog extends JDialog {
         JButton buttonOK = new JButton("OK");
         add(buttonOK);
 
-        if (treatmentTypeCategory != null) {
-            textName.setText(treatmentTypeCategory.getName());
+        if (category != null) {
+            textName.setText(category.getName());
         }
 
         buttonOK.addActionListener(e -> {
@@ -57,8 +57,8 @@ public class AddEditTreatmentTypeCategoryDialog extends JDialog {
                 return;
             }
 
-            if (treatmentTypeCategory != null) {
-                treatmentManager.updateTreatmentTypeCategoryName(treatmentTypeCategory, name);
+            if (category != null) {
+                treatmentManager.updateTreatmentTypeCategoryName(category, name);
             } else {
                 treatmentManager.addTreatmentTypeCategory(name);
             }

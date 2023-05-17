@@ -34,6 +34,7 @@ public class MainFrame extends JFrame {
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new MigLayout("wrap 1", "[grow, center]", "[grow]"));
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         JLabel welcome = new JLabel("Welcome");
         this.add(welcome);

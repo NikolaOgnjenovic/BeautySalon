@@ -49,25 +49,25 @@ public class TreatmentManager {
                 .filter(category -> !category.getValue().isDeleted())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-    public String getTreatmentTypeCategoryName(int treatmentTypeCategoryId) throws TreatmentTypeCategoryNotFoundException {
-        TreatmentTypeCategory category = getTreatmentTypeCategory(treatmentTypeCategoryId);
+    public String getTreatmentTypeCategoryName(int categoryId) throws TreatmentTypeCategoryNotFoundException {
+        TreatmentTypeCategory category = getTreatmentTypeCategory(categoryId);
         return category.getName();
     }
 
-    public String getTreatmentTypeCategoryNameByType(int treatmentTypeId) throws TreatmentTypeNotFoundException, TreatmentTypeCategoryNotFoundException {
-        TreatmentType treatmentType = getTreatmentType(treatmentTypeId);
+    public String getTreatmentTypeCategoryNameByType(int typeId) throws TreatmentTypeNotFoundException, TreatmentTypeCategoryNotFoundException {
+        TreatmentType type = getTreatmentType(typeId);
 
-        return getTreatmentTypeCategoryName(treatmentType.getCategoryId());
+        return getTreatmentTypeCategoryName(type.getCategoryId());
     }
 
-    public void updateTreatmentTypeCategory(TreatmentTypeCategory treatmentTypeCategory) {
-        categories.put(treatmentTypeCategory.getId(), treatmentTypeCategory);
-        database.updateTreatmentTypeCategory(treatmentTypeCategory);
+    public void updateTreatmentTypeCategory(TreatmentTypeCategory category) {
+        categories.put(category.getId(), category);
+        database.updateTreatmentTypeCategory(category);
     }
 
-    public void updateTreatmentTypeCategoryName(TreatmentTypeCategory treatmentTypeCategory, String name) {
-        treatmentTypeCategory.setName(name);
-        database.updateTreatmentTypeCategory(treatmentTypeCategory);
+    public void updateTreatmentTypeCategoryName(TreatmentTypeCategory category, String name) {
+        category.setName(name);
+        database.updateTreatmentTypeCategory(category);
     }
 
     public void deleteTreatmentTypeCategory(int id) throws TreatmentTypeCategoryNotFoundException {
@@ -83,12 +83,12 @@ public class TreatmentManager {
         }
     }
 
-    public int[] getCategoryProfitByMonths(int treatmentTypeCategoryId) {
+    public int[] getCategoryProfitByMonths(int categoryId) {
         int[] profit = new int[12];
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, -1);
         for (Treatment t : treatments.values()) {
-            if (treatmentTypeCategoryId == types.get(t.getTreatmentTypeId()).getCategoryId()) {
+            if (categoryId == types.get(t.getTreatmentTypeId()).getCategoryId()) {
                 if (t.getScheduledDate().after(calendar)) {
                     profit[t.getScheduledDate().get(Calendar.MONTH)] += t.getPrice();
                 }
@@ -100,9 +100,9 @@ public class TreatmentManager {
     //endregion
 
     //region Treatment type
-    public void addTreatmentType(String name, double price, int treatmentTypeCategoryId, int duration) {
+    public void addTreatmentType(String name, float price, int categoryId, int duration) {
         int id = database.getNextTreatmentTypeId();
-        database.addTreatmentType(id, new TreatmentType(name, price, treatmentTypeCategoryId, duration));
+        database.addTreatmentType(id, new TreatmentType(name, price, categoryId, duration));
     }
     public HashMap<Integer, TreatmentType> getTreatmentTypes() {
         return types;
@@ -131,10 +131,10 @@ public class TreatmentManager {
         database.updateTreatmentType(type.getId(), type);
     }
 
-    public void updateTreatmentType(TreatmentType type, String name, double price, int treatmentTypeCategoryId, int duration) {
+    public void updateTreatmentType(TreatmentType type, String name, float price, int categoryId, int duration) {
         type.setName(name);
         type.setPrice(price);
-        type.setCategoryId(treatmentTypeCategoryId);
+        type.setCategoryId(categoryId);
         type.setDuration(duration);
         database.updateTreatmentType(type.getId(), type);
     }
@@ -145,25 +145,25 @@ public class TreatmentManager {
         updateTreatmentType(type);
     }
 
-    public String getTreatmentTypeName(int treatmentTypeId) throws TreatmentTypeNotFoundException {
-        TreatmentType treatmentType = getTreatmentType(treatmentTypeId);
-        return treatmentType.getName();
+    public String getTreatmentTypeName(int typeId) throws TreatmentTypeNotFoundException {
+        TreatmentType type = getTreatmentType(typeId);
+        return type.getName();
     }
 
     /**
      *
      * @param selectedDate The date on which the time slots are being calculated
-     * @param treatmentTypeId The id of the treatment type
+     * @param typeId The id of the treatment type
      * @param salonManager Used for the opening & closing hour
      * @return a Vector of Strings which contains available time slots for the treatment
      */
-    public Vector<String> getAvailableTimeSlots(Calendar selectedDate, int treatmentTypeId, SalonManager salonManager) {
-        if (!types.containsKey(treatmentTypeId)) {
+    public Vector<String> getAvailableTimeSlots(Calendar selectedDate, int typeId, SalonManager salonManager) {
+        if (!types.containsKey(typeId)) {
             return new Vector<>();
         }
 
         // Round the treatment duration (minutes) to hours
-        int duration = types.get(treatmentTypeId).getDuration();
+        int duration = types.get(typeId).getDuration();
         int roundedDurationHour = duration / 60 + 1;
         Vector<String> availableTimeSlots = new Vector<>();
 
@@ -195,10 +195,10 @@ public class TreatmentManager {
         return "0" + h;
     }
 
-    public int getTimesBooked(int treatmentTypeId) {
+    public int getTimesBooked(int typeId) {
         int counter = 0;
         for (Treatment t : treatments.values()) {
-            if (t.getTreatmentTypeId() == treatmentTypeId) {
+            if (t.getTreatmentTypeId() == typeId) {
                 counter++;
             }
         }
@@ -206,10 +206,10 @@ public class TreatmentManager {
         return counter;
     }
 
-    public double getProfit(int treatmentTypeId) {
-        double profit = 0;
+    public float getProfit(int typeId) {
+        float profit = 0;
         for (Treatment t : treatments.values()) {
-            if (t.getTreatmentTypeId() == treatmentTypeId) {
+            if (t.getTreatmentTypeId() == typeId) {
                 profit += t.getPrice();
             }
         }
@@ -244,8 +244,8 @@ public class TreatmentManager {
         database.updateTreatment(treatment);
     }
 
-    public void updateTreatment(Treatment treatment, int treatmentTypeId, Calendar scheduledDate, Double price, String clientUsername, String beauticianUsername, Treatment.Status status) throws TreatmentNotFoundException {
-        treatment.setTreatmentTypeId(treatmentTypeId);
+    public void updateTreatment(Treatment treatment, int typeId, Calendar scheduledDate, Float price, String clientUsername, String beauticianUsername, Treatment.Status status) throws TreatmentNotFoundException {
+        treatment.setTreatmentTypeId(typeId);
         treatment.setScheduledDate(scheduledDate);
         treatment.setPrice(price);
         treatment.setClientUsername(clientUsername);
@@ -291,12 +291,12 @@ public class TreatmentManager {
         return statusCountMap;
     }
 
-    public double getTotalCost(HashMap<Integer, Treatment> treatments) {
-        double cost = 0d;
+    public float getTotalCost(HashMap<Integer, Treatment> treatments) {
+        float cost = 0;
         for (Treatment t : treatments.values()) {
             cost += t.getPrice();
         }
-        return cost;
+        return ((int) cost * 100) / 100f;
     }
 
     public List<Treatment> getTreatmentsSortedByBeauticians() {
@@ -324,9 +324,9 @@ public class TreatmentManager {
             return;
         }
 
-        double refundedPrice = treatment.getPrice();
+        float refundedPrice = treatment.getPrice();
         if (clientCancelled) {
-            salonManager.addIncome(refundedPrice * 0.1);
+            salonManager.addIncome((float) (refundedPrice * 0.1));
             refundedPrice *= 0.9;
             treatment.setStatus(Treatment.Status.CANCELLED_BY_CLIENT);
         } else {

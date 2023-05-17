@@ -38,6 +38,7 @@ public class ReceptionistFrame extends JFrame {
         this.setTitle("Beauty salon - Receptionist");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         buttonViewTreatments = new JButton("All treatments");
         this.add(buttonViewTreatments);
@@ -54,10 +55,6 @@ public class ReceptionistFrame extends JFrame {
 
         buttonLogout = new JButton("Logout");
         this.add(buttonLogout);
-
-        // TODO:
-        //  Recepcioner ima mogućnost da filtrira sve zakazane tretmane po:
-        //  kozmetičkom tretmanu, njegovom tipu i opsegu cene koju klijent plaća.
     }
 
     private void initialiseListeners() {

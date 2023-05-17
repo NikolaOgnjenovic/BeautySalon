@@ -26,6 +26,7 @@ public class TreatmentsFrame extends JFrame {
     private JButton buttonEdit;
     private JButton buttonDelete;
     private JButton buttonBack;
+    private JTextField textMaxPrice;
 
     public TreatmentsFrame(TreatmentManager treatmentManager, UserManager userManager, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean isClient) {
         this.treatmentManager = treatmentManager;
@@ -43,6 +44,7 @@ public class TreatmentsFrame extends JFrame {
         this.setTitle("Beauty salon - Treatments");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         // Toolbar
         JToolBar mainToolbar = new JToolBar();
@@ -75,15 +77,16 @@ public class TreatmentsFrame extends JFrame {
         filterText = new JTextField(20);
         this.add(filterText);
 
-        double totalCost = treatmentManager.getTotalCost(treatments);
-        JLabel total = new JLabel("Total cost: " + totalCost);
+        float totalCost = treatmentManager.getTotalCost(treatments);
+        JLabel total = new JLabel("Total cost: " + ((int) totalCost * 100) / 100f);
         this.add(total);
 
-        JLabel totalRefund = new JLabel(totalCost + " will be refunded if the salon cancels the treatments");
-        this.add(totalRefund);
-
-        JLabel clientRefund = new JLabel(0.9*totalCost + " will be refunded if the client cancels the treatments");
+        JLabel clientRefund = new JLabel(((int) (0.9 * totalCost) * 100) / 100f + " will be refunded if the client cancels every treatment.");
         this.add(clientRefund);
+
+        this.add(new JLabel("Maximum price"), "split 2");
+        textMaxPrice = new JTextField(5);
+        this.add(textMaxPrice);
 
         buttonBack = new JButton("Back");
         this.add(buttonBack, "span");
@@ -91,6 +94,26 @@ public class TreatmentsFrame extends JFrame {
 
     private void initialiseListeners() {
         filterText.addActionListener(e -> table.filter(filterText.getText()));
+
+        textMaxPrice.addActionListener(e -> {
+            try {
+                float maxPrice = Float.parseFloat(textMaxPrice.getText());
+                if (maxPrice <= 0) {
+                    refreshData();
+                    return;
+                }
+                HashMap<Integer, Treatment> filteredTratments = new HashMap<>();
+                for (Treatment treatment : treatments.values()) {
+                    if (treatment.getPrice() <= maxPrice) {
+                        filteredTratments.put(treatment.getId(), treatment);
+                    }
+                    tableModel = new GenericTableModel(filteredTratments, treatmentManager);
+                    table.setModel(tableModel);
+                }
+            } catch (NumberFormatException ex) {
+                refreshData();
+            }
+        });
 
         buttonEdit.addActionListener(e -> {
             int row = table.getSelectedRow();

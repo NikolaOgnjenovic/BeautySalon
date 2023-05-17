@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class TreatmentTypeCategoriesFrame extends JFrame {
     private final TreatmentManager treatmentManager;
-    private final HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories;
+    private final HashMap<Integer, TreatmentTypeCategory> categories;
     private JTextField filterText;
     private JButton buttonAdd;
     private JButton buttonEdit;
@@ -21,9 +21,9 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
     private JButton buttonBack;
     private GenericTable table;
     private GenericTableModel tableModel;
-    public TreatmentTypeCategoriesFrame(TreatmentManager treatmentManager, HashMap<Integer, TreatmentTypeCategory> treatmentTypeCategories) {
+    public TreatmentTypeCategoriesFrame(TreatmentManager treatmentManager, HashMap<Integer, TreatmentTypeCategory> categories) {
         this.treatmentManager = treatmentManager;
-        this.treatmentTypeCategories = treatmentTypeCategories;
+        this.categories = categories;
 
         initialiseViews();
         initialiseListeners();
@@ -34,6 +34,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
         this.setTitle("Beauty salon - Treatment type categories");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         // Toolbar
         JToolBar mainToolbar = new JToolBar();
@@ -59,7 +60,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
 
         this.add(mainToolbar);
 
-        tableModel = new GenericTableModel(treatmentTypeCategories, treatmentManager);
+        tableModel = new GenericTableModel(categories, treatmentManager);
         table = new GenericTable(tableModel);
         this.add(new JScrollPane(table), "span, growx");
 
@@ -74,7 +75,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
         filterText.addActionListener(e -> table.filter(filterText.getText()));
 
         buttonAdd.addActionListener(e -> {
-            AddEditTreatmentTypeCategoryDialog add = new AddEditTreatmentTypeCategoryDialog(this, treatmentManager, null, -1);
+            AddEditTreatmentTypeCategoryDialog add = new AddEditTreatmentTypeCategoryDialog(this, treatmentManager, null);
             add.setVisible(true);
             tableModel.fireTableDataChanged();
         });
@@ -86,8 +87,8 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
             } else {
                 try {
                     int id = Integer.parseInt(table.getValueAt(row, 0).toString());
-                    TreatmentTypeCategory treatmentTypeCategory = treatmentManager.getTreatmentTypeCategory(id);
-                    AddEditTreatmentTypeCategoryDialog edit = new AddEditTreatmentTypeCategoryDialog(this, treatmentManager, treatmentTypeCategory, id);
+                    TreatmentTypeCategory category = treatmentManager.getTreatmentTypeCategory(id);
+                    AddEditTreatmentTypeCategoryDialog edit = new AddEditTreatmentTypeCategoryDialog(this, treatmentManager, category);
                     edit.setVisible(true);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Error processing treatment type category", "Error", JOptionPane.ERROR_MESSAGE);
@@ -102,10 +103,10 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
             } else {
                 try {
                     int id = Integer.parseInt(table.getValueAt(row, 0).toString());
-                    TreatmentTypeCategory treatmentTypeCategory = treatmentManager.getTreatmentTypeCategory(id);
+                    TreatmentTypeCategory category = treatmentManager.getTreatmentTypeCategory(id);
                     int choice = JOptionPane.showConfirmDialog(null,
                             "Are you sure that you want to delete this treatment type?"+
-                                    "\n" + treatmentTypeCategory.getName(),
+                                    "\n" + category.getName(),
                             "Deletion confirmation", JOptionPane.YES_NO_OPTION);
                     if(choice == JOptionPane.YES_OPTION) {
                         treatmentManager.deleteTreatmentTypeCategory(id);
@@ -121,7 +122,7 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
     }
 
     public void refreshData() {
-        GenericTableModel model = new GenericTableModel(treatmentTypeCategories, treatmentManager);
+        GenericTableModel model = new GenericTableModel(categories, treatmentManager);
         table.setModel(model);
     }
 }

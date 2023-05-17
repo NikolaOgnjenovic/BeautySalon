@@ -40,6 +40,7 @@ public class ClientFrame extends JFrame {
         this.setTitle("Beauty salon - Client");
         this.setSize(1000, 1080);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
 
         JLabel title = new JLabel("Welcome back, " + clientUsername);
         this.add(title);

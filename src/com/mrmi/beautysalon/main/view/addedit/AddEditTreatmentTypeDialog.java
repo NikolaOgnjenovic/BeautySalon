@@ -11,20 +11,20 @@ import javax.swing.*;
 public class AddEditTreatmentTypeDialog extends JDialog {
     private final JFrame parent;
     private final TreatmentManager treatmentManager;
-    private final TreatmentType treatmentType;
+    private final TreatmentType type;
 
-    public AddEditTreatmentTypeDialog(JFrame parent, TreatmentManager treatmentManager, TreatmentType treatmentType, int id) {
+    public AddEditTreatmentTypeDialog(JFrame parent, TreatmentManager treatmentManager, TreatmentType type) {
         super(parent, true);
         this.parent = parent;
 
-        if (treatmentType != null) {
+        if (type != null) {
             setTitle("Edit treatment type");
         } else {
             setTitle("Add treatment type");
         }
 
         this.treatmentManager = treatmentManager;
-        this.treatmentType = treatmentType;
+        this.type = type;
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -37,7 +37,7 @@ public class AddEditTreatmentTypeDialog extends JDialog {
     private void initialiseViews() {
         setLayout(new MigLayout("wrap 2", "", "[]10"));
 
-        //String name, double price, int categoryId, int duration, boolean isDeleted
+        //String name, float price, int categoryId, int duration, boolean isDeleted
         add(new JLabel("Name"));
         JTextField textName = new JTextField(20);
         add(textName);
@@ -64,11 +64,11 @@ public class AddEditTreatmentTypeDialog extends JDialog {
         add(buttonOK);
 
         // If a treatment type is being edited then the treatment type parameter of the constructor != null
-        if (treatmentType != null) {
-            textName.setText(treatmentType.getName());
-            textPrice.setText(String.valueOf(treatmentType.getPrice()));
-            comboBoxCategory.setSelectedItem(treatmentManager.getTreatmentTypeCategories().get(treatmentType.getCategoryId()));
-            textDuration.setText(String.valueOf(treatmentType.getDuration()));
+        if (type != null) {
+            textName.setText(type.getName());
+            textPrice.setText(String.valueOf(type.getPrice()));
+            comboBoxCategory.setSelectedItem(treatmentManager.getTreatmentTypeCategories().get(type.getCategoryId()));
+            textDuration.setText(String.valueOf(type.getDuration()));
         }
 
         buttonOK.addActionListener(e -> {
@@ -78,7 +78,7 @@ public class AddEditTreatmentTypeDialog extends JDialog {
                 return;
             }
 
-            double price = Double.parseDouble(textPrice.getText());
+            float price = Float.parseFloat(textPrice.getText());
             if (price < 0) {
                 JOptionPane.showMessageDialog(null, "Invalid price", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -89,7 +89,7 @@ public class AddEditTreatmentTypeDialog extends JDialog {
                 JOptionPane.showMessageDialog(null, "Invalid treatment type category", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            int treatmentTypeCategoryId = category.getId();
+            int categoryId = category.getId();
 
             int duration = Integer.parseInt(textDuration.getText());
             if (duration < 0) {
@@ -97,10 +97,10 @@ public class AddEditTreatmentTypeDialog extends JDialog {
                 return;
             }
 
-            if (treatmentType != null) {
-                treatmentManager.updateTreatmentType(treatmentType, name, price, treatmentTypeCategoryId, duration);
+            if (type != null) {
+                treatmentManager.updateTreatmentType(type, name, price, categoryId, duration);
             } else {
-                treatmentManager.addTreatmentType(name, price, treatmentTypeCategoryId, duration);
+                treatmentManager.addTreatmentType(name, price, categoryId, duration);
             }
 
             ((TreatmentTypesFrame) parent).refreshData();
