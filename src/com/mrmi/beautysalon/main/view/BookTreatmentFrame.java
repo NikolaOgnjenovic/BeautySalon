@@ -62,9 +62,6 @@ public class BookTreatmentFrame extends JFrame {
         comboBoxBeauticians = new JComboBox<>();
         this.add(comboBoxBeauticians);
 
-        JTextField textBeauticianFilter = new JTextField("Search beauticians", 20);
-        this.add(textBeauticianFilter);
-
         datePicker = DatePicker.getDatePicker();
         this.add(datePicker);
         datePicker.setVisible(false);

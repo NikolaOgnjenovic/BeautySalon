@@ -23,6 +23,7 @@ public class RegisterFrame extends JFrame {
 
     private JComboBox<String> comboBoxUserType;
     private JLabel labelSalary, labelQualificationLevel, labelExperience;
+
     public RegisterFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, AuthManager authManager, boolean canPickUserType, User user, boolean isClient) {
         this.salonManager = salonManager;
         this.treatmentManager = treatmentManager;
@@ -99,20 +100,16 @@ public class RegisterFrame extends JFrame {
             textSalary = new JTextField(20);
             this.add(textSalary);
 
-            if (user != null) {
-                if (user instanceof Client) {
-                    comboBoxUserType.setSelectedIndex(0);
-                    toggleEmployeeFields(false);
-                } else {
-                    toggleEmployeeFields(true);
+            toggleEmployeeFields(false);
+            if (user != null && !(user instanceof Client)) {
+                toggleEmployeeFields(true);
 
-                    if (user instanceof Beautician) {
-                        comboBoxUserType.setSelectedIndex(1);
-                    } else if (user instanceof Receptionist) {
-                        comboBoxUserType.setSelectedIndex(2);
-                    } else {
-                        comboBoxUserType.setSelectedIndex(3);
-                    }
+                if (user instanceof Beautician) {
+                    comboBoxUserType.setSelectedIndex(1);
+                } else if (user instanceof Receptionist) {
+                    comboBoxUserType.setSelectedIndex(2);
+                } else {
+                    comboBoxUserType.setSelectedIndex(3);
                 }
             }
         }
@@ -146,8 +143,51 @@ public class RegisterFrame extends JFrame {
         }
 
         buttonRegister.addActionListener(e -> {
+            String username, password, name, surname, gender, phone, address;
+            username = textUsername.getText();
+            if (username.length() == 0) {
+                JOptionPane.showMessageDialog(null, "The username cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            password = textPassword.getText();
+            if (password.length() == 0) {
+                JOptionPane.showMessageDialog(null, "The password cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            name = textName.getText();
+            if (name.length() == 0) {
+                JOptionPane.showMessageDialog(null, "The name cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            surname = textSurname.getText();
+            if (surname.length() == 0) {
+                JOptionPane.showMessageDialog(null, "The surname cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            gender = textGender.getText();
+            if (gender.length() == 0) {
+                JOptionPane.showMessageDialog(null, "The gender cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            phone = textPhone.getText();
+            if (phone.length() == 0) {
+                JOptionPane.showMessageDialog(null, "The phone number cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            address = textAddress.getText();
+            if (address.length() == 0) {
+                JOptionPane.showMessageDialog(null, "The address number cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             if (!canPickUserType) {
-                Client client = new Client(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText());
+                Client client = new Client(username, password, name, surname, gender, phone, address);
                 userManager.addUser(client);
                 this.dispose();
 
@@ -158,18 +198,54 @@ public class RegisterFrame extends JFrame {
                 return;
             }
             User newUser = user;
+            byte qualificationLevel;
+            try {
+                qualificationLevel = Byte.parseByte(textQualificationLevel.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "The qualification level has to be a number between 1 and 8", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (qualificationLevel < 1 || qualificationLevel > 8) {
+                JOptionPane.showMessageDialog(null, "The qualification level has to be a number between 1 and 8", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            byte experience;
+            try {
+                experience = Byte.parseByte(textExperience.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "The years of experience have to be a number >= 0", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (experience < 0) {
+                JOptionPane.showMessageDialog(null, "The years of experience have to be a number >= 0", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            float salary;
+            try {
+                salary = Float.parseFloat(textSalary.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "The salary has to be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (salary <= 0) {
+                JOptionPane.showMessageDialog(null, "The salary has to be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             switch (comboBoxUserType.getSelectedIndex()) {
                 case 0:
-                    newUser = new Client(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText());
+                    newUser = new Client(username, password, name, surname, gender, phone, address);
                     break;
                 case 1:
-                    newUser = new Beautician(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textSalary.getText()));
+                    newUser = new Beautician(username, password, name, surname, gender, phone, address, qualificationLevel, experience, salary);
                     break;
                 case 2:
-                    newUser = new Receptionist(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textSalary.getText()));
+                    newUser = new Receptionist(username, password, name, surname, gender, phone, address, qualificationLevel, experience, salary);
                     break;
                 case 3:
-                    newUser = new Manager(textUsername.getText(), textPassword.getText(), textName.getText(), textSurname.getText(), textGender.getText(), textPhone.getText(), textAddress.getText(), Byte.parseByte(textQualificationLevel.getText()), Byte.parseByte(textExperience.getText()), Float.parseFloat(textSalary.getText()));
+                    newUser = new Manager(username, password, name, surname, gender, phone, address, qualificationLevel, experience, salary);
                     break;
             }
 

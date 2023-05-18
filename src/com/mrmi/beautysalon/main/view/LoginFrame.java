@@ -58,7 +58,7 @@ public class LoginFrame extends JFrame {
     private void initialiseListeners() {
         buttonLogin.addActionListener(e -> {
             if (!authManager.login(textUsername.getText(), String.valueOf(textPassword.getText()))) {
-                JOptionPane.showMessageDialog(new JFrame(), "Invalid credentials!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Invalid credentials!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 

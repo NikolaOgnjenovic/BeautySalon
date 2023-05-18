@@ -50,7 +50,7 @@ public class Employee extends User {
 
     @Override
     public String getFileString() {
-        return super.getFileString() + qualificationLevel + "," + yearsOfExperience + "," + monthlySalary + "," + hiringDate + ",";
+        return super.getFileString() + qualificationLevel + "," + yearsOfExperience + "," + monthlySalary + "," + hiringDate.getTime() + ",";
     }
 
     @Override

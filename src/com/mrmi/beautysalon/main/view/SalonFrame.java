@@ -53,11 +53,67 @@ public class SalonFrame extends JFrame {
     }
 
     private void initialiseListeners() {
-        textLoyaltyThreshold.addActionListener(e -> salonManager.setLoyaltyThreshold(Float.parseFloat(textLoyaltyThreshold.getText())));
-        textSalonName.addActionListener(e -> salonManager.setName(textSalonName.getText()));
-        textOpeningHour.addActionListener(e -> salonManager.setOpeningHour(Byte.parseByte(textOpeningHour.getText())));
-        textClosingHour.addActionListener(e -> salonManager.setClosingHour(Byte.parseByte(textClosingHour.getText())));
-        textBonus.addActionListener(e -> salonManager.setBonus(Float.parseFloat(textBonus.getText())));
+        textLoyaltyThreshold.addActionListener(e -> {
+            float loyaltyThreshold = salonManager.getLoyaltyThreshold();
+            try {
+                loyaltyThreshold = Float.parseFloat(textLoyaltyThreshold.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "The loyalty threshold has to be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            if (loyaltyThreshold < 0) {
+                JOptionPane.showMessageDialog(null, "The loyalty threshold has to be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            salonManager.setLoyaltyThreshold(loyaltyThreshold);
+        });
+
+        textSalonName.addActionListener(e -> {
+            String name = textSalonName.getText();
+            if (name.length() == 0) {
+                JOptionPane.showMessageDialog(null, "The salon name cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            salonManager.setName(name);
+        });
+
+        textOpeningHour.addActionListener(e -> {
+            byte openingHour = salonManager.getOpeningHour();
+            try {
+                openingHour = Byte.parseByte(textOpeningHour.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "The opening hour must be a number between 0 and 24.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            if (openingHour < 0 || openingHour > 24) {
+                JOptionPane.showMessageDialog(null, "The opening hour must be a number between 0 and 24.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            salonManager.setOpeningHour(openingHour);
+        });
+
+        textClosingHour.addActionListener(e -> {
+            byte closingHour = salonManager.getClosingHour();
+            try {
+                closingHour = Byte.parseByte(textClosingHour.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "The closing hour must be a number between 0 and 24.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            if (closingHour < 0 || closingHour > 24) {
+                JOptionPane.showMessageDialog(null, "The closing hour must be a number between 0 and 24.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            salonManager.setClosingHour(closingHour);
+        });
+
+        textBonus.addActionListener(e -> {
+            float bonus = salonManager.getBonus();
+            try {
+                bonus = Float.parseFloat(textBonus.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "The bonus has to be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            if (bonus < 0) {
+                JOptionPane.showMessageDialog(null, "The bonus has to be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            salonManager.setBonus(bonus);
+        });
+
         buttonBack.addActionListener(e -> this.dispose());
     }
 }
