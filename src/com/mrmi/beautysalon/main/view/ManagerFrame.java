@@ -129,7 +129,7 @@ public class ManagerFrame extends JFrame {
             PieChart chart = new PieChartBuilder().width(800).height(600).title("Beauticians by number of finished treatments").build();
             chart.getStyler().setSeriesColors(getChartColors(beauticians.size()));
             for (Beautician beautician : beauticians) {
-                chart.addSeries("ID: " + beautician.getId() + "- " + beautician.getName(), userManager.getFinishedTreatments(beautician.getUsername()));
+                chart.addSeries(beautician.getName(), userManager.getFinishedTreatments(beautician.getUsername()));
             }
             Thread t = new Thread(() -> new SwingWrapper<>(chart).displayChart().setDefaultCloseOperation(DISPOSE_ON_CLOSE));
             t.start();
@@ -144,7 +144,7 @@ public class ManagerFrame extends JFrame {
             chart.setYAxisTitle("Profit");
             chart.setTitle("Profit by treatment type category per month");
             for (Map.Entry<Integer, TreatmentTypeCategory> category : categories.entrySet()) {
-                chart.addSeries("ID: " + category.getValue().getId() + "- " + category.getValue().getName(), treatmentManager.getCategoryProfitByMonths(category.getKey()));
+                chart.addSeries(category.getValue().getName(), treatmentManager.getCategoryProfitByMonths(category.getKey()));
             }
             Thread t = new Thread(() -> new SwingWrapper<>(chart).displayChart().setDefaultCloseOperation(DISPOSE_ON_CLOSE));
             t.start();

@@ -6,7 +6,7 @@ import com.mrmi.beautysalon.main.view.MainFrame;
 
 public class Main {
     public static void main(String[] args) {
-        FlatNordIJTheme.setup();
+        FlatDarkPurpleIJTheme.setup();
         MainFrame mainFrame = new MainFrame();
         mainFrame.setVisible(true);
     }

@@ -198,41 +198,24 @@ public class RegisterFrame extends JFrame {
                 return;
             }
             User newUser = user;
-            byte qualificationLevel;
-            try {
-                qualificationLevel = Byte.parseByte(textQualificationLevel.getText());
-            } catch (NumberFormatException ex) {
+
+            if (!textQualificationLevel.getText().matches("[1-8]")) {
                 JOptionPane.showMessageDialog(null, "The qualification level has to be a number between 1 and 8", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (qualificationLevel < 1 || qualificationLevel > 8) {
-                JOptionPane.showMessageDialog(null, "The qualification level has to be a number between 1 and 8", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            byte qualificationLevel = Byte.parseByte(textQualificationLevel.getText());
 
-            byte experience;
-            try {
-                experience = Byte.parseByte(textExperience.getText());
-            } catch (NumberFormatException ex) {
+            if (!textExperience.getText().matches("[0-9]+")) {
                 JOptionPane.showMessageDialog(null, "The years of experience have to be a number >= 0", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (experience < 0) {
-                JOptionPane.showMessageDialog(null, "The years of experience have to be a number >= 0", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            byte experience = Byte.parseByte(textExperience.getText());
 
-            float salary;
-            try {
-                salary = Float.parseFloat(textSalary.getText());
-            } catch (NumberFormatException ex) {
+            if (!textSalary.getText().matches("[1-9][0-9]?")) {
                 JOptionPane.showMessageDialog(null, "The salary has to be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (salary <= 0) {
-                JOptionPane.showMessageDialog(null, "The salary has to be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            float salary = Float.parseFloat(textSalary.getText());
 
             switch (comboBoxUserType.getSelectedIndex()) {
                 case 0:

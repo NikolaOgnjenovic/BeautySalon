@@ -54,15 +54,11 @@ public class SalonFrame extends JFrame {
 
     private void initialiseListeners() {
         textLoyaltyThreshold.addActionListener(e -> {
-            float loyaltyThreshold = salonManager.getLoyaltyThreshold();
-            try {
-                loyaltyThreshold = Float.parseFloat(textLoyaltyThreshold.getText());
-            } catch (NumberFormatException ex) {
+            if (!textLoyaltyThreshold.getText().matches("[0-9]+")) {
                 JOptionPane.showMessageDialog(null, "The loyalty threshold has to be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            if (loyaltyThreshold < 0) {
-                JOptionPane.showMessageDialog(null, "The loyalty threshold has to be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            float loyaltyThreshold = Float.parseFloat(textLoyaltyThreshold.getText());
             salonManager.setLoyaltyThreshold(loyaltyThreshold);
         });
 
@@ -75,42 +71,29 @@ public class SalonFrame extends JFrame {
         });
 
         textOpeningHour.addActionListener(e -> {
-            byte openingHour = salonManager.getOpeningHour();
-            try {
-                openingHour = Byte.parseByte(textOpeningHour.getText());
-            } catch (NumberFormatException ex) {
+            if (!textOpeningHour.getText().matches("([01]?[0-9])|2[0-3]")) {
                 JOptionPane.showMessageDialog(null, "The opening hour must be a number between 0 and 24.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            if (openingHour < 0 || openingHour > 24) {
-                JOptionPane.showMessageDialog(null, "The opening hour must be a number between 0 and 24.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            byte openingHour = Byte.parseByte(textOpeningHour.getText());
             salonManager.setOpeningHour(openingHour);
         });
 
         textClosingHour.addActionListener(e -> {
-            byte closingHour = salonManager.getClosingHour();
-            try {
-                closingHour = Byte.parseByte(textClosingHour.getText());
-            } catch (NumberFormatException ex) {
+            if (!textClosingHour.getText().matches("([01]?[0-9])|2[0-3]")) {
                 JOptionPane.showMessageDialog(null, "The closing hour must be a number between 0 and 24.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            if (closingHour < 0 || closingHour > 24) {
-                JOptionPane.showMessageDialog(null, "The closing hour must be a number between 0 and 24.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            byte closingHour = Byte.parseByte(textClosingHour.getText());
             salonManager.setClosingHour(closingHour);
         });
 
         textBonus.addActionListener(e -> {
-            float bonus = salonManager.getBonus();
-            try {
-                bonus = Float.parseFloat(textBonus.getText());
-            } catch (NumberFormatException ex) {
+            if (!textBonus.getText().matches("[0-9]+")) {
                 JOptionPane.showMessageDialog(null, "The bonus has to be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            if (bonus < 0) {
-                JOptionPane.showMessageDialog(null, "The bonus has to be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-
+            float bonus = Float.parseFloat(textBonus.getText());
             salonManager.setBonus(bonus);
         });
 

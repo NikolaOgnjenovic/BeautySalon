@@ -113,7 +113,12 @@ public class Treatment implements TableCell {
     }
 
     public String getFileString() {
-        return id + "," + scheduledDate.getTime() + "," + clientUsername + "," + beauticianUsername + "," + typeId + "," + price + "," + status + "," + cancellationReason;
+        String fileString = id + "," + scheduledDate.getTime() + "," + clientUsername + "," + beauticianUsername + "," + typeId + "," + price + "," + status + "," + cancellationReason;
+        if (cancellationDate != null) {
+            fileString += "," + cancellationDate.getTime();
+        }
+
+        return fileString;
     }
 
     public void setId(int id) {
@@ -167,7 +172,10 @@ public class Treatment implements TableCell {
             case 9:
                 return ((int) (0.9 * price) * 100) / 100f;
             case 10:
-                return cancellationDate;
+                if (cancellationDate == null) {
+                    return null;
+                }
+                return cancellationDate.getTime();
             default:
                 return null;
         }
