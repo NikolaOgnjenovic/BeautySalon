@@ -36,9 +36,10 @@ public class ReceptionistFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Receptionist");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
 
         buttonViewTreatments = new JButton("All treatments");
         this.add(buttonViewTreatments);

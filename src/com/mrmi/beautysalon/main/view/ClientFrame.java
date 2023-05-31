@@ -38,9 +38,10 @@ public class ClientFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Client");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
 
         JLabel title = new JLabel("Welcome back, " + clientUsername);
         this.add(title);

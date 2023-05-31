@@ -45,9 +45,10 @@ public class ManagerFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 2", "[center, grow, align right][center, grow, align left]", "[center, grow]40"));
         this.setTitle("Beauty salon - Manager");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
 
         buttonEditSalon = new JButton("Edit salon properties");
         add(buttonEditSalon);

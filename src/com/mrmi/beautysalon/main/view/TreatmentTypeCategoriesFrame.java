@@ -32,9 +32,12 @@ public class TreatmentTypeCategoriesFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Treatment type categories");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
+
+        add(new JLabel("All treatment type categories"), "span");
 
         // Toolbar
         JToolBar mainToolbar = new JToolBar();

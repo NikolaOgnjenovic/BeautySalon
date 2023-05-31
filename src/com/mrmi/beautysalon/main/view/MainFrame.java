@@ -31,10 +31,12 @@ public class MainFrame extends JFrame {
 
     private void initialiseViews() {
         this.setTitle("Beauty salon");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new MigLayout("wrap 1", "[grow, center]", "[grow]"));
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null);
 
         JLabel welcome = new JLabel("Welcome");
         this.add(welcome);

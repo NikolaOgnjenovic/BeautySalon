@@ -47,9 +47,12 @@ public class BookTreatmentFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 1", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Book treatment");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
+
+        add(new JLabel("Book a treatmnet"), "span");
 
         GenericTableModel tableModel = new GenericTableModel(treatmentManager.getAvailableTreatmentTypes(), treatmentManager);
         typeTable = new GenericTable(tableModel);

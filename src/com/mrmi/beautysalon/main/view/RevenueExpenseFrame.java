@@ -36,9 +36,13 @@ public class RevenueExpenseFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 2", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Revenue & Expenses");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
+
+        add(new JLabel("Salon revenue & expenses"), "span");
+
 
         JLabel fromLabel = new JLabel("From");
         this.add(fromLabel, "align right");

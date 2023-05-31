@@ -24,9 +24,12 @@ public class SalonFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 2", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - salon");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
+
+        add(new JLabel("Salon properties"), "span");
 
         this.add(new JLabel("Loyalty threshold"), "align right");
         textLoyaltyThreshold = new JTextField(String.valueOf(salonManager.getLoyaltyThreshold()), 7);

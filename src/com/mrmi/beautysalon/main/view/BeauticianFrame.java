@@ -28,9 +28,10 @@ public class BeauticianFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap", "[center, grow]", "[center, grow]"));
         this.setTitle("Beauty salon - Beautician");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
 
         buttonDueTreatments = new JButton("Due treatments");
         this.add(buttonDueTreatments);

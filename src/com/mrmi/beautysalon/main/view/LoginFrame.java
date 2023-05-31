@@ -33,9 +33,10 @@ public class LoginFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 2", "[grow, align right][grow, align left]", "[grow]40[grow]40[grow]10[grow]"));
         this.setTitle("Beauty salon - Login");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
 
         this.add(new JLabel("Login to your account"), "span, align center");
         this.add(new JLabel("Username"));

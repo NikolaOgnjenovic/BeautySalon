@@ -40,9 +40,12 @@ public class RegisterFrame extends JFrame {
     private void initialiseViews() {
         this.setLayout(new MigLayout("wrap 2", "[center, grow, align right][center, grow, align left]", "[center, grow]"));
         this.setTitle("Beauty salon - Registration");
-        this.setSize(1000, 1080);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
+        this.setLocationRelativeTo(null);
+
+        add(new JLabel("Register"), "span");
 
         this.add(new JLabel("Username"));
         textUsername = new JTextField(20);
