@@ -125,6 +125,8 @@ public abstract class User implements TableCell {
                 return "Known treatment type categories";
             case 13:
                 return "Has loyalty card";
+            case 14:
+                return "Total money spent";
             default:
                 return null;
         }
@@ -132,6 +134,6 @@ public abstract class User implements TableCell {
 
     @Override
     public int getColumnCount() {
-        return 14;
+        return 15;
     }
 }

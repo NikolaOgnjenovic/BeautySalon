@@ -54,6 +54,8 @@ public class LoginFrame extends JFrame {
 
         buttonBack = new JButton("Back");
         this.add(buttonBack, "span, align center");
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {
@@ -64,28 +66,28 @@ public class LoginFrame extends JFrame {
             }
 
             if (authManager.getCurrentUser().getClass().equals(Client.class)) {
-                this.dispose();
                 ClientFrame clientFrame = new ClientFrame(salonManager, treatmentManager, userManager, authManager, authManager.getCurrentUsername(), (Client) authManager.getCurrentUser());
                 clientFrame.setVisible(true);
-            } else if (authManager.getCurrentUser().getClass().equals(Beautician.class)) {
                 this.dispose();
+            } else if (authManager.getCurrentUser().getClass().equals(Beautician.class)) {
                 BeauticianFrame beauticianFrame = new BeauticianFrame(treatmentManager, userManager, authManager.getCurrentUsername());
                 beauticianFrame.setVisible(true);
-            } else if (authManager.getCurrentUser().getClass().equals(Receptionist.class)) {
                 this.dispose();
+            } else if (authManager.getCurrentUser().getClass().equals(Receptionist.class)) {
                 ReceptionistFrame receptionistFrame = new ReceptionistFrame(salonManager, treatmentManager, userManager, authManager);
                 receptionistFrame.setVisible(true);
-            } else if (authManager.getCurrentUser().getClass().equals(Manager.class)) {
                 this.dispose();
+            } else if (authManager.getCurrentUser().getClass().equals(Manager.class)) {
                 ManagerFrame managerFrame = new ManagerFrame(salonManager, treatmentManager, userManager, authManager);
                 managerFrame.setVisible(true);
+                this.dispose();
             }
         });
 
         buttonBack.addActionListener(e -> {
-            this.dispose();
             MainFrame mainFrame = new MainFrame();
             mainFrame.setVisible(true);
+            this.dispose();
         });
     }
 }

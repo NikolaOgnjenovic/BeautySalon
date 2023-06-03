@@ -36,7 +36,6 @@ public class MainFrame extends JFrame {
         this.setLayout(new MigLayout("wrap 1", "[grow, center]", "[grow]"));
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
         this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(null);
 
         JLabel welcome = new JLabel("Welcome");
         this.add(welcome);
@@ -46,19 +45,19 @@ public class MainFrame extends JFrame {
 
         buttonRegister = new JButton("Register");
         this.add(buttonRegister);
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {
         buttonLogin.addActionListener(e -> {
-            this.dispose();
             LoginFrame loginFrame = new LoginFrame(salonManager, treatmentManager, userManager, authManager);
-            loginFrame.setVisible(true);
+            this.dispose();
         });
 
         buttonRegister.addActionListener(e -> {
-            this.dispose();
             RegisterFrame registerFrame = new RegisterFrame(salonManager, treatmentManager, userManager, authManager, false, null, true);
-            registerFrame.setVisible(true);
+            this.dispose();
         });
     }
 }

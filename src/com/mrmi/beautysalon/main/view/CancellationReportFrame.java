@@ -58,6 +58,8 @@ public class CancellationReportFrame extends JFrame {
 
         buttonBack = new JButton("Back");
         this.add(buttonBack, "span");
+
+        setVisible(true);
     }
 
     private void displayTable(JTable table) {

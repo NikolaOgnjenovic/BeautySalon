@@ -136,6 +136,8 @@ public class RegisterFrame extends JFrame {
 
         buttonBack = new JButton("Back");
         this.add(buttonBack, "span, center");
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {
@@ -190,12 +192,12 @@ public class RegisterFrame extends JFrame {
             if (!canPickUserType || comboBoxUserType.getSelectedIndex() == 0) {
                 Client client = new Client(username, password, name, surname, gender, phone, address);
                 userManager.addUser(client);
-                this.dispose();
 
                 if (isClient) {
                     ClientFrame clientFrame = new ClientFrame(salonManager, treatmentManager, userManager, authManager, textUsername.getText(), client);
                     clientFrame.setVisible(true);
                 }
+                this.dispose();
                 return;
             }
             User newUser = user;

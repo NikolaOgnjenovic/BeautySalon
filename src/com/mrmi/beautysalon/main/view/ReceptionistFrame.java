@@ -79,10 +79,12 @@ public class ReceptionistFrame extends JFrame {
         });
 
         buttonLogout.addActionListener(e -> {
-            this.dispose();
             MainFrame mainFrame = new MainFrame();
             mainFrame.setVisible(true);
+            this.dispose();
         });
+
+        setVisible(true);
     }
 
     public void refreshClients() {

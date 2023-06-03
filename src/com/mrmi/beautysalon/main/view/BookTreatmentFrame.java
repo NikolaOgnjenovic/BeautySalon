@@ -67,21 +67,18 @@ public class BookTreatmentFrame extends JFrame {
 
         datePicker = DatePicker.getDatePicker();
         this.add(datePicker);
-        datePicker.setVisible(false);
 
         availableTimeSlots = new Vector<>();
         treatmentAvailableTimeSlots = new JComboBox<>(availableTimeSlots);
-        treatmentAvailableTimeSlots.setVisible(false);
-        
         this.add(treatmentAvailableTimeSlots);
-        treatmentAvailableTimeSlots.setVisible(false);
 
         buttonBook = new JButton("Book treatment");
         this.add(buttonBook);
-        buttonBook.setVisible(false);
 
         buttonBack = new JButton("Back");
         this.add(buttonBack);
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {
@@ -97,7 +94,6 @@ public class BookTreatmentFrame extends JFrame {
                 }
 
             } else {
-                buttonBook.setVisible(false);
                 treatmentAvailableTimeSlots.setVisible(false);
             }
         });
@@ -108,17 +104,19 @@ public class BookTreatmentFrame extends JFrame {
             Beautician beautician = (Beautician) comboBoxBeauticians.getSelectedItem();
             if (beautician != null) {
                 beauticianUsername = beautician.getUsername();
-                datePicker.setVisible(false);
                 datePicker.setVisible(true);
                 treatmentAvailableTimeSlots.setVisible(false);
+                buttonBook.setVisible(false);
             }
         });
+
 
         selectedDate = Calendar.getInstance();
         datePicker.addActionListener(e -> {
             Date date = (Date) datePicker.getModel().getValue();
             selectedDate.setTime(date);
             refreshTimeComboBox();
+            buttonBook.setVisible(false);
         });
 
         treatmentAvailableTimeSlots.addActionListener(e -> {
@@ -127,11 +125,13 @@ public class BookTreatmentFrame extends JFrame {
                 buttonBook.setVisible(true);
             } else {
                 buttonBook.setVisible(false);
-                treatmentAvailableTimeSlots.setVisible(false);
             }
         });
 
         buttonBook.addActionListener(e -> {
+            if (selectedTime.equals("")) {
+                return;
+            }
             selectedDate.set(Calendar.HOUR_OF_DAY, Integer.parseInt(selectedTime.substring(0, 2)));
             selectedDate.set(Calendar.MINUTE, 0);
             selectedDate.set(Calendar.SECOND, 0);

@@ -167,10 +167,12 @@ public class ManagerFrame extends JFrame {
         });
         buttonLogout.addActionListener(e -> {
             authManager.logout();
-            this.dispose();
             MainFrame mainFrame = new MainFrame();
             mainFrame.setVisible(true);
+            this.dispose();
         });
+
+        setVisible(true);
     }
     private Color[] getChartColors(int size) {
         Color[] chartColors = new Color[size];

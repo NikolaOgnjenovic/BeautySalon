@@ -53,6 +53,8 @@ public class SalonFrame extends JFrame {
 
         buttonBack = new JButton("Back");
         this.add(buttonBack, "span");
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {

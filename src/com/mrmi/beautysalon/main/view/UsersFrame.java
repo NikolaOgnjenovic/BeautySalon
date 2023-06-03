@@ -84,6 +84,8 @@ public class UsersFrame extends JFrame {
 
         buttonBack = new JButton("Back");
         this.add(buttonBack);
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {
@@ -122,10 +124,10 @@ public class UsersFrame extends JFrame {
         });
 
         buttonRegister.addActionListener(e -> {
-            this.dispose();
             RegisterFrame registerFrame = new RegisterFrame(salonManager, treatmentManager, userManager, authManager, true, null, false);
             registerFrame.setVisible(true);
             refreshData();
+            this.dispose();
         });
 
         buttonEdit.addActionListener(e -> {

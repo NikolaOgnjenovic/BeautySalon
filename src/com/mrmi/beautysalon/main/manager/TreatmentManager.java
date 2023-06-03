@@ -167,18 +167,23 @@ public class TreatmentManager {
         Vector<String> availableTimeSlots = new Vector<>();
 
         // Get all treatments for the given beautician, filter them by the given date, sort them by their date,
-        List<Treatment> sortedTreatments = new ArrayList<>(userManager.getBeauticianDueTreatments(beauticianUsername).values())
+        List<Treatment> sortedTreatments = new ArrayList<>(userManager.getBeauticianTreatments(beauticianUsername).values())
                 .stream().filter(t -> t.getScheduledDate().get(Calendar.DATE) == selectedDate.get(Calendar.DATE))
                 .sorted(Comparator.comparing(Treatment::getScheduledDate)).collect(Collectors.toList());
 
         // Loop from the salon's opening hour to the closing hour, increasing i by the duration of the treatment in hours
-        for (int i = salonManager.getOpeningHour(); i < salonManager.getClosingHour(); i += roundedDurationHour) {
+        //for (int i = salonManager.getOpeningHour(); i < salonManager.getClosingHour(); i += roundedDurationHour) {
+        for (int i = salonManager.getOpeningHour(); i < salonManager.getClosingHour(); i += 1) {
             int currentHour = i;
-            // If any of the filtered treatments' scheduled hour is == i continue looping
-            if (sortedTreatments.stream().anyMatch(treatment -> treatment.getScheduledDate().get(Calendar.HOUR_OF_DAY) == currentHour)) {
+            // If any of the filtered treatments' duration overlaps with the current hour, continue
+            if (sortedTreatments.stream().anyMatch(treatment -> {
+                    int hourOfDay = treatment.getScheduledDate().get(Calendar.HOUR_OF_DAY);
+                    return (hourOfDay == currentHour) || ((hourOfDay < currentHour) && ((hourOfDay + roundedDurationHour) > currentHour));
+                }
+            )) {
                 continue;
             }
-            // Else print the current time slot for the treatment
+            // Else add the current time slot for the treatment
             availableTimeSlots.add(hourToString(i) + ":00 - " + hourToString(i + duration / 60) + ":" + hourToString(duration % 60));
         }
 
@@ -345,10 +350,11 @@ public class TreatmentManager {
             if (treatment.getClientUsername().equals(clientUsername)) {
                 switch (treatment.getStatus()) {
                     case CANCELLED_BY_SALON:
-                        total -= treatment.getPrice();
+                        //total -= treatment.getPrice();
                         break;
                     case CANCELLED_BY_CLIENT:
-                        total -= treatment.getPrice() * 0.9;
+                        total += 0.1 * treatment.getPrice();
+                        //total -= treatment.getPrice() * 0.9;
                         break;
                     default:
                         total += treatment.getPrice();

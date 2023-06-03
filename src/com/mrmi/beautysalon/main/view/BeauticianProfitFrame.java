@@ -72,6 +72,8 @@ public class BeauticianProfitFrame extends JFrame {
 
         buttonBack = new JButton("Back");
         this.add(buttonBack, "span");
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {

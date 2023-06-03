@@ -71,6 +71,8 @@ public class TreatmentTypesFrame extends JFrame {
 
         buttonBack = new JButton("Back");
         this.add(buttonBack, "span");
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {
@@ -78,7 +80,6 @@ public class TreatmentTypesFrame extends JFrame {
 
         buttonAdd.addActionListener(e -> {
             AddEditTreatmentTypeDialog edit = new AddEditTreatmentTypeDialog(this, treatmentManager, null);
-            edit.setVisible(true);
             tableModel.fireTableDataChanged();
         });
 
@@ -91,7 +92,6 @@ public class TreatmentTypesFrame extends JFrame {
                     int id = Integer.parseInt(table.getValueAt(row, 0).toString());
                     TreatmentType type = treatmentManager.getTreatmentType(id);
                     AddEditTreatmentTypeDialog add = new AddEditTreatmentTypeDialog(this, treatmentManager, type);
-                    add.setVisible(true);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Error processing treatment type", "Error", JOptionPane.ERROR_MESSAGE);
                 }

@@ -26,10 +26,14 @@ public class Client extends User implements TableCell {
 
     @Override
     public Object getCell(int column, Object manager) {
-        if (column != 13) {
+        if (column < 13) {
             return super.getCell(column, manager);
         }
 
-        return ((TreatmentManager) manager).hasLoyaltyCard(this);
+        if (column == 13) {
+            return ((TreatmentManager) manager).hasLoyaltyCard(this);
+        }
+
+        return ((TreatmentManager) manager).getMoneySpent(this.getUsername());
     }
 }

@@ -41,25 +41,24 @@ public class BeauticianFrame extends JFrame {
 
         buttonLogout = new JButton("Logout");
         this.add(buttonLogout);
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {
         buttonDueTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> dueTreatments = userManager.getBeauticianDueTreatments(beauticianUsername);
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, dueTreatments, false, false);
-            treatmentsFrame.setVisible(true);
         });
 
         buttonPastTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> pastTreatments = userManager.getBeauticianPastTreatments(beauticianUsername);
             TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, pastTreatments, false, false);
-            treatmentsFrame.setVisible(true);
         });
 
         buttonLogout.addActionListener(e -> {
-            this.dispose();
             MainFrame mainFrame = new MainFrame();
-            mainFrame.setVisible(true);
+            this.dispose();
         });
     }
 }

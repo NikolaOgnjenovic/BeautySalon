@@ -66,14 +66,16 @@ public class ClientFrame extends JFrame {
         buttonLogout = new JButton("Logout");
         
         this.add(buttonLogout);
+
+        setVisible(true);
     }
 
     private void initialiseListeners() {
         buttonLogout.addActionListener(e -> {
             authManager.logout();
-            this.dispose();
             MainFrame mainFrame = new MainFrame();
             mainFrame.setVisible(true);
+            this.dispose();
         });
 
         buttonDueTreatments.addActionListener(e -> {
