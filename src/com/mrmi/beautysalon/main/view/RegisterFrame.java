@@ -45,8 +45,6 @@ public class RegisterFrame extends JFrame {
         this.setIconImage(new ImageIcon("src/images/icon.png").getImage());
         this.setLocationRelativeTo(null);
 
-        add(new JLabel("Register"), "span");
-
         this.add(new JLabel("Username"));
         textUsername = new JTextField(20);
         this.add(textUsername);
@@ -189,7 +187,7 @@ public class RegisterFrame extends JFrame {
                 return;
             }
 
-            if (!canPickUserType) {
+            if (!canPickUserType || comboBoxUserType.getSelectedIndex() == 0) {
                 Client client = new Client(username, password, name, surname, gender, phone, address);
                 userManager.addUser(client);
                 this.dispose();
@@ -214,7 +212,7 @@ public class RegisterFrame extends JFrame {
             }
             byte experience = Byte.parseByte(textExperience.getText());
 
-            if (!textSalary.getText().matches("[1-9][0-9]?")) {
+            if (!textSalary.getText().matches("^[+]?([.]\\d+|\\d+([.]\\d+)?)$")) {
                 JOptionPane.showMessageDialog(null, "The salary has to be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }

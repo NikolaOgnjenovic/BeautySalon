@@ -3,7 +3,6 @@ package com.mrmi.beautysalon.main.manager;
 import com.mrmi.beautysalon.main.exceptions.TreatmentNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.TreatmentTypeCategoryNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
-import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.entity.*;
 
 import java.util.*;
@@ -16,7 +15,7 @@ public class TreatmentManager {
     private final HashMap<Integer, TreatmentType> types;
     private final HashMap<Integer, Treatment> treatments;
 
-    public TreatmentManager(Database database,SalonManager salonManager) {
+    public TreatmentManager(Database database, SalonManager salonManager) {
         this.database = database;
         this.salonManager = salonManager;
         this.categories = database.getTreatmentTypeCategories();
@@ -49,6 +48,7 @@ public class TreatmentManager {
                 .filter(category -> !category.getValue().isDeleted())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
+
     public String getTreatmentTypeCategoryName(int categoryId) throws TreatmentTypeCategoryNotFoundException {
         TreatmentTypeCategory category = getTreatmentTypeCategory(categoryId);
         return category.getName();
@@ -104,12 +104,12 @@ public class TreatmentManager {
         int id = database.getNextTreatmentTypeId();
         database.addTreatmentType(id, new TreatmentType(name, price, categoryId, duration));
     }
+
     public HashMap<Integer, TreatmentType> getTreatmentTypes() {
         return types;
     }
 
     /**
-     *
      * @return HashMap of treatments types that aren't marked as deleted
      */
     public HashMap<Integer, TreatmentType> getAvailableTreatmentTypes() {
@@ -151,9 +151,8 @@ public class TreatmentManager {
     }
 
     /**
-     *
      * @param selectedDate The date on which the time slots are being calculated
-     * @param typeId The id of the treatment type
+     * @param typeId       The id of the treatment type
      * @param salonManager Used for the opening & closing hour
      * @return a Vector of Strings which contains available time slots for the treatment
      */
@@ -310,35 +309,22 @@ public class TreatmentManager {
         return list;
     }
 
-    public void cancelTreatment(int clientId, int treatmentId, boolean clientCancelled, String cancellationReason, UserManager userManager) throws TreatmentNotFoundException {
+    public void cancelTreatment(int treatmentId, boolean clientCancelled, String cancellationReason) throws TreatmentNotFoundException {
         Treatment treatment = getTreatment(treatmentId);
         treatment.setCancellationReason(cancellationReason);
         treatment.setCancellationDate(Calendar.getInstance());
 
-        Client client;
-        try {
-            client = userManager.getClient(clientId);
-        } catch (UserNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        float refundedPrice = treatment.getPrice();
         if (clientCancelled) {
-            salonManager.addIncome((float) (refundedPrice * 0.1));
-            refundedPrice *= 0.9;
             treatment.setStatus(Treatment.Status.CANCELLED_BY_CLIENT);
         } else {
-            salonManager.addIncome(refundedPrice);
             treatment.setStatus(Treatment.Status.CANCELLED_BY_SALON);
         }
 
-        userManager.changeMoneySpent(client, refundedPrice);
         updateTreatment(treatment);
     }
 
     /**
-     *     Finishes treatments that aren't marked as cancelled and that were scheduled before the current date
+     * Finishes treatments that aren't marked as cancelled and that were scheduled before the current date
      */
     public void finishTreatments() {
         Calendar currentDate = Calendar.getInstance();
@@ -353,5 +339,30 @@ public class TreatmentManager {
     // Used for tables
     public float getBonus() {
         return salonManager.getBonus();
+    }
+
+    public float getMoneySpent(String clientUsername) {
+        float total = 0;
+        for (Treatment treatment : treatments.values()) {
+            if (treatment.getClientUsername().equals(clientUsername)) {
+                switch (treatment.getStatus()) {
+                    case CANCELLED_BY_SALON:
+                        total -= treatment.getPrice();
+                        break;
+                    case CANCELLED_BY_CLIENT:
+                        total -= treatment.getPrice() * 0.9;
+                        break;
+                    default:
+                        total += treatment.getPrice();
+                        break;
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public boolean hasLoyaltyCard(Client client) {
+        return getMoneySpent(client.getUsername()) >= salonManager.getLoyaltyThreshold();
     }
 }

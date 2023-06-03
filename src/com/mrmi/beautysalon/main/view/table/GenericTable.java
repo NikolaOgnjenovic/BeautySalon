@@ -25,10 +25,14 @@ public class GenericTable extends JTable {
         tableSorter = new TableRowSorter<>(tableModel); // Enable row filtering using the TableRowSorter
         this.setRowSorter(tableSorter);
 
-        // Hide the id column which is necessary for proper editing & deleting
-        this.getColumn("Id").setMinWidth(0);
-        this.getColumn("Id").setMaxWidth(0);
-        this.getColumn("Id").setWidth(0);
+
+        try {
+            // Hide the id column which is necessary for proper editing & deleting
+            this.getColumn("Id").setMinWidth(0);
+            this.getColumn("Id").setMaxWidth(0);
+            this.getColumn("Id").setWidth(0);
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 
     @Override

@@ -36,13 +36,6 @@ public class SalonTest {
     }
 
     @Test
-    public void testIncome() {
-        assertEquals(0, salonManager.getIncome());
-        salonManager.addIncome(100);
-        assertEquals(100, salonManager.getIncome());
-    }
-
-    @Test
     public void testHours() {
         salonManager.setOpeningHour((byte) 10);
         assertEquals(10, salonManager.getOpeningHour());

@@ -12,11 +12,6 @@ public class SalonManager {
         this.beautySalon = database.getBeautySalon();
     }
 
-    public void addIncome(float income) {
-        beautySalon.setSalonIncome(beautySalon.getSalonIncome() + income);
-        database.updateBeautySalon(beautySalon);
-    }
-
     public void setOpeningHour(byte hour) {
         beautySalon.setSalonOpeningHour(hour);
         database.updateBeautySalon(beautySalon);
@@ -51,10 +46,6 @@ public class SalonManager {
 
     public float getLoyaltyThreshold() {
         return beautySalon.getLoyaltyThreshold();
-    }
-
-    public float getIncome() {
-        return beautySalon.getSalonIncome();
     }
 
     public void setBonus(float bonus) {

@@ -78,11 +78,11 @@ public class AddEditTreatmentTypeDialog extends JDialog {
                 return;
             }
 
-            float price = Float.parseFloat(textPrice.getText());
-            if (price < 0) {
+            if (!textPrice.getText().matches("^(?=.+)(?:[1-9]\\d*|0)?(?:\\.\\d+)?$")) {
                 JOptionPane.showMessageDialog(null, "Invalid price", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            float price = Float.parseFloat(textPrice.getText());
 
             TreatmentTypeCategory category = (TreatmentTypeCategory) comboBoxCategory.getSelectedItem();
             if (category == null) {
@@ -91,11 +91,11 @@ public class AddEditTreatmentTypeDialog extends JDialog {
             }
             int categoryId = category.getId();
 
-            int duration = Integer.parseInt(textDuration.getText());
-            if (duration < 0) {
+            if (!textDuration.getText().matches("^(?=.+)(?:[1-9]\\d*|0)?(?:\\.\\d+)?$")) {
                 JOptionPane.showMessageDialog(null, "Invalid duration", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            int duration = Integer.parseInt(textDuration.getText());
 
             if (type != null) {
                 treatmentManager.updateTreatmentType(type, name, price, categoryId, duration);

@@ -61,7 +61,7 @@ public class ReceptionistFrame extends JFrame {
     private void initialiseListeners() {
         buttonViewTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> treatments = treatmentManager.getTreatments();
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, treatments, true, false);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, treatments, true, false);
             treatmentsFrame.setVisible(true);
         });
 

@@ -4,7 +4,6 @@ public class BeautySalon {
     private byte salonOpeningHour;
     private byte salonClosingHour;
     private float loyaltyThreshold;
-    private float salonIncome;
     private String name;
     private float bonus;
 
@@ -13,17 +12,15 @@ public class BeautySalon {
         this.salonOpeningHour = 8;
         this.salonClosingHour = 20;
         this.loyaltyThreshold = 15000;
-        this.salonIncome = 0;
         this.name = "Salon";
         this.bonus = 5000;
     }
 
     // Used when reading from files
-    public BeautySalon(byte salonOpeningHour, byte salonClosingHour, float loyaltyThreshold, float salonIncome, String name, float bonus) {
+    public BeautySalon(byte salonOpeningHour, byte salonClosingHour, float loyaltyThreshold, String name, float bonus) {
         this.salonOpeningHour = salonOpeningHour;
         this.salonClosingHour = salonClosingHour;
         this.loyaltyThreshold = loyaltyThreshold;
-        this.salonIncome = salonIncome;
         this.name = name;
         this.bonus = bonus;
     }
@@ -50,14 +47,6 @@ public class BeautySalon {
 
     public void setLoyaltyThreshold(float loyaltyThreshold) {
         this.loyaltyThreshold = loyaltyThreshold;
-    }
-
-    public float getSalonIncome() {
-        return salonIncome;
-    }
-
-    public void setSalonIncome(float salonIncome) {
-        this.salonIncome = salonIncome;
     }
 
     public String getName() {

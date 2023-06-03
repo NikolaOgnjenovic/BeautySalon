@@ -47,8 +47,9 @@ public class ClientFrame extends JFrame {
         this.add(title);
 
         String loyaltyMessage = "You have a loyalty card which grants you a 10% discount on all treatments!";
-        if (!client.hasLoyaltyCard()) {
-            loyaltyMessage = "You need to spend " + (salonManager.getLoyaltyThreshold() - client.getMoneySpent()) + " more money in order to get a loyalty card.";
+        if (!treatmentManager.hasLoyaltyCard(client)) {
+            loyaltyMessage = "You need to spend " + (salonManager.getLoyaltyThreshold() - treatmentManager.getMoneySpent(clientUsername)) + " more money in order to get a loyalty card.";
+            //loyaltyMessage = "You need to spend " + (salonManager.getLoyaltyThreshold() - client.getMoneySpent()) + " more money in order to get a loyalty card.";
         }
         JLabel loyaltyStatus = new JLabel(loyaltyMessage);
         this.add(loyaltyStatus);
@@ -77,13 +78,13 @@ public class ClientFrame extends JFrame {
 
         buttonDueTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> dueTreatments = userManager.getClientDueTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, dueTreatments, false, true);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, dueTreatments, false, true);
             treatmentsFrame.setVisible(true);
         });
 
         buttonPastTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> pastTreatments = userManager.getClientPastTreatments(clientUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, pastTreatments, false, true);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, pastTreatments, false, true);
             treatmentsFrame.setVisible(true);
         });
 

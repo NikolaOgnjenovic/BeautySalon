@@ -26,7 +26,7 @@ public class TreatmentTest {
         Database database = new Database("test");
         SalonManager salonManager = new SalonManager(database);
         treatmentManager = new TreatmentManager(database, salonManager);
-        userManager = new UserManager(database, salonManager);
+        userManager = new UserManager(database);
 
         userManager.addUser(new Client("Client", "password", "Client", "username", "M", "123456", "Address 1"));
         userManager.addUser(new Manager("Manager", "password", "Manager", "username", "M", "123456", "Address 2", (byte) 6, (byte) 5, 90000));
@@ -100,14 +100,14 @@ public class TreatmentTest {
         HashMap<Integer, Treatment> treatments = treatmentManager.getTreatments();
         assertEquals(0, treatments.size());
         assertThrows(TreatmentNotFoundException.class, () -> treatmentManager.deleteTreatment(0));
-        assertThrows(TreatmentNotFoundException.class, () -> treatmentManager.cancelTreatment(0, 0, true, "Unexpected duties", userManager));
+        assertThrows(TreatmentNotFoundException.class, () -> treatmentManager.cancelTreatment(0, true, "Unexpected duties"));
 
         Treatment treatment = new Treatment(Calendar.getInstance(), "Client", "Beautician", 0, 1000);
         userManager.bookTreatment(treatment, treatmentManager);
         assertEquals(1, treatments.size());
         assertEquals(Treatment.Status.SCHEDULED, treatments.get(0).getStatus());
 
-        treatmentManager.cancelTreatment(0, 0, true, "Unexpected duties", userManager);
+        treatmentManager.cancelTreatment( 0, true, "Unexpected duties");
         assertEquals(Treatment.Status.CANCELLED_BY_CLIENT, treatments.get(0).getStatus());
 
         treatmentManager.deleteTreatment(0);

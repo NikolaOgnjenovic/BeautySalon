@@ -2,7 +2,6 @@ package com.mrmi.beautysalon.main.view;
 
 
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
-import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.view.addedit.AddEditTreatmentDialog;
 import com.mrmi.beautysalon.main.view.table.GenericTable;
@@ -14,7 +13,6 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class TreatmentsFrame extends JFrame {
-    private final UserManager userManager;
     private final TreatmentManager treatmentManager;
     private final HashMap<Integer, Treatment> treatments;
     private final boolean canEdit;
@@ -28,9 +26,8 @@ public class TreatmentsFrame extends JFrame {
     private JButton buttonBack;
     private JTextField textMaxPrice;
 
-    public TreatmentsFrame(TreatmentManager treatmentManager, UserManager userManager, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean isClient) {
+    public TreatmentsFrame(TreatmentManager treatmentManager, HashMap<Integer, Treatment> treatments, boolean canEdit, boolean isClient) {
         this.treatmentManager = treatmentManager;
-        this.userManager = userManager;
         this.treatments = treatments;
         this.canEdit = canEdit;
         this.isClient = isClient;
@@ -127,12 +124,11 @@ public class TreatmentsFrame extends JFrame {
                     int id = Integer.parseInt(table.getValueAt(row, 0).toString());
                     Treatment treatment = treatmentManager.getTreatment(id);
                     if (isClient) {
-                        int clientId = userManager.getClientIdByUsername(treatment.getClientUsername());
                         String cancellationReason = JOptionPane.showInputDialog("Why are you cancelling the treatment?");
-                        treatmentManager.cancelTreatment(clientId, id, false, cancellationReason, userManager);
+                        treatmentManager.cancelTreatment(id, false, cancellationReason);
                         refreshData();
                     } else {
-                        AddEditTreatmentDialog add = new AddEditTreatmentDialog(this, treatmentManager, userManager, treatment, id, false);
+                        AddEditTreatmentDialog add = new AddEditTreatmentDialog(this, treatmentManager, treatment, id, false);
                         add.setVisible(true);
                     }
 

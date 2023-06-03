@@ -188,9 +188,7 @@ public class Database {
                             userData[5],
                             userData[6],
                             userData[7],
-                            userData[8],
-                            Boolean.parseBoolean(userData[9]),
-                            Float.parseFloat(userData[10])));
+                            userData[8]));
                         break;
                     case "B":
                         ArrayList<Integer> typeIDs = new ArrayList<>();
@@ -449,16 +447,14 @@ public class Database {
             byte openingHour = Byte.parseByte(in.readLine());
             byte closingHour = Byte.parseByte(in.readLine());
             float loyaltyThreshold = Float.parseFloat(in.readLine());
-            float income = Float.parseFloat(in.readLine());
             String name = in.readLine();
             float bonus = Float.parseFloat(in.readLine());
             in.close();
-            beautySalon = new BeautySalon(openingHour, closingHour, loyaltyThreshold, income, name, bonus);
+            beautySalon = new BeautySalon(openingHour, closingHour, loyaltyThreshold, name, bonus);
         } catch (NumberFormatException | IOException e) {
             beautySalon = new BeautySalon();
         }
     }
-
     private void overwriteSalonFile() {
         String fileName = filePathPrefix + "data" + separator + "salon.txt";
         try {
@@ -467,7 +463,6 @@ public class Database {
             out.write(beautySalon.getSalonOpeningHour() + "\n");
             out.write(beautySalon.getSalonClosingHour() + "\n");
             out.write(beautySalon.getLoyaltyThreshold() + "\n");
-            out.write(beautySalon.getSalonIncome() + "\n");
             out.write(beautySalon.getName() + "\n");
             out.write(beautySalon.getBonus() + "\n");
             out.close();

@@ -1,8 +1,0 @@
-1,ledja,135.0,2,111,true
-2,dddgdagda,111.0,2,33,false
-3,ddd,111.0,2,33,false
-4,ddd,111.0,2,33,false
-5,gadgad,13.0,1,3,false
-6,Sportska,300.0,2,30,false
-7,gdagadg,333.0,4,111,false
-8,gdagd,333.0,4,13,false

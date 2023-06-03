@@ -4,9 +4,7 @@ import com.mrmi.beautysalon.main.entity.Treatment;
 import com.mrmi.beautysalon.main.entity.TreatmentType;
 import com.mrmi.beautysalon.main.exceptions.TreatmentNotFoundException;
 import com.mrmi.beautysalon.main.exceptions.TreatmentTypeNotFoundException;
-import com.mrmi.beautysalon.main.exceptions.UserNotFoundException;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
-import com.mrmi.beautysalon.main.manager.UserManager;
 import com.mrmi.beautysalon.main.view.DatePicker;
 import com.mrmi.beautysalon.main.view.TreatmentsFrame;
 import net.miginfocom.swing.MigLayout;
@@ -20,12 +18,11 @@ import java.util.Map;
 public class AddEditTreatmentDialog extends JDialog {
     private final JFrame parent;
     private final TreatmentManager treatmentManager;
-    private final UserManager userManager;
     private final Treatment treatment;
     private final int id;
     private final boolean isClient;
 
-    public AddEditTreatmentDialog(JFrame parent, TreatmentManager treatmentManager, UserManager userManager, Treatment treatment, int id, boolean isClient) {
+    public AddEditTreatmentDialog(JFrame parent, TreatmentManager treatmentManager, Treatment treatment, int id, boolean isClient) {
         super(parent, true);
         this.parent = parent;
         
@@ -36,7 +33,6 @@ public class AddEditTreatmentDialog extends JDialog {
         }
 
         this.treatmentManager = treatmentManager;
-        this.userManager = userManager;
         this.treatment = treatment;
         this.id = id;
         this.isClient = isClient;
@@ -143,13 +139,8 @@ public class AddEditTreatmentDialog extends JDialog {
                 String cancellationReason = textCancellationReason.getText();
                 if (comboBoxStatus.getSelectedItem() == Treatment.Status.CANCELLED_BY_CLIENT || comboBoxStatus.getSelectedItem() == Treatment.Status.CANCELLED_BY_SALON) {
                     if (!cancellationReason.equals("")) {
-                        int clientId;
                         try {
-                            clientId = userManager.getClientIdByUsername(clientUsername);
-                            treatmentManager.cancelTreatment(clientId, id, false, cancellationReason, userManager);
-                        } catch (UserNotFoundException ex) {
-                            JOptionPane.showMessageDialog(null, "Invalid client username", "Error", JOptionPane.ERROR_MESSAGE);
-                            return;
+                            treatmentManager.cancelTreatment(id, false, cancellationReason);
                         } catch (TreatmentNotFoundException ex) {
                             JOptionPane.showMessageDialog(null, "Invalid treatment id", "Error", JOptionPane.ERROR_MESSAGE);
                             return;

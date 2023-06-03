@@ -46,13 +46,13 @@ public class BeauticianFrame extends JFrame {
     private void initialiseListeners() {
         buttonDueTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> dueTreatments = userManager.getBeauticianDueTreatments(beauticianUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, dueTreatments, false, false);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, dueTreatments, false, false);
             treatmentsFrame.setVisible(true);
         });
 
         buttonPastTreatments.addActionListener(e -> {
             HashMap<Integer, Treatment> pastTreatments = userManager.getBeauticianPastTreatments(beauticianUsername);
-            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, userManager, pastTreatments, false, false);
+            TreatmentsFrame treatmentsFrame = new TreatmentsFrame(treatmentManager, pastTreatments, false, false);
             treatmentsFrame.setVisible(true);
         });
 

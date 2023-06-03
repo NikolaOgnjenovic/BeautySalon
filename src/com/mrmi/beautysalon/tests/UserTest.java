@@ -25,7 +25,7 @@ public class UserTest {
         Database database = new Database("test");
         SalonManager salonManager = new SalonManager(database);
 
-        userManager = new UserManager(database, salonManager);
+        userManager = new UserManager(database);
         treatmentManager = new TreatmentManager(database, salonManager);
 
         userManager.addUser(new Client("Client", "password", "Client", "username", "M", "123456", "Address 1"));
@@ -95,15 +95,6 @@ public class UserTest {
     public void testGetClientIdByUsername() throws UserNotFoundException {
         assertThrows(UserNotFoundException.class, () -> userManager.getClientIdByUsername("Random username"));
         assertEquals(0, userManager.getClientIdByUsername("Client"));
-    }
-
-    @Test
-    public void testClientMoneySpent() {
-        ArrayList<Client> clients = userManager.getClients();
-        Client client = clients.get(0);
-        assertEquals(0, client.getMoneySpent());
-        userManager.changeMoneySpent(client, 900);
-        assertEquals(900, client.getMoneySpent());
     }
 
     @Test

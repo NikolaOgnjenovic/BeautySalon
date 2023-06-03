@@ -1,37 +1,17 @@
 package com.mrmi.beautysalon.main.entity;
 
+import com.mrmi.beautysalon.main.manager.TreatmentManager;
+
 public class Client extends User implements TableCell {
-    private float moneySpent;
-    private boolean hasLoyaltyCard;
 
     // Used when adding
     public Client(String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
         super(username, password, name, surname, gender, phoneNumber, address);
-        this.hasLoyaltyCard = false;
-        this.moneySpent = 0;
     }
 
     // Used when reading from files
-    public Client(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address, boolean hasLoyaltyCard, Float moneySpent) {
+    public Client(int id, String username, String password, String name, String surname, String gender, String phoneNumber, String address) {
         super(id, username, password, name, surname, gender, phoneNumber, address);
-        this.hasLoyaltyCard = hasLoyaltyCard;
-        this.moneySpent = moneySpent;
-    }
-
-    public float getMoneySpent() {
-        return moneySpent;
-    }
-
-    public void setMoneySpent (float moneySpent) {
-        this.moneySpent = moneySpent;
-    }
-
-    public boolean hasLoyaltyCard() {
-        return hasLoyaltyCard;
-    }
-
-    public void setHasLoyaltyCard (boolean hasLoyaltyCard) {
-        this.hasLoyaltyCard = hasLoyaltyCard;
     }
 
     @Override
@@ -41,7 +21,7 @@ public class Client extends User implements TableCell {
 
     @Override
     public String getFileString() {
-        return "C" + super.getFileString() + hasLoyaltyCard + "," + moneySpent;
+        return "C" + super.getFileString();
     }
 
     @Override
@@ -50,6 +30,6 @@ public class Client extends User implements TableCell {
             return super.getCell(column, manager);
         }
 
-        return hasLoyaltyCard;
+        return ((TreatmentManager) manager).hasLoyaltyCard(this);
     }
 }

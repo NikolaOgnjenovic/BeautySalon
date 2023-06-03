@@ -9,13 +9,11 @@ public class UserManager {
     private final Database database;
     private final HashMap<Integer, User> users;
     private final HashMap<Integer, Treatment> treatments;
-    private final SalonManager salonManager;
 
-    public UserManager(Database database, SalonManager salonManager) {
+    public UserManager(Database database) {
         this.database = database;
         this.treatments = database.getTreatments();
         this.users = database.getUsers();
-        this.salonManager = salonManager;
     }
 
     //region User
@@ -107,12 +105,6 @@ public class UserManager {
         return pastTreatments;
     }
 
-    public void changeMoneySpent(Client client, float refundedPrice) {
-        client.setMoneySpent(client.getMoneySpent() + refundedPrice);
-        client.setHasLoyaltyCard(client.getMoneySpent() >= salonManager.getLoyaltyThreshold());
-        updateUser(client);
-    }
-
     public void bookTreatment(Treatment treatment, TreatmentManager treatmentManager) {
         Client client = null;
         for (User user : users.values()) {
@@ -126,14 +118,12 @@ public class UserManager {
         }
 
         float price = treatment.getPrice();
-        if (client.hasLoyaltyCard()) {
+        if (treatmentManager.hasLoyaltyCard(client)) {
             price *= 0.9;
             treatment.setPrice(price);
         }
 
         treatmentManager.addTreatment(treatment);
-        salonManager.addIncome(treatment.getPrice());
-        changeMoneySpent(client, price);
     }
     //endregion
 
@@ -207,6 +197,12 @@ public class UserManager {
     public void teachTreatment(int id, byte categoryId) throws UserNotFoundException {
         Beautician beautician = getBeautician(id);
         beautician.addTreatmentTypeCategoryID(categoryId);
+        database.updateUser(beautician);
+    }
+
+    public void clearSkills(int id) throws UserNotFoundException {
+        Beautician beautician = getBeautician(id);
+        beautician.getTreatmentTypeCategoryIDs().clear();
         database.updateUser(beautician);
     }
 

@@ -1,11 +1,12 @@
 package com.mrmi.beautysalon.main.view;
 
+import com.mrmi.beautysalon.main.entity.Beautician;
 import com.mrmi.beautysalon.main.manager.AuthManager;
 import com.mrmi.beautysalon.main.manager.SalonManager;
 import com.mrmi.beautysalon.main.manager.TreatmentManager;
 import com.mrmi.beautysalon.main.manager.UserManager;
-import com.mrmi.beautysalon.main.entity.TreatmentTypeCategory;
 import com.mrmi.beautysalon.main.entity.User;
+import com.mrmi.beautysalon.main.view.addedit.EditBeauticianSkillsDialog;
 import com.mrmi.beautysalon.main.view.table.GenericTable;
 import com.mrmi.beautysalon.main.view.table.GenericTableModel;
 import net.miginfocom.swing.MigLayout;
@@ -13,7 +14,6 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
-import java.util.Map;
 
 public class UsersFrame extends JFrame {
     private final SalonManager salonManager;
@@ -28,7 +28,6 @@ public class UsersFrame extends JFrame {
     private JButton buttonRegister;
     private JButton buttonEdit;
     private JButton buttonBack;
-    private JComboBox<String> comboBoxTreatmentTypeCategory;
 
     public UsersFrame(SalonManager salonManager, TreatmentManager treatmentManager, UserManager userManager, AuthManager authManager, HashMap<Integer, User> users) {
         this.salonManager = salonManager;
@@ -80,15 +79,8 @@ public class UsersFrame extends JFrame {
         filterText = new JTextField("Search", 20);
         this.add(filterText);
 
-        buttonLearn = new JButton("Teach a beautician a new skill");
+        buttonLearn = new JButton("Edit a beautician's known treatment type categories");
         this.add(buttonLearn);
-
-        comboBoxTreatmentTypeCategory = new JComboBox<>();
-        for (Map.Entry<Integer, TreatmentTypeCategory> entry : treatmentManager.getAvailableTreatmentTypeCategories().entrySet()) {
-            comboBoxTreatmentTypeCategory.addItem(entry.getValue().getName() + ", id: " + entry.getKey());
-        }
-        this.add(comboBoxTreatmentTypeCategory);
-        comboBoxTreatmentTypeCategory.setVisible(false);
 
         buttonBack = new JButton("Back");
         this.add(buttonBack);
@@ -121,15 +113,12 @@ public class UsersFrame extends JFrame {
         });
 
         buttonLearn.addActionListener(e -> {
-            comboBoxTreatmentTypeCategory.setVisible(true);
-            Object category = comboBoxTreatmentTypeCategory.getSelectedItem();
-            if (category != null) {
-                try {
-                    userManager.teachTreatment((int) table.getValueAt(table.getSelectedRow(), 0), Byte.parseByte(category.toString().split(", id: ")[1]));
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "This user cannot learn to do any treatment types", "Error", JOptionPane.WARNING_MESSAGE);
-                }
+            if (table.getSelectedRow() == -1 || !(users.get(table.getValueAt(table.getSelectedRow(), 0)) instanceof Beautician)) {
+                JOptionPane.showMessageDialog(null, "This user cannot learn to do any treatment types", "Error", JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            EditBeauticianSkillsDialog editSkills = new EditBeauticianSkillsDialog(this, (int) table.getValueAt(table.getSelectedRow(), 0), userManager, treatmentManager);
+            editSkills.setVisible(true);
         });
 
         buttonRegister.addActionListener(e -> {
@@ -160,7 +149,7 @@ public class UsersFrame extends JFrame {
         buttonBack.addActionListener(e -> this.dispose());
     }
 
-    private void refreshData() {
+    public void refreshData() {
         GenericTableModel model = new GenericTableModel(users, treatmentManager);
         table.setModel(model);
     }

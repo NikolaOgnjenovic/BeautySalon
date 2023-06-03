@@ -90,6 +90,8 @@ public class RevenueExpenseFrame extends JFrame {
 
     private void refreshData() {
         if (fromDate == null || toDate == null || fromDate.after(toDate)) {
+            labelRevenue.setText("0");
+            labelExpenses.setText("0");
             return;
         }
 

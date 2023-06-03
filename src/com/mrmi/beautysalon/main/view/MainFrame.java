@@ -21,7 +21,7 @@ public class MainFrame extends JFrame {
         Database database = new Database("");
         salonManager = new SalonManager(database);
         treatmentManager = new TreatmentManager(database, salonManager);
-        userManager = new UserManager(database, salonManager);
+        userManager = new UserManager(database);
         authManager = new AuthManager(userManager);
         treatmentManager.finishTreatments();
 
