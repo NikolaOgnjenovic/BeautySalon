@@ -1,0 +1,7 @@
+1,Relaks masaža,2000.0,1,45,false
+2,Sportska masaža,2500.0,1,75,false
+3,Francuski manikir,1500.0,2,50,false
+4,Gel lak,1600.0,2,80,false
+5,Spa manikir,2000.0,2,90,false
+6,Spa pedikir,1600.0,3,45,false
+7,gda,431413.0,1,0,true

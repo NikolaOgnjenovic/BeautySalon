@@ -1,0 +1,3 @@
+1,Masaža,false
+2,Manikir,false
+3,Pedikir,false

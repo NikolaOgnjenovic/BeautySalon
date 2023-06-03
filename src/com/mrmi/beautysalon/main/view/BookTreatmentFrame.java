@@ -108,7 +108,9 @@ public class BookTreatmentFrame extends JFrame {
             Beautician beautician = (Beautician) comboBoxBeauticians.getSelectedItem();
             if (beautician != null) {
                 beauticianUsername = beautician.getUsername();
+                datePicker.setVisible(false);
                 datePicker.setVisible(true);
+                treatmentAvailableTimeSlots.setVisible(false);
             }
         });
 
@@ -130,7 +132,7 @@ public class BookTreatmentFrame extends JFrame {
         });
 
         buttonBook.addActionListener(e -> {
-            selectedDate.set(Calendar.HOUR, Integer.parseInt(selectedTime.substring(0, 2)));
+            selectedDate.set(Calendar.HOUR_OF_DAY, Integer.parseInt(selectedTime.substring(0, 2)));
             selectedDate.set(Calendar.MINUTE, 0);
             selectedDate.set(Calendar.SECOND, 0);
             userManager.bookTreatment(new Treatment(selectedDate, clientUsername, beauticianUsername, typeId, treatmentPrice), treatmentManager);
@@ -152,7 +154,7 @@ public class BookTreatmentFrame extends JFrame {
     }
 
     private void refreshTimeComboBox() {
-        availableTimeSlots = treatmentManager.getAvailableTimeSlots(selectedDate, typeId, salonManager);
+        availableTimeSlots = treatmentManager.getAvailableTimeSlots(userManager, beauticianUsername, selectedDate, typeId, salonManager);
         treatmentAvailableTimeSlots.removeAllItems();
         treatmentAvailableTimeSlots.setModel(new DefaultComboBoxModel<>(availableTimeSlots));
         treatmentAvailableTimeSlots.setVisible(true);

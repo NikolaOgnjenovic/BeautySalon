@@ -1,7 +1,7 @@
 M,0,manager,manager,Nikola,Nikolić,M,1234,Adresa 1,7,5,70000.0,Sat Jun 03 10:42:53 CEST 2023,
 R,1,pera,pera,Pera,Perić,M,1234,Adresa 2,5,5,10000.0,Sat Jun 03 10:42:53 CEST 2023,
 B,2,sima,sima,Sima,Simić,M,1234,Adresa 3,5,5,3000.0,Sat Jun 03 10:42:53 CEST 2023,;1;2;
-B,3,zika,zika,Zika,Žikić,M,1234,Adresa 4,5,5,3000.0,Sat Jun 03 10:42:53 CEST 2021,;1;2;3;
+B,3,zika,zika,Zika,Žikić,M,1234,Adresa 4,5,5,3000.0,Sat Jun 03 10:42:53 CEST 2023,;1;2;3;
 B,4,jovana,jovana,Jovana,Jovanović,F,1234,Adresa 5,5,5,3000.0,Sat Jun 03 10:42:53 CEST 2023,;2;
 C,5,milica,milica,Milica,Milić,F,1234,Adresa 6,
 C,6,mika,mika,Mika,Mikić,M,1234,Adresa 7,

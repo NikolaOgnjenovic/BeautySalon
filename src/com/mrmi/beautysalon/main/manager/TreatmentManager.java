@@ -156,7 +156,7 @@ public class TreatmentManager {
      * @param salonManager Used for the opening & closing hour
      * @return a Vector of Strings which contains available time slots for the treatment
      */
-    public Vector<String> getAvailableTimeSlots(Calendar selectedDate, int typeId, SalonManager salonManager) {
+    public Vector<String> getAvailableTimeSlots(UserManager userManager, String beauticianUsername, Calendar selectedDate, int typeId, SalonManager salonManager) {
         if (!types.containsKey(typeId)) {
             return new Vector<>();
         }
@@ -166,18 +166,16 @@ public class TreatmentManager {
         int roundedDurationHour = duration / 60 + 1;
         Vector<String> availableTimeSlots = new Vector<>();
 
-        // Get all treatments
-        List<Treatment> sortedTreatments = new ArrayList<>(treatments.values());
-        // Sort them by their date
-        sortedTreatments.sort(Comparator.comparing(Treatment::getScheduledDate));
-        // Filter the treatments by the given scheduled date
-        sortedTreatments = sortedTreatments.stream().filter(t -> t.getScheduledDate().get(Calendar.DATE) == selectedDate.get(Calendar.DATE)).collect(Collectors.toList());
+        // Get all treatments for the given beautician, filter them by the given date, sort them by their date,
+        List<Treatment> sortedTreatments = new ArrayList<>(userManager.getBeauticianDueTreatments(beauticianUsername).values())
+                .stream().filter(t -> t.getScheduledDate().get(Calendar.DATE) == selectedDate.get(Calendar.DATE))
+                .sorted(Comparator.comparing(Treatment::getScheduledDate)).collect(Collectors.toList());
 
         // Loop from the salon's opening hour to the closing hour, increasing i by the duration of the treatment in hours
         for (int i = salonManager.getOpeningHour(); i < salonManager.getClosingHour(); i += roundedDurationHour) {
             int currentHour = i;
             // If any of the filtered treatments' scheduled hour is == i continue looping
-            if (sortedTreatments.stream().anyMatch(treatment -> treatment.getScheduledDate().get(Calendar.HOUR) == currentHour)) {
+            if (sortedTreatments.stream().anyMatch(treatment -> treatment.getScheduledDate().get(Calendar.HOUR_OF_DAY) == currentHour)) {
                 continue;
             }
             // Else print the current time slot for the treatment
