@@ -22,7 +22,7 @@ public class BookTreatmentFrame extends JFrame {
     private int typeId;
     private int categoryId;
     private float treatmentPrice;
-    private String beauticianUsername;
+    private Beautician selectedBeautician;
     private JComboBox<Beautician> comboBoxBeauticians;
     private HashMap<Integer, Beautician> beauticians;
     private Calendar selectedDate;
@@ -101,15 +101,13 @@ public class BookTreatmentFrame extends JFrame {
         textTreatmentTypeFilter.addActionListener(e -> typeTable.filter(textTreatmentTypeFilter.getText()));
 
         comboBoxBeauticians.addActionListener(e -> {
-            Beautician beautician = (Beautician) comboBoxBeauticians.getSelectedItem();
-            if (beautician != null) {
-                beauticianUsername = beautician.getUsername();
+            selectedBeautician = (Beautician) comboBoxBeauticians.getSelectedItem();
+            if (selectedBeautician != null) {
                 datePicker.setVisible(true);
                 treatmentAvailableTimeSlots.setVisible(false);
                 buttonBook.setVisible(false);
             }
         });
-
 
         selectedDate = Calendar.getInstance();
         datePicker.addActionListener(e -> {
@@ -135,7 +133,17 @@ public class BookTreatmentFrame extends JFrame {
             selectedDate.set(Calendar.HOUR_OF_DAY, Integer.parseInt(selectedTime.substring(0, 2)));
             selectedDate.set(Calendar.MINUTE, 0);
             selectedDate.set(Calendar.SECOND, 0);
-            userManager.bookTreatment(new Treatment(selectedDate, clientUsername, beauticianUsername, typeId, treatmentPrice), treatmentManager);
+
+            if (selectedBeautician.getUsername().equals("Any")) {
+                for (Beautician beautician : beauticians.values()) {
+                    if (treatmentManager.getAvailableTimeSlots(userManager, beautician, selectedDate, typeId, salonManager).contains(selectedTime)) {
+                        selectedBeautician = beautician;
+                        break;
+                    }
+                }
+            }
+
+            userManager.bookTreatment(new Treatment(selectedDate, clientUsername, selectedBeautician.getUsername(), typeId, treatmentPrice), treatmentManager);
             this.dispose();
         });
 
@@ -144,17 +152,19 @@ public class BookTreatmentFrame extends JFrame {
 
     private void displayAvailableBeauticians(int categoryId) {
         beauticians = userManager.getBeauticiansByTreatmentTypeCategory(categoryId);
+        comboBoxBeauticians.removeAllItems();
         if (beauticians.size() < 1) {
             return;
         }
-        comboBoxBeauticians.removeAllItems();
+        comboBoxBeauticians.addItem(new Beautician("Any", "password", "Any", "beautician", "M", "123456", "Address 3", (byte) 6, (byte) 5, 90000));
+
         for (Beautician b : beauticians.values()) {
             comboBoxBeauticians.addItem(b);
         }
     }
 
     private void refreshTimeComboBox() {
-        availableTimeSlots = treatmentManager.getAvailableTimeSlots(userManager, beauticianUsername, selectedDate, typeId, salonManager);
+        availableTimeSlots = treatmentManager.getAvailableTimeSlots(userManager, selectedBeautician, selectedDate, typeId, salonManager);
         treatmentAvailableTimeSlots.removeAllItems();
         treatmentAvailableTimeSlots.setModel(new DefaultComboBoxModel<>(availableTimeSlots));
         treatmentAvailableTimeSlots.setVisible(true);

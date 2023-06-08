@@ -117,7 +117,12 @@ public class UserTest {
 
     @Test
     public void testBookTreatment() throws UserNotFoundException {
-        Treatment treatment = new Treatment(Calendar.getInstance(), "Client", "Beautician", 0, 1000);
+        /* Sometimes past treatments were empty and sometimes they contained the current date
+        perhaps it gets cached since it's accessed twice with a few functions in between?
+        => subtract an hour from the current time and date just to be sure */
+        Calendar today = Calendar.getInstance();
+        today.add(Calendar.HOUR_OF_DAY, -1);
+        Treatment treatment = new Treatment(today, "Client", "Beautician", 0, 1000);
         userManager.bookTreatment(treatment, treatmentManager);
 
         Beautician beautician = userManager.getBeautician(2);

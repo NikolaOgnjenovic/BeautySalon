@@ -150,13 +150,28 @@ public class TreatmentManager {
         return type.getName();
     }
 
+
+    private List<Treatment> getSortedTreatments(UserManager userManager, String beauticianUsername, Calendar selectedDate) {
+        List<Treatment> sortedTreatments;
+        if (beauticianUsername != null) {
+            sortedTreatments = new ArrayList<>(userManager.getBeauticianTreatments(beauticianUsername).values());
+        } else {
+            sortedTreatments = new ArrayList<>(treatments.values());
+        }
+
+        return sortedTreatments
+                .stream()
+                .filter(t -> t.getScheduledDate().get(Calendar.DATE) == selectedDate.get(Calendar.DATE))
+                .sorted(Comparator.comparing(Treatment::getScheduledDate))
+                .collect(Collectors.toList());
+    }
     /**
      * @param selectedDate The date on which the time slots are being calculated
      * @param typeId       The id of the treatment type
      * @param salonManager Used for the opening & closing hour
      * @return a Vector of Strings which contains available time slots for the treatment
      */
-    public Vector<String> getAvailableTimeSlots(UserManager userManager, String beauticianUsername, Calendar selectedDate, int typeId, SalonManager salonManager) {
+    public Vector<String> getAvailableTimeSlots(UserManager userManager, Beautician selectedBeautician, Calendar selectedDate, int typeId, SalonManager salonManager) {
         if (!types.containsKey(typeId)) {
             return new Vector<>();
         }
@@ -167,12 +182,9 @@ public class TreatmentManager {
         Vector<String> availableTimeSlots = new Vector<>();
 
         // Get all treatments for the given beautician, filter them by the given date, sort them by their date,
-        List<Treatment> sortedTreatments = new ArrayList<>(userManager.getBeauticianTreatments(beauticianUsername).values())
-                .stream().filter(t -> t.getScheduledDate().get(Calendar.DATE) == selectedDate.get(Calendar.DATE))
-                .sorted(Comparator.comparing(Treatment::getScheduledDate)).collect(Collectors.toList());
+        List<Treatment> sortedTreatments = getSortedTreatments(userManager, selectedBeautician.getUsername(), selectedDate);
 
         // Loop from the salon's opening hour to the closing hour, increasing i by the duration of the treatment in hours
-        //for (int i = salonManager.getOpeningHour(); i < salonManager.getClosingHour(); i += roundedDurationHour) {
         for (int i = salonManager.getOpeningHour(); i < salonManager.getClosingHour(); i += 1) {
             int currentHour = i;
             // If any of the filtered treatments' duration overlaps with the current hour, continue
